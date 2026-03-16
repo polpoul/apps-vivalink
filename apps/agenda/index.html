@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agendas Partagés</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f5f0e8;
+    --surface: #fffdf8;
+    --border: #e0d8cc;
+    --text: #2a2520;
+    --text-muted: #8a8078;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { height: 100%; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); display: flex; flex-direction: row; height: 100dvh; overflow: hidden; }
+
+  /* ── LOADER ── */
+  #loader { position: fixed; inset: 0; background: var(--bg); display: flex; align-items: center; justify-content: center; z-index: 999; font-family: 'Playfair Display', serif; font-size: 1rem; color: var(--text-muted); gap: 10px; }
+  .spinner { width: 18px; height: 18px; border: 2px solid var(--border); border-top-color: var(--text-muted); border-radius: 50%; animation: spin .7s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── SIDEBAR ── */
+  aside {
+    width: 200px; min-width: 200px;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    padding: 16px 0;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-y;
+    height: 100dvh;
+    flex-shrink: 0;
+  }
+  .sidebar-top { padding: 0 14px 14px; border-bottom: 1px solid var(--border); margin-bottom: 14px; }
+  .logo { font-family: 'Playfair Display', serif; font-size: 1.15rem; letter-spacing: -0.02em; margin-bottom: 10px; }
+  .logo span { color: var(--text-muted); font-weight: 400; }
+  .user-badge { display: flex; align-items: center; gap: 8px; font-size: .82rem; margin-bottom: 12px; }
+  .user-dot { width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: .65rem; font-weight: 700; color: #fff; flex-shrink: 0; }
+  .month-nav { display: flex; flex-direction: column; gap: 6px; }
+  .calendar-title { font-family: 'Playfair Display', serif; font-size: .8rem; color: var(--text); line-height: 1.4; }
+  .nav-row { display: flex; gap: 5px; align-items: center; }
+  .nav-btn { height: 26px; border-radius: 6px; border: 1px solid var(--border); background: var(--bg); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: .78rem; transition: all .15s; color: var(--text); padding: 0 9px; font-family: inherit; flex: 1; }
+  .nav-btn:hover { background: var(--border); }
+  .nav-btn.today { flex: 2; font-size: .72rem; }
+
+  .sidebar-section { padding: 0 10px; margin-bottom: 14px; }
+  .sidebar-label { font-size: .62rem; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px; padding: 0 4px; }
+  .instance-item { display: flex; align-items: center; gap: 8px; padding: 6px 8px; border-radius: 7px; cursor: pointer; transition: background .15s; font-size: .82rem; user-select: none; }
+  .instance-item:hover, .instance-item.active { background: var(--bg); }
+  .instance-color {
+    width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
+    transition: transform .2s, box-shadow .2s;
+    cursor: pointer;
+  }
+  .instance-item.active .instance-color { transform: scale(1.4); box-shadow: 0 0 0 3px rgba(0,0,0,.07); }
+  /* Instance de saisie : bordure colorée sur l'item + crayon sur le rond */
+  .instance-item.write-active {
+    border: 1.5px solid currentColor;
+    padding: 5px 7px; /* compenser la bordure */
+  }
+  .instance-color.write { box-shadow: 0 0 0 2.5px #fff, 0 0 0 4px var(--write-color, #000) !important; transform: scale(1.5) !important; }
+  .instance-check { margin-left: auto; opacity: 0; font-size: .7rem; color: var(--text-muted); transition: opacity .15s; }
+  .instance-item.active .instance-check { opacity: 1; }
+  .add-instance-btn { display: flex; align-items: center; gap: 7px; padding: 6px 8px; border-radius: 7px; cursor: pointer; font-size: .82rem; color: var(--text-muted); border: 1.5px dashed var(--border); background: transparent; width: 100%; transition: all .2s; margin-top: 5px; font-family: inherit; }
+  .add-instance-btn:hover { color: var(--text); border-color: var(--text-muted); background: var(--bg); }
+
+  /* ── MAIN ── */
+  main { flex: 1; padding: 10px; overflow: hidden; display: flex; flex-direction: column; height: 100dvh; min-width: 0; }
+  .calendar-scroll { overflow: auto; flex: 1; -webkit-overflow-scrolling: touch; touch-action: pan-x pan-y; }
+  .calendar-grid { display: flex; gap: 4px; min-width: max-content; align-items: flex-start; padding-bottom: 8px; }
+  .month-block { background: var(--surface); border: 1px solid var(--border); border-radius: 7px; overflow: hidden; flex-shrink: 0; width: 145px; }
+  .month-title { padding: 4px 8px; font-family: 'Playfair Display', serif; font-size: .78rem; border-bottom: 1px solid var(--border); display: flex; align-items: baseline; gap: 4px; }
+  .month-title .year-label { font-family: 'DM Sans', sans-serif; font-size: .62rem; color: var(--text-muted); }
+  .days-list { display: flex; flex-direction: column; }
+  .day-cell { display: flex; align-items: center; gap: 5px; padding: 0 6px; cursor: pointer; transition: background .1s; border-bottom: 1px solid var(--border); height: 21px; overflow: hidden; }
+  .day-cell:last-child { border-bottom: none; }
+  .day-cell:hover { background: var(--bg); }
+  .day-cell.weekend { background: #f0ebe0; color: var(--text-muted); }
+  .day-cell.weekend:hover { background: #e8e2d6; }
+  .day-cell.today { background: rgba(42,37,32,.05); }
+  .day-cell.today .day-num { background: var(--text); color: #fff; border-radius: 50%; width: 15px; height: 15px; display: flex; align-items: center; justify-content: center; font-size: .6rem; }
+  .day-label { font-size: .58rem; color: var(--text-muted); width: 15px; flex-shrink: 0; text-transform: uppercase; }
+  .day-cell.weekend .day-label { color: #b0a898; }
+  .day-num { font-size: .67rem; font-weight: 500; width: 14px; text-align: center; flex-shrink: 0; line-height: 1; }
+  /* Badge : bande pleine hauteur couleur instance, rond = couleur user */
+  .day-state-badge {
+    display: flex; align-items: center; justify-content: center;
+    align-self: stretch;
+    padding: 0 5px;
+    flex-shrink: 0;
+    border-radius: 2px;
+  }
+  .day-state-icon {
+    width: 11px; height: 11px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: .52rem; font-weight: 700; color: #fff; line-height: 1;
+    border-radius: 50%;
+  }
+  .day-state-icon svg { width: 11px; height: 11px; display: block; }
+  .day-dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
+
+  /* ── MODAL ── */
+  .modal-overlay { position: fixed; inset: 0; background: rgba(42,37,32,.4); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 200; opacity: 0; pointer-events: none; transition: opacity .2s; }
+  .modal-overlay.open { opacity: 1; pointer-events: all; }
+  .modal { background: var(--surface); border-radius: 16px; padding: 26px; width: 330px; border: 1px solid var(--border); transform: translateY(8px); transition: transform .2s; box-shadow: 0 20px 60px rgba(0,0,0,.12); }
+  .modal-overlay.open .modal { transform: translateY(0); }
+  .modal h2 { font-family: 'Playfair Display', serif; font-size: 1.15rem; margin-bottom: 5px; }
+  .modal p { font-size: .83rem; color: var(--text-muted); margin-bottom: 18px; line-height: 1.5; }
+  .modal input { width: 100%; padding: 9px 13px; border: 1.5px solid var(--border); border-radius: 8px; font-family: inherit; font-size: .88rem; background: var(--bg); color: var(--text); outline: none; transition: border-color .15s; margin-bottom: 10px; }
+  .modal input:focus { border-color: var(--text-muted); }
+  .modal-actions { display: flex; gap: 8px; justify-content: flex-end; }
+  .btn { padding: 8px 16px; border-radius: 8px; font-family: inherit; font-size: .85rem; cursor: pointer; border: none; transition: all .15s; font-weight: 500; }
+  .btn-ghost { background: transparent; color: var(--text-muted); border: 1px solid var(--border); }
+  .btn-ghost:hover { background: var(--bg); color: var(--text); }
+  .btn-primary { background: var(--text); color: #fff; }
+  .btn-primary:hover { opacity: .85; }
+
+  /* ── DAY POPUP ── */
+  .day-popup { position: fixed; background: var(--surface); border: 1px solid var(--border); border-radius: 11px; padding: 12px; width: 185px; box-shadow: 0 8px 32px rgba(0,0,0,.12); z-index: 300; display: none; }
+  .day-popup.open { display: block; }
+  .popup-date { font-family: 'Playfair Display', serif; font-size: .88rem; margin-bottom: 9px; padding-bottom: 9px; border-bottom: 1px solid var(--border); }
+  .popup-states { display: flex; flex-direction: column; gap: 3px; }
+  .popup-state-btn { display: flex; align-items: center; gap: 8px; padding: 6px 9px; border-radius: 6px; cursor: pointer; font-size: .8rem; background: transparent; border: none; font-family: inherit; color: var(--text); width: 100%; text-align: left; transition: background .12s; }
+  .popup-state-btn:hover { background: var(--bg); }
+  .popup-state-btn.active { background: var(--bg); font-weight: 500; }
+  .popup-icon { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: .5rem; font-weight: 700; color: #fff; }
+
+  /* ── FORMES USERS ── */
+  .user-shape {
+    width: 9px; height: 9px; flex-shrink: 0;
+    display: inline-flex; align-items: center; justify-content: center;
+  }
+  .user-shape svg { width: 100%; height: 100%; overflow: visible; }
+
+  /* ── PANEL USERS sidebar ── */
+  .user-panel-item { display: flex; align-items: center; gap: 7px; padding: 3px 4px; font-size: .78rem; }
+  .user-shape-lg { width: 13px; height: 13px; flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center; }
+  .user-shape-lg svg { width: 100%; height: 100%; overflow: visible; }
+
+  /* ── MODAL DOC ── */
+  .doc-modal { width: 480px; max-height: 80vh; overflow-y: auto; }
+  .doc-modal h3 { font-family: 'Playfair Display', serif; font-size: 1rem; margin: 16px 0 6px; color: var(--text); }
+  .doc-modal h3:first-child { margin-top: 0; }
+  .doc-modal p, .doc-modal li { font-size: .83rem; color: var(--text-muted); line-height: 1.6; }
+  .doc-modal ul { padding-left: 16px; }
+  .doc-modal li { margin-bottom: 4px; }
+  .doc-section { background: var(--bg); border-radius: 8px; padding: 12px 14px; margin-bottom: 10px; }
+  #tooltip {
+    position: fixed;
+    background: var(--text); color: #fff;
+    font-size: .68rem; font-family: 'DM Sans', sans-serif;
+    padding: 3px 8px; border-radius: 5px;
+    pointer-events: none; z-index: 500;
+    white-space: nowrap;
+    opacity: 0; transition: opacity .15s;
+  }
+  #tooltip.show { opacity: 1; }
+  .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: var(--text); color: #fff; padding: 8px 18px; border-radius: 50px; font-size: .82rem; z-index: 999; opacity: 0; transition: opacity .2s; pointer-events: none; }
+  .toast.show { opacity: 1; }
+</style>
+</head>
+<body>
+
+<div id="loader"><div class="spinner"></div> Chargement…</div>
+
+<aside>
+  <div class="sidebar-top">
+    <div class="logo">Agenda<span>Partagé</span></div>
+    <div class="user-badge">
+      <div class="user-dot" id="userDot">?</div>
+      <span id="userName">…</span>
+    </div>
+    <div class="month-nav">
+      <div class="calendar-title" id="calendarTitle"></div>
+      <div class="nav-row">
+        <button class="nav-btn" id="prevBtn">←</button>
+        <button class="nav-btn today" id="todayBtn">Aujourd'hui</button>
+        <button class="nav-btn" id="nextBtn">→</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-label">Instances</div>
+    <div id="instanceList"></div>
+    <button class="add-instance-btn" id="addInstanceBtn"><span>＋</span> Nouvelle instance</button>
+  </div>
+
+  <div class="sidebar-section" style="padding-top:12px;border-top:1px solid var(--border)">
+    <div class="sidebar-label">Participants</div>
+    <div id="userPanel"></div>
+  </div>
+
+  <div class="sidebar-section" style="padding-top:10px;border-top:1px solid var(--border)">
+    <div class="sidebar-label">Légende</div>
+    <div style="display:flex;flex-direction:column;gap:7px;padding:0 4px;">
+      <div class="legend-item">
+        <span style="width:9px;height:9px;border-radius:50%;background:var(--text-muted);display:inline-block;flex-shrink:0"></span>&nbsp;Présent
+      </div>
+      <div class="legend-item">
+        <span style="width:9px;height:9px;border-radius:50%;background:var(--text-muted);display:inline-flex;align-items:center;justify-content:center;font-size:.48rem;font-weight:700;color:#fff;flex-shrink:0">?</span>&nbsp;Peut-être
+      </div>
+    </div>
+    <button class="add-instance-btn" id="docBtn" style="margin-top:10px;border-style:solid;opacity:.7">
+      <span>?</span> Documentation
+    </button>
+  </div>
+</aside>
+
+<main>
+  <div class="calendar-scroll">
+    <div class="calendar-grid" id="calendarGrid"></div>
+  </div>
+</main>
+
+<!-- Modal auth magic link -->
+<div class="modal-overlay" id="identModal">
+  <div class="modal">
+    <!-- Étape 1 : saisir email -->
+    <div id="step1">
+      <h2>Connexion</h2>
+      <p>Entrez votre email — vous recevrez un lien de connexion instantané, sans mot de passe.</p>
+      <input type="email" id="emailInput" placeholder="votre@email.com" maxlength="100" />
+      <div class="modal-actions">
+        <button class="btn btn-primary" id="sendLinkBtn">Envoyer le lien →</button>
+      </div>
+    </div>
+    <!-- Étape 2 : confirmation envoi -->
+    <div id="step2" style="display:none">
+      <h2>Vérifiez vos emails ✉️</h2>
+      <p>Un lien de connexion vient d'être envoyé. Cliquez dessus pour accéder à l'agenda — le lien est valable 1 heure.</p>
+      <p style="margin-top:8px;font-size:.75rem;color:var(--text-muted)">Pensez à vérifier vos spams.</p>
+    </div>
+    <!-- Étape 3 : choisir un prénom (premier login) -->
+    <div id="step3" style="display:none">
+      <h2>Bienvenue !</h2>
+      <p>Dernière étape — choisissez un prénom qui vous identifiera dans l'agenda.</p>
+      <input type="text" id="nameInput" placeholder="Votre prénom…" maxlength="30" />
+      <div class="modal-actions">
+        <button class="btn btn-primary" id="nameConfirm">C'est parti →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal nouvelle instance -->
+<div class="modal-overlay" id="addModal">
+  <div class="modal">
+    <h2>Nouvelle instance</h2>
+    <p>Donnez un nom à ce calendrier partagé.</p>
+    <input type="text" id="instanceNameInput" placeholder="Ex : Équipe dev, Famille…" maxlength="40" />
+    <div class="modal-actions">
+      <button class="btn btn-ghost" id="addCancel">Annuler</button>
+      <button class="btn btn-primary" id="addConfirm">Créer →</button>
+    </div>
+  </div>
+</div>
+
+<!-- Day popup -->
+<div class="day-popup" id="dayPopup">
+  <div class="popup-date" id="popupDate"></div>
+  <div class="popup-states">
+    <button class="popup-state-btn" data-state="present">
+      <div class="popup-icon" id="iconPresent"></div> Présent
+    </button>
+    <button class="popup-state-btn" data-state="maybe">
+      <div class="popup-icon" id="iconMaybe"></div> Peut-être
+    </button>
+    <button class="popup-state-btn" data-state="none" style="color:var(--text-muted)">
+      <div class="popup-icon" style="border:1.5px solid var(--border)"></div> Effacer
+    </button>
+  </div>
+</div>
+
+<!-- Modal doc -->
+<div class="modal-overlay" id="docModal">
+  <div class="modal doc-modal">
+    <h2>Documentation</h2>
+    <div class="doc-section">
+      <h3>🗓 Naviguer</h3>
+      <p>Les flèches ← → dans le header défilent mois par mois. <strong>Aujourd'hui</strong> recentre sur le mois courant.</p>
+    </div>
+    <div class="doc-section">
+      <h3>📋 Instances</h3>
+      <p>Une instance est un calendrier partagé (ex : Équipe dev, Famille). Cochez/décochez une instance dans la sidebar pour l'afficher ou la masquer.</p>
+    </div>
+    <div class="doc-section">
+      <h3>✏️ Saisir sa présence</h3>
+      <ul>
+        <li>Cliquez sur le <strong>rond coloré</strong> d'une instance dans la sidebar pour la désigner comme instance de saisie (bordure colorée).</li>
+        <li>Cliquez sur un jour du calendrier pour indiquer votre statut : <strong>Présent</strong> ou <strong>Peut-être</strong>.</li>
+        <li>Cliquez sur votre propre badge pour modifier ou effacer votre statut.</li>
+      </ul>
+    </div>
+    <div class="doc-section">
+      <h3>👤 Participants</h3>
+      <p>Chaque participant a une <strong>couleur</strong> et une <strong>forme</strong> uniques visibles dans le panel sidebar et au survol des badges.</p>
+    </div>
+    <div class="doc-section">
+      <h3>🔵 Badges sur les jours</h3>
+      <ul>
+        <li>Le <strong>fond coloré</strong> du badge = couleur de l'instance.</li>
+        <li>La <strong>forme colorée</strong> à l'intérieur = couleur + forme du participant.</li>
+        <li>Un <strong>?</strong> indique "Peut-être".</li>
+        <li>Survolez un badge pour voir le nom du participant.</li>
+      </ul>
+    </div>
+    <div class="modal-actions" style="margin-top:16px">
+      <button class="btn btn-primary" id="docClose">Fermer</button>
+    </div>
+  </div>
+</div>
+
+<div id="tooltip"></div>
+<div class="toast" id="toast"></div>
+
+<script>
+// ─── CONFIG ────────────────────────────────────────────────
+const API_URL  = 'https://api-agenda.vivalink.top';
+const AUTH_URL = 'https://auth.vivalink.top';
+
+// ─── API REST (api-agenda.vivalink.top) ────────────────────
+// Remplace les appels Supabase REST. Le device_token est envoyé
+// en Authorization: Bearer pour que l'API identifie l'utilisateur.
+let deviceToken = null;
+
+async function api(path, opts = {}) {
+  const res = await fetch(`${API_URL}/${path}`, {
+    method: opts.method || 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      ...(deviceToken ? { 'Authorization': `Bearer ${deviceToken}` } : {}),
+    },
+    body: opts.body,
+  });
+  if (res.status === 204) return null;
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || res.statusText);
+  return data;
+}
+
+// ─── AUTH (auth.vivalink.top) ──────────────────────────────
+// Gère le magic link et la session via device_token stocké en localStorage.
+
+function saveSession(token, userId) {
+  localStorage.setItem('agp_session', JSON.stringify({ token, userId }));
+}
+
+function loadSession() {
+  try {
+    return JSON.parse(localStorage.getItem('agp_session') || 'null');
+  } catch(e) { return null; }
+}
+
+function clearSession() {
+  localStorage.removeItem('agp_session');
+}
+
+// Vérifie que le device_token est encore valide auprès de auth-service
+async function verifyToken(token) {
+  try {
+    const res = await fetch(`${AUTH_URL}/auth/me`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    if (!res.ok) return null;
+    const data = await res.json();
+    return data.user_id || null;
+  } catch(e) { return null; }
+}
+
+function showLoader(on) { document.getElementById('loader').style.display = on ? 'flex' : 'none'; }
+
+// ─── INIT ──────────────────────────────────────────────────
+async function init() {
+  showLoader(true);
+  loadLocal();
+
+  // Vérifier si retour magic link dans l'URL (?device_token=xxx)
+  // auth-service redirige vers agenda.vivalink.top?device_token=xxx&user_id=xxx
+  const params = new URLSearchParams(window.location.search);
+  const tokenFromURL = params.get('device_token');
+  const userIdFromURL = params.get('user_id');
+
+  if (tokenFromURL && userIdFromURL) {
+    // Sauvegarder la session et nettoyer l'URL
+    saveSession(tokenFromURL, userIdFromURL);
+    deviceToken = tokenFromURL;
+    window.history.replaceState({}, '', window.location.pathname);
+    await handleAuthUser(userIdFromURL);
+    return;
+  }
+
+  // Vérifier session existante en localStorage
+  const session = loadSession();
+  if (session) {
+    const userId = await verifyToken(session.token);
+    if (userId) {
+      deviceToken = session.token;
+      await handleAuthUser(userId);
+      return;
+    } else {
+      // Token expiré ou révoqué
+      clearSession();
+    }
+  }
+
+  showLoader(false);
+  showMagicLinkModal();
+}
+
+async function handleAuthUser(userId) {
+  // Chercher l'utilisateur dans agenda_users via l'API
+  const existing = await api(`users?id=eq.${userId}`);
+  if (existing && existing.length > 0) {
+    state.user = existing[0];
+  } else {
+    // Nouvel utilisateur — demander le prénom
+    showLoader(false);
+    showNameModal(userId);
+    return;
+  }
+  await boot();
+}
+
+// ─── MODAL MAGIC LINK ──────────────────────────────────────
+function showMagicLinkModal() {
+  const modal = document.getElementById('identModal');
+  modal.classList.add('open');
+  const emailInput = document.getElementById('emailInput');
+  const step1 = document.getElementById('step1');
+  const step2 = document.getElementById('step2');
+  step1.style.display = 'block';
+  step2.style.display = 'none';
+  setTimeout(() => emailInput.focus(), 150);
+
+  async function sendLink() {
+    const email = emailInput.value.trim();
+    if (!email || !email.includes('@')) { showToast('Email invalide'); return; }
+    showLoader(true);
+    try {
+      // auth-service : POST /auth/request-login
+      // Il envoie un magic link qui redirige vers agenda.vivalink.top?device_token=xxx&user_id=xxx
+      const res = await fetch(`${AUTH_URL}/auth/request-login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+      if (!res.ok) throw new Error('Erreur serveur');
+      step1.style.display = 'none';
+      step2.style.display = 'block';
+      showLoader(false);
+    } catch(e) {
+      showToast('Erreur : ' + e.message);
+      showLoader(false);
+    }
+  }
+
+  document.getElementById('sendLinkBtn').onclick = sendLink;
+  emailInput.onkeydown = e => { if (e.key === 'Enter') sendLink(); };
+}
+
+// ─── MODAL PRÉNOM (premier login) ──────────────────────────
+function showNameModal(userId) {
+  const modal = document.getElementById('identModal');
+  modal.classList.add('open');
+  const step1 = document.getElementById('step1');
+  const step2 = document.getElementById('step2');
+  const step3 = document.getElementById('step3');
+  step1.style.display = 'none';
+  step2.style.display = 'none';
+  step3.style.display = 'block';
+
+  const nameInput = document.getElementById('nameInput');
+  setTimeout(() => nameInput.focus(), 150);
+
+  async function confirm() {
+    const name = nameInput.value.trim();
+    if (!name) return;
+    const color = COLORS[Math.floor(Math.random() * COLORS.length)];
+    const shape = getNextShape();
+    showLoader(true);
+    try {
+      // L'API force l'id depuis le device_token côté serveur
+      const rows = await api('users', { method: 'POST', body: JSON.stringify({ name, color, shape }) });
+      state.user = rows[0];
+      modal.classList.remove('open');
+      await boot();
+    } catch(e) {
+      showToast('Erreur : ' + e.message);
+      showLoader(false);
+    }
+  }
+  document.getElementById('nameConfirm').onclick = confirm;
+  nameInput.onkeydown = e => { if (e.key === 'Enter') confirm(); };
+}
+const SHAPES = ['circle', 'square', 'diamond', 'triangle', 'star'];
+
+function shapeSVG(shape, color, size = 9) {
+  const h = size, c = size / 2;
+  let path = '';
+  switch(shape) {
+    case 'circle':
+      return `<svg width="${h}" height="${h}" viewBox="0 0 10 10"><circle cx="5" cy="5" r="4.5" fill="${color}"/></svg>`;
+    case 'square':
+      return `<svg width="${h}" height="${h}" viewBox="0 0 10 10"><rect x=".5" y=".5" width="9" height="9" rx="1.5" fill="${color}"/></svg>`;
+    case 'diamond':
+      return `<svg width="${h}" height="${h}" viewBox="0 0 10 10"><polygon points="5,0.5 9.5,5 5,9.5 0.5,5" fill="${color}"/></svg>`;
+    case 'triangle':
+      return `<svg width="${h}" height="${h}" viewBox="0 0 10 10"><polygon points="5,0.5 9.5,9.5 0.5,9.5" fill="${color}"/></svg>`;
+    case 'star':
+      return `<svg width="${h}" height="${h}" viewBox="0 0 10 10"><polygon points="5,0.5 6.2,3.8 9.8,3.8 6.9,5.9 8,9.2 5,7.2 2,9.2 3.1,5.9 0.2,3.8 3.8,3.8" fill="${color}"/></svg>`;
+    default:
+      return `<svg width="${h}" height="${h}" viewBox="0 0 10 10"><circle cx="5" cy="5" r="4.5" fill="${color}"/></svg>`;
+  }
+}
+
+function getNextShape() {
+  const used = Object.values(state.userShapes || {});
+  return SHAPES.find(s => !used.includes(s)) || SHAPES[Object.keys(state.userShapes || {}).length % SHAPES.length];
+}
+const COLORS = ['#e07b5a','#5a8fe0','#6db87a','#b85aa8','#c4a83a','#5abdb8','#e05a7b','#8b5ae0','#a0b85a','#e0a05a'];
+
+// ─── STATE ─────────────────────────────────────────────────
+let state = {
+  user: null,
+  instances: [],
+  activeInstances: [],
+  writeInstance: null,
+  presences: {},
+  userColors: {},
+  userNames:  {},
+  userShapes: {},
+  offsetMonths: 0,
+};
+
+// ─── LOCAL PREFS (navigation + actives seulement) ──────────
+function saveLocal() {
+  localStorage.setItem('agp_prefs', JSON.stringify({
+    offsetMonths: state.offsetMonths,
+    activeInstances: state.activeInstances,
+    writeInstance: state.writeInstance,
+  }));
+}
+function loadLocal() {
+  try {
+    const p = JSON.parse(localStorage.getItem('agp_prefs') || '{}');
+    state.offsetMonths    = p.offsetMonths    || 0;
+    state.activeInstances = p.activeInstances || [];
+    state.writeInstance   = p.writeInstance   || null;
+  } catch(e) {}
+}
+
+// ─── BOOT ──────────────────────────────────────────────────
+async function boot() {
+  updateUserBadge();
+  await Promise.all([loadInstances(), loadUsers(), loadPresences()]);
+  showLoader(false);
+  renderSidebar();
+  renderUserPanel();
+  renderCalendar();
+  setupNavigation();
+  setupAddInstance();
+  setupDocModal();
+}
+
+// ─── LOAD DATA ─────────────────────────────────────────────
+async function loadInstances() {
+  state.instances = await api('instances?select=*&order=created_at.asc') || [];
+  state.activeInstances = state.activeInstances.filter(id => state.instances.find(i => i.id === id));
+  if (!state.activeInstances.length && state.instances.length) {
+    state.activeInstances = [state.instances[0].id];
+  }
+  // Valider writeInstance
+  if (!state.writeInstance || !state.instances.find(i => i.id === state.writeInstance)) {
+    state.writeInstance = state.activeInstances[0] || null;
+  }
+  saveLocal();
+}
+
+async function loadUsers() {
+  const users = await api('users?select=id,color,name,shape') || [];
+  state.userColors = {};
+  state.userNames  = {};
+  state.userShapes = {};
+  users.forEach(u => {
+    state.userColors[u.id] = u.color;
+    state.userNames[u.id]  = u.name;
+    state.userShapes[u.id] = u.shape || 'circle';
+  });
+}
+
+async function loadPresences() {
+  const rows = await api('presences?select=*') || [];
+  state.presences = {};
+  rows.forEach(r => {
+    if (!state.presences[r.instance_id]) state.presences[r.instance_id] = {};
+    if (!state.presences[r.instance_id][r.user_id]) state.presences[r.instance_id][r.user_id] = {};
+    state.presences[r.instance_id][r.user_id][r.date] = r.state;
+  });
+}
+
+// ─── USER BADGE ────────────────────────────────────────────
+function updateUserBadge() {
+  document.getElementById('userName').textContent = state.user.name;
+  const dot = document.getElementById('userDot');
+  dot.textContent = state.user.name[0].toUpperCase();
+  dot.style.background = state.user.color;
+  // Icônes popup couleur user
+  document.getElementById('iconPresent').style.background = state.user.color;
+  const im = document.getElementById('iconMaybe');
+  im.style.background = state.user.color;
+  im.textContent = '?';
+}
+
+// ─── SIDEBAR ───────────────────────────────────────────────
+function renderSidebar() {
+  const list = document.getElementById('instanceList');
+  list.innerHTML = '';
+  state.instances.forEach(inst => {
+    const active  = state.activeInstances.includes(inst.id);
+    const isWrite = state.writeInstance === inst.id;
+    const el = document.createElement('div');
+    el.className = 'instance-item' + (active ? ' active' : '');
+    if (isWrite) {
+      el.style.outline = `2px solid ${inst.color}`;
+      el.style.outlineOffset = '-2px';
+    }
+
+    // Rond couleur — clic = désigner comme instance de saisie
+    const dot = document.createElement('div');
+    dot.className = 'instance-color';
+    dot.style.background = inst.color;
+    if (isWrite) {
+      dot.style.transform = 'scale(1.5)';
+      dot.style.boxShadow = `0 0 0 2px #fff, 0 0 0 3.5px ${inst.color}`;
+    }
+    dot.title = isWrite ? 'Instance de saisie' : 'Cliquer pour saisir ici';
+    dot.onclick = e => {
+      e.stopPropagation();
+      state.writeInstance = inst.id;
+      if (!state.activeInstances.includes(inst.id)) state.activeInstances.push(inst.id);
+      saveLocal(); renderSidebar(); renderCalendar();
+    };
+
+    const name = document.createElement('span');
+    name.style.cssText = 'flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap';
+    name.textContent = inst.name;
+
+    const check = document.createElement('span');
+    check.className = 'instance-check';
+    check.textContent = isWrite ? '✏️' : '✓';
+
+    el.appendChild(dot);
+    el.appendChild(name);
+    el.appendChild(check);
+
+    el.onclick = async () => {
+      if (active) {
+        state.activeInstances = state.activeInstances.filter(id => id !== inst.id);
+        if (state.writeInstance === inst.id) state.writeInstance = state.activeInstances[0] || null;
+      } else {
+        state.activeInstances.push(inst.id);
+      }
+      saveLocal(); renderSidebar();
+      await Promise.all([loadUsers(), loadPresences()]);
+      renderUserPanel();
+      renderCalendar();
+    };
+    list.appendChild(el);
+  });
+
+}
+
+// ─── ADD INSTANCE ──────────────────────────────────────────
+function setupAddInstance() {
+  const modal = document.getElementById('addModal');
+  const input = document.getElementById('instanceNameInput');
+  document.getElementById('addInstanceBtn').onclick = () => { input.value = ''; modal.classList.add('open'); setTimeout(() => input.focus(), 100); };
+  document.getElementById('addCancel').onclick = () => modal.classList.remove('open');
+  modal.onclick = e => { if (e.target === modal) modal.classList.remove('open'); };
+
+  async function confirm() {
+    const name = input.value.trim();
+    if (!name) return;
+    const usedColors = state.instances.map(i => i.color);
+    const color = COLORS.find(c => !usedColors.includes(c)) || COLORS[state.instances.length % COLORS.length];
+    const id = 'inst' + Date.now();
+    modal.classList.remove('open');
+    showLoader(true);
+    try {
+      const rows = await api('instances', { method: 'POST', body: JSON.stringify({ name, owner_id: state.user.id, color }) });
+      state.instances.push(rows[0]);
+      state.activeInstances.push(rows[0].id);
+      saveLocal(); renderSidebar(); renderCalendar();
+      showToast(`Instance « ${name} » créée !`);
+    } catch(e) { showToast('Erreur : ' + e.message); }
+    finally { showLoader(false); }
+  }
+  document.getElementById('addConfirm').onclick = confirm;
+  input.onkeydown = e => { if (e.key === 'Enter') confirm(); };
+}
+
+// ─── NAVIGATION ────────────────────────────────────────────
+function setupNavigation() {
+  document.getElementById('prevBtn').onclick  = () => { state.offsetMonths--; saveLocal(); renderCalendar(); };
+  document.getElementById('nextBtn').onclick  = () => { state.offsetMonths++; saveLocal(); renderCalendar(); };
+  document.getElementById('todayBtn').onclick = () => { state.offsetMonths = 0; saveLocal(); renderCalendar(); };
+}
+
+// ─── CALENDAR ──────────────────────────────────────────────
+const MONTHS_FR = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
+const DAYS_SHORT = ['Di','Lu','Ma','Me','Je','Ve','Sa'];
+
+function renderCalendar() {
+  const grid = document.getElementById('calendarGrid');
+  grid.innerHTML = '';
+  const today = new Date();
+  const base  = new Date(today.getFullYear(), today.getMonth() + state.offsetMonths, 1);
+  const end   = new Date(base.getFullYear(), base.getMonth() + 5, 1);
+
+  document.getElementById('calendarTitle').textContent =
+    `${MONTHS_FR[base.getMonth()]} ${base.getFullYear()} — ${MONTHS_FR[end.getMonth()]} ${end.getFullYear()}`;
+
+  for (let m = 0; m < 6; m++) {
+    const yr = base.getFullYear() + Math.floor((base.getMonth() + m) / 12);
+    const mo = (base.getMonth() + m) % 12;
+    grid.appendChild(renderMonth(yr, mo, today));
+  }
+}
+
+function renderMonth(year, month, today) {
+  const block = document.createElement('div');
+  block.className = 'month-block';
+  const title = document.createElement('div');
+  title.className = 'month-title';
+  title.innerHTML = `${MONTHS_FR[month]} <span class="year-label">${year}</span>`;
+  block.appendChild(title);
+
+  const list = document.createElement('div');
+  list.className = 'days-list';
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+  for (let d = 1; d <= daysInMonth; d++) {
+    const date    = new Date(year, month, d);
+    const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const isToday   = date.toDateString() === today.toDateString();
+    const dow       = date.getDay();
+    const isWeekend = dow === 0 || dow === 6;
+
+    const cell = document.createElement('div');
+    cell.className = 'day-cell' + (isToday ? ' today' : '') + (isWeekend ? ' weekend' : '');
+
+    const label = document.createElement('div');
+    label.className = 'day-label';
+    label.textContent = DAYS_SHORT[dow];
+    cell.appendChild(label);
+
+    const num = document.createElement('div');
+    num.className = 'day-num';
+    num.textContent = d;
+    cell.appendChild(num);
+
+    // Badges de TOUS les users (y compris soi-même) sur toutes les instances actives
+    state.activeInstances.forEach(instId => {
+      const inst = state.instances.find(i => i.id === instId);
+      const instPresences = state.presences[instId] || {};
+
+      // Statut perso sur cette instance
+      const ownState = instPresences[state.user.id]?.[dateStr] || null;
+      if (ownState) {
+        const badge = document.createElement('div');
+        badge.className = 'day-state-badge';
+        badge.style.background = inst ? inst.color : state.user.color;
+        badge.dataset.tip = `${state.user.name} — ${ownState === 'maybe' ? 'Peut-être' : 'Présent'}`;
+        badge.dataset.instId = instId;
+        const icon = document.createElement('div');
+        icon.className = 'day-state-icon';
+        const shape = state.userShapes[state.user.id] || 'circle';
+        if (ownState === 'maybe') {
+          icon.style.background = state.user.color;
+          icon.style.borderRadius = '50%';
+          icon.textContent = '?';
+        } else {
+          icon.style.border = 'none';
+          icon.style.borderRadius = '0';
+          icon.style.background = 'none';
+          icon.innerHTML = shapeSVG(shape, state.user.color, 11);
+        }
+        badge.appendChild(icon);
+        badge.onclick = e => { e.stopPropagation(); openDayPopup(e, dateStr, cell, instId); };
+        cell.appendChild(badge);
+      }
+
+      // Statut des autres users sur cette instance
+      Object.entries(instPresences).forEach(([userId, days]) => {
+        if (userId === state.user.id) return;
+        const s = days[dateStr];
+        if (!s) return;
+        const badge = document.createElement('div');
+        badge.className = 'day-state-badge';
+        badge.style.background = inst ? inst.color : '#aaa';
+        const userName = state.userNames[userId] || '?';
+        badge.dataset.tip = `${userName} — ${s === 'maybe' ? 'Peut-être' : 'Présent'}`;
+        const dot = document.createElement('div');
+        dot.className = 'day-state-icon';
+        const uShape = state.userShapes[userId] || 'circle';
+        const uColor = state.userColors[userId] || '#aaa';
+        if (s === 'maybe') {
+          dot.style.background = uColor;
+          dot.style.opacity = '0.6';
+          dot.style.borderRadius = '50%';
+          dot.textContent = '?';
+        } else {
+          dot.style.border = 'none';
+          dot.style.borderRadius = '0';
+          dot.style.background = 'none';
+          dot.innerHTML = shapeSVG(uShape, uColor, 11);
+        }
+        badge.appendChild(dot);
+        cell.appendChild(badge);
+      });
+    });
+
+    cell.onclick = e => openDayPopup(e, dateStr, cell);
+    list.appendChild(cell);
+  }
+
+  block.appendChild(list);
+  return block;
+}
+
+// ─── PANEL USERS ───────────────────────────────────────────
+function renderUserPanel() {
+  const panel = document.getElementById('userPanel');
+  if (!panel) return;
+  panel.innerHTML = '';
+  const userIds = Object.keys(state.userNames);
+  if (!userIds.length) { panel.innerHTML = '<div style="font-size:.72rem;color:var(--text-muted);padding:0 4px">Aucun participant</div>'; return; }
+  userIds.forEach(uid => {
+    const name  = state.userNames[uid]  || '?';
+    const color = state.userColors[uid] || '#aaa';
+    const shape = state.userShapes[uid] || 'circle';
+    const isMe  = uid === state.user?.id;
+    const el = document.createElement('div');
+    el.className = 'user-panel-item';
+    el.innerHTML = `
+      <div class="user-shape-lg">${shapeSVG(shape, color, 13)}</div>
+      <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;${isMe ? 'font-weight:500' : ''}">${name}${isMe ? ' <span style="font-size:.65rem;color:var(--text-muted)">(moi)</span>' : ''}</span>
+    `;
+    panel.appendChild(el);
+  });
+}
+
+// ─── DOC MODAL ─────────────────────────────────────────────
+function setupDocModal() {
+  const modal = document.getElementById('docModal');
+  document.getElementById('docBtn').onclick = () => modal.classList.add('open');
+  document.getElementById('docClose').onclick = () => modal.classList.remove('open');
+  modal.onclick = e => { if (e.target === modal) modal.classList.remove('open'); };
+}
+const tooltipEl = document.getElementById('tooltip');
+document.addEventListener('mouseover', e => {
+  const badge = e.target.closest('[data-tip]');
+  if (!badge) { tooltipEl.classList.remove('show'); return; }
+  tooltipEl.textContent = badge.dataset.tip;
+  tooltipEl.classList.add('show');
+});
+document.addEventListener('mousemove', e => {
+  if (!tooltipEl.classList.contains('show')) return;
+  tooltipEl.style.left = (e.clientX + 10) + 'px';
+  tooltipEl.style.top  = (e.clientY - 28) + 'px';
+});
+document.addEventListener('mouseout', e => {
+  if (!e.target.closest('[data-tip]')) tooltipEl.classList.remove('show');
+});
+
+// ─── DAY POPUP ─────────────────────────────────────────────
+let popupTarget = null;
+
+function openDayPopup(e, dateStr, cell, instId) {
+  // instId optionnel — si non fourni, on prend la première instance active
+  const targetInst = instId || state.writeInstance || state.activeInstances[0];
+  if (!targetInst) { showToast('Sélectionnez une instance d\'abord'); return; }
+  e.stopPropagation();
+  popupTarget = { dateStr, instId: targetInst };
+
+  const popup = document.getElementById('dayPopup');
+  const [y, m, d] = dateStr.split('-').map(Number);
+  document.getElementById('popupDate').textContent =
+    new Date(y, m-1, d).toLocaleDateString('fr-FR', { weekday:'long', day:'numeric', month:'long' });
+
+  const current = state.presences[targetInst]?.[state.user.id]?.[dateStr] || 'none';
+  popup.querySelectorAll('.popup-state-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.state === current));
+
+  const rect = cell.getBoundingClientRect();
+  popup.style.display = 'block'; popup.classList.add('open');
+  let top = rect.bottom + 5, left = rect.left;
+  if (left + 190 > window.innerWidth)  left = window.innerWidth - 195;
+  if (top  + 150 > window.innerHeight) top  = rect.top - 155;
+  popup.style.top = top + 'px'; popup.style.left = left + 'px';
+}
+
+document.getElementById('dayPopup').querySelectorAll('.popup-state-btn').forEach(btn => {
+  btn.onclick = async e => {
+    e.stopPropagation();
+    if (!popupTarget) return;
+    // Sauvegarder avant closePopup qui remet popupTarget à null
+    const dateStr  = popupTarget.dateStr;
+    const instId   = popupTarget.instId;
+    const newState = btn.dataset.state;
+    // Si même état → on efface (toggle)
+    const current = state.presences[instId]?.[state.user.id]?.[dateStr] || 'none';
+    const finalState = (newState === current) ? 'none' : newState;
+    closePopup();
+    try {
+      if (finalState === 'none') {
+        await api(`presences?instance_id=eq.${instId}&user_id=eq.${state.user.id}&date=eq.${dateStr}`, { method: 'DELETE' });
+        if (state.presences[instId]?.[state.user.id]) delete state.presences[instId][state.user.id][dateStr];
+      } else {
+        await api('presences', {
+          method: 'POST',
+          body: JSON.stringify({ instance_id: instId, user_id: state.user.id, date: dateStr, state: finalState }),
+        });
+        if (!state.presences[instId]) state.presences[instId] = {};
+        if (!state.presences[instId][state.user.id]) state.presences[instId][state.user.id] = {};
+        state.presences[instId][state.user.id][dateStr] = finalState;
+      }
+      renderCalendar();
+    } catch(err) { showToast('Erreur : ' + err.message); }
+  };
+});
+
+function closePopup() {
+  const popup = document.getElementById('dayPopup');
+  popup.classList.remove('open'); popup.style.display = 'none'; popupTarget = null;
+}
+document.addEventListener('click', e => { if (!document.getElementById('dayPopup').contains(e.target)) closePopup(); });
+
+// ─── TOAST ─────────────────────────────────────────────────
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ─── START ─────────────────────────────────────────────────
+init();
+</script>
+</body>
+</html>
