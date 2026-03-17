@@ -378,19 +378,30 @@ async function init() {
   showLoader(true);
   loadLocal();
 
-  // Vérifier si retour magic link dans l'URL (?device_token=xxx)
-  // auth-service redirige vers agenda.vivalink.top?device_token=xxx&user_id=xxx
+  // Vérifier si retour magic link dans l'URL (?token=xxx)
+  // auth-service envoie un email avec un lien vers agenda.vivalink.top?token=xxx
+  // On échange ce token court contre un device_token persistant (comme library)
   const params = new URLSearchParams(window.location.search);
-  const tokenFromURL = params.get('device_token');
-  const userIdFromURL = params.get('user_id');
+  const magicToken = params.get('token');
 
-  if (tokenFromURL && userIdFromURL) {
-    // Sauvegarder la session et nettoyer l'URL
-    saveSession(tokenFromURL, userIdFromURL);
-    deviceToken = tokenFromURL;
+  if (magicToken) {
     window.history.replaceState({}, '', window.location.pathname);
-    await handleAuthUser(userIdFromURL);
-    return;
+    try {
+      const resp = await fetch(`${AUTH_URL}/auth/login?token=${encodeURIComponent(magicToken)}`);
+      if (!resp.ok) throw new Error('Token invalide ou expiré');
+      const data = await resp.json();
+      if (data.device_token) {
+        saveSession(data.device_token, data.user_id);
+        deviceToken = data.device_token;
+        await handleAuthUser(data.user_id);
+        return;
+      }
+    } catch(e) {
+      showLoader(false);
+      showToast('Lien invalide ou expiré, veuillez vous reconnecter.');
+      showMagicLinkModal();
+      return;
+    }
   }
 
   // Vérifier session existante en localStorage
@@ -402,7 +413,6 @@ async function init() {
       await handleAuthUser(userId);
       return;
     } else {
-      // Token expiré ou révoqué
       clearSession();
     }
   }
@@ -446,7 +456,7 @@ function showMagicLinkModal() {
       const res = await fetch(`${AUTH_URL}/auth/request-login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ email, redirect_url: 'https://agenda.vivalink.top' }),
       });
       if (!res.ok) throw new Error('Erreur serveur');
       step1.style.display = 'none';
