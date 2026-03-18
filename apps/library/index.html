@@ -595,7 +595,7 @@
                     tmp.locations.load(locsRaw);
                     const page = tmp.locations.locationFromCfi(posRaw);
                     const total = tmp.locations.length();
-                    return (page >= 0 && total > 0) ? (page + 1) + ' / ' + total : null;
+                    return (page >= 0 && total > 0) ? Math.ceil((page + 1) / total * 100) : null;
                 } catch { return null; }
             })();
             return `
