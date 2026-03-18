@@ -420,11 +420,9 @@
         <div class="header-right">
             <button class="sort-btn" id="sort-title-btn" title="Trier par titre">
                 <svg width="11" height="14" viewBox="0 0 11 14" fill="none" xmlns="http://www.w3.org/2000/svg"><text x="0" y="12" font-family="Georgia,serif" font-weight="700" font-size="13" fill="currentColor">T</text></svg>
-                <span class="sort-arrow" id="sort-title-arrow">↕</span>
             </button>
             <button class="sort-btn" id="sort-author-btn" title="Trier par auteur">
                 <svg width="11" height="14" viewBox="0 0 11 14" fill="none" xmlns="http://www.w3.org/2000/svg"><text x="0" y="12" font-family="Georgia,serif" font-weight="700" font-size="13" fill="currentColor">A</text></svg>
-                <span class="sort-arrow" id="sort-author-arrow">↕</span>
             </button>
             <button class="read-filter-btn" id="read-filter-btn" title="Tous / Lus / Non lus">
                 <svg id="read-filter-icon" width="18" height="12" viewBox="0 0 18 12" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -574,24 +572,14 @@
     }
 
     function updateSortButtons() {
-        const titleBtn   = document.getElementById('sort-title-btn');
-        const authorBtn  = document.getElementById('sort-author-btn');
-        const titleArrow = document.getElementById('sort-title-arrow');
-        const authorArrow= document.getElementById('sort-author-arrow');
+        const titleBtn  = document.getElementById('sort-title-btn');
+        const authorBtn = document.getElementById('sort-author-btn');
 
         // Reset
         titleBtn.classList.remove('active');
         authorBtn.classList.remove('active');
-        titleArrow.textContent  = '↕';
-        authorArrow.textContent = '↕';
-
-        if (sortState.key === 'title') {
-            titleBtn.classList.add('active');
-            titleArrow.textContent = sortState.dir === 'asc' ? '↑' : '↓';
-        } else if (sortState.key === 'author') {
-            authorBtn.classList.add('active');
-            authorArrow.textContent = sortState.dir === 'asc' ? '↑' : '↓';
-        }
+        if (sortState.key === 'title')  titleBtn.classList.add('active');
+        else if (sortState.key === 'author') authorBtn.classList.add('active');
     }
 
     function handleSort(key) {
