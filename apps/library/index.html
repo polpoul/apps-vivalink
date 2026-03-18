@@ -658,15 +658,37 @@
                 applyFontSize();
             });
 
+            const LOC_CACHE_KEY = 'reader_locs_' + book.name;
+            let lastLoc = null;
+
+            function updateProgress(loc) {
+                if (!loc?.start?.cfi) return;
+                const locs = epubBook.locations;
+                if (!locs || !locs.length()) return; // pas encore prêt, on n'affiche rien
+                const page  = locs.locationFromCfi(loc.start.cfi) + 1;
+                const total = locs.length();
+                document.getElementById('reader-progress').textContent = 'Page ' + page + ' / ' + total;
+            }
+
             rendition.on('relocated', loc => {
-                if (loc?.start?.cfi) {
-                    localStorage.setItem('reader_pos_' + book.name, loc.start.cfi);
-                }
-                const pct = epubBook.locations?.percentageFromCfi?.(loc.start.cfi);
-                if (pct !== undefined) {
-                    document.getElementById('reader-progress').textContent = Math.round(pct * 100) + '%';
-                }
+                lastLoc = loc;
+                if (loc?.start?.cfi) localStorage.setItem('reader_pos_' + book.name, loc.start.cfi);
+                updateProgress(loc);
             });
+
+            // Locations : depuis le cache, ou calcul en arrière-plan
+            const cachedLocs = localStorage.getItem(LOC_CACHE_KEY);
+            if (cachedLocs) {
+                try {
+                    epubBook.locations.load(cachedLocs);
+                    if (lastLoc) updateProgress(lastLoc);
+                } catch { localStorage.removeItem(LOC_CACHE_KEY); }
+            } else {
+                epubBook.locations.generate(1600).then(() => {
+                    try { localStorage.setItem(LOC_CACHE_KEY, epubBook.locations.save()); } catch {}
+                    if (lastLoc) updateProgress(lastLoc);
+                }).catch(() => {});
+            }
 
         } catch (err) {
             document.getElementById('reader-loading').style.display = 'none';
