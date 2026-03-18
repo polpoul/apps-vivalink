@@ -552,9 +552,13 @@
 
             const epubBook = ePub(arrayBuffer);
             const viewer = document.getElementById('epub-viewer');
+            // Forcer un reflow avant de lire les dimensions
+            await new Promise(r => setTimeout(r, 50));
+            const w = viewer.clientWidth  || window.innerWidth;
+            const h = viewer.clientHeight || (window.innerHeight - 120);
             rendition = epubBook.renderTo('epub-viewer', {
-                width:  viewer.clientWidth,
-                height: viewer.clientHeight,
+                width:  w,
+                height: h,
                 spread: 'none',
             });
 
