@@ -318,6 +318,27 @@
             font-size: 0.8rem; font-family: sans-serif; color: var(--muted);
         }
 
+        .goto-form {
+            display: flex; align-items: center; gap: 0.4rem;
+        }
+        .goto-input {
+            width: 58px; padding: 0.3rem 0.5rem;
+            border: 1px solid var(--border); border-radius: 6px;
+            font-size: 0.82rem; font-family: sans-serif;
+            text-align: center; color: var(--text);
+            background: var(--bg); transition: all 0.2s;
+        }
+        .goto-input:focus { outline: none; border-color: var(--accent); background: white; }
+        .goto-input:disabled { opacity: 0.35; cursor: not-allowed; }
+        .goto-btn {
+            background: none; border: 1px solid var(--border);
+            padding: 0.3rem 0.6rem; border-radius: 6px;
+            font-size: 0.78rem; font-family: sans-serif; color: var(--muted);
+            cursor: pointer; transition: all 0.2s;
+        }
+        .goto-btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+        .goto-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
         .reader-loading {
             position: absolute; inset: 0;
             display: flex; align-items: center; justify-content: center;
@@ -404,7 +425,11 @@
     </div>
     <div class="reader-nav">
         <button class="nav-btn" id="nav-prev">← Précédent</button>
-        <span class="reader-progress" id="reader-progress"></span>
+        <div class="goto-form">
+            <span class="reader-progress" id="reader-progress"></span>
+            <input type="number" id="goto-input" class="goto-input" min="1" placeholder="p." title="Aller à la page" disabled />
+            <button id="goto-btn" class="goto-btn" disabled>→</button>
+        </div>
         <button class="nav-btn" id="nav-next">Suivant →</button>
     </div>
 </div>
@@ -670,6 +695,28 @@
                 document.getElementById('reader-progress').textContent = 'Page ' + page + ' / ' + total;
             }
 
+            // Goto page
+            const gotoInput = document.getElementById('goto-input');
+            const gotoBtn   = document.getElementById('goto-btn');
+
+            function enableGoto(total) {
+                gotoInput.disabled = false;
+                gotoInput.max = total;
+                gotoBtn.disabled = false;
+            }
+
+            function doGoto() {
+                const locs = epubBook.locations;
+                if (!locs || !locs.length()) return;
+                const page = parseInt(gotoInput.value);
+                if (!page || page < 1 || page > locs.length()) return;
+                const cfi = locs.cfiFromLocation(page - 1);
+                if (cfi) rendition.display(cfi);
+            }
+
+            gotoBtn.addEventListener('click', doGoto);
+            gotoInput.addEventListener('keydown', e => { if (e.key === 'Enter') doGoto(); });
+
             rendition.on('relocated', loc => {
                 lastLoc = loc;
                 if (loc?.start?.cfi) localStorage.setItem('reader_pos_' + book.name, loc.start.cfi);
@@ -681,11 +728,13 @@
             if (cachedLocs) {
                 try {
                     epubBook.locations.load(cachedLocs);
+                    enableGoto(epubBook.locations.length());
                     if (lastLoc) updateProgress(lastLoc);
                 } catch { localStorage.removeItem(LOC_CACHE_KEY); }
             } else {
                 epubBook.locations.generate(1600).then(() => {
                     try { localStorage.setItem(LOC_CACHE_KEY, epubBook.locations.save()); } catch {}
+                    enableGoto(epubBook.locations.length());
                     if (lastLoc) updateProgress(lastLoc);
                 }).catch(() => {});
             }
@@ -716,6 +765,10 @@
 
     function closeReader() {
         if (rendition) { try { rendition.destroy(); } catch {} rendition = null; }
+        const gi = document.getElementById('goto-input');
+        const gb = document.getElementById('goto-btn');
+        if (gi) { gi.disabled = true; gi.value = ''; }
+        if (gb) gb.disabled = true;
         showPage('library');
     }
 
