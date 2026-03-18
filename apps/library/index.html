@@ -459,7 +459,6 @@
             const desc    = m.description ? m.description.replace(/<[^>]*>/g,'').substring(0,120) : '';
             return `
             <li class="book-item" data-index="${i}">
-                <span class="book-icon">📖</span>
                 <div class="book-info">
                     <div class="book-title">${b.displayName}</div>
                     <div class="book-sub">
@@ -468,10 +467,7 @@
                     </div>
                     ${desc ? `<div class="book-desc">${desc}</div>` : ''}
                 </div>
-                <div class="book-actions">
-                    <button class="btn-read" data-index="${i}">Lire</button>
-                    <button class="btn-dl"   data-index="${i}">⬇ Télécharger</button>
-                </div>
+                <button class="btn-read" data-index="${i}">Lire</button>
             </li>`;
         }).join('');
 
