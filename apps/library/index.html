@@ -424,13 +424,13 @@
         </div>
     </div>
     <div class="reader-nav">
-        <button class="nav-btn" id="nav-prev">← Précédent</button>
+        <button class="nav-btn" id="nav-prev">←</button>
         <div class="goto-form">
             <span class="reader-progress" id="reader-progress"></span>
             <input type="number" id="goto-input" class="goto-input" min="1" placeholder="p." title="Aller à la page" disabled />
             <button id="goto-btn" class="goto-btn" disabled>→</button>
         </div>
-        <button class="nav-btn" id="nav-next">Suivant →</button>
+        <button class="nav-btn" id="nav-next">→</button>
     </div>
 </div>
 
@@ -692,7 +692,7 @@
                 if (!locs || !locs.length()) return; // pas encore prêt, on n'affiche rien
                 const page  = locs.locationFromCfi(loc.start.cfi) + 1;
                 const total = locs.length();
-                document.getElementById('reader-progress').textContent = 'Page ' + page + ' / ' + total;
+                document.getElementById('reader-progress').textContent = page + ' / ' + total;
             }
 
             // Goto page
