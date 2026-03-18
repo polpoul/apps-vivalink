@@ -124,6 +124,10 @@
             padding: 0.3rem 0.8rem; border-radius: 20px;
             font-size: 0.8rem; font-family: sans-serif; color: var(--muted);
         }
+        .logout-bottom {
+            display: flex; justify-content: center;
+            padding: 1.5rem 2rem 2rem;
+        }
         .logout-btn {
             background: none; border: 1px solid var(--border);
             padding: 0.35rem 0.9rem; border-radius: 8px;
@@ -131,6 +135,15 @@
             cursor: pointer; transition: all 0.2s;
         }
         .logout-btn:hover { border-color: #dc3545; color: #dc3545; }
+        .read-filter-btn {
+            background: none; border: 1px solid var(--border);
+            padding: 0.3rem 0.7rem; border-radius: 20px;
+            font-size: 0.78rem; font-family: sans-serif; color: var(--muted);
+            cursor: pointer; transition: all 0.2s; white-space: nowrap;
+        }
+        .read-filter-btn:hover { border-color: var(--accent); color: var(--accent); }
+        .read-filter-btn.active-read { background: #d4edda; border-color: #28a745; color: #155724; }
+        .read-filter-btn.active-unread { background: #fff3cd; border-color: #ffc107; color: #856404; }
 
         .lib-search {
             padding: 1.2rem 2rem;
@@ -401,8 +414,8 @@
                 <span>Auteur</span>
                 <span class="sort-arrow" id="sort-author-arrow">↕</span>
             </button>
+            <button class="read-filter-btn" id="read-filter-btn" title="Filtrer par statut de lecture">Tous</button>
             <span class="count-badge" id="count-badge">— livres</span>
-            <button class="logout-btn" id="logout-btn">Déconnexion</button>
         </div>
     </div>
     <div class="lib-search">
@@ -411,6 +424,9 @@
     <ul class="book-list" id="book-list">
         <div class="spinner"></div>
     </ul>
+    <div class="logout-bottom">
+        <button class="logout-btn" id="logout-btn">Déconnexion</button>
+    </div>
 </div>
 
 <!-- ── Reader ── -->
@@ -456,6 +472,8 @@
 
     // État du tri : null = pas actif, 'asc' ou 'desc'
     let sortState = { key: null, dir: null };
+    // 'all' | 'read' | 'unread'
+    let readFilter = 'all';
 
     /* ── Auth ── */
     const getToken   = () => localStorage.getItem(TOKEN_KEY);
@@ -638,10 +656,29 @@
         }
     }
 
+    function isRead(b) {
+        return !!localStorage.getItem('reader_locs_' + b.name);
+    }
+
+    function applyReadFilter(books) {
+        if (readFilter === 'read')   return books.filter(isRead);
+        if (readFilter === 'unread') return books.filter(b => !isRead(b));
+        return books;
+    }
+
+    function updateReadFilterBtn() {
+        const btn = document.getElementById('read-filter-btn');
+        btn.className = 'read-filter-btn';
+        if (readFilter === 'read')   { btn.textContent = 'Lus';     btn.classList.add('active-read'); }
+        else if (readFilter === 'unread') { btn.textContent = 'Non lus'; btn.classList.add('active-unread'); }
+        else                         { btn.textContent = 'Tous'; }
+    }
+
     function filterBooks(q) {
-        if (!q.trim()) { renderBooks(allBooks); return; }
+        const base = applyReadFilter(allBooks);
+        if (!q.trim()) { renderBooks(base); return; }
         const s = q.toLowerCase();
-        renderBooks(allBooks.filter(b => {
+        renderBooks(base.filter(b => {
             const m = b.metadata || {};
             return b.displayName.toLowerCase().includes(s)
                 || m.authors?.some(a => a.toLowerCase().includes(s))
@@ -831,6 +868,13 @@
     // Boutons de tri
     document.getElementById('sort-title-btn').addEventListener('click',  () => handleSort('title'));
     document.getElementById('sort-author-btn').addEventListener('click', () => handleSort('author'));
+
+    // Filtre lu/non lu
+    document.getElementById('read-filter-btn').addEventListener('click', () => {
+        readFilter = readFilter === 'all' ? 'read' : readFilter === 'read' ? 'unread' : 'all';
+        updateReadFilterBtn();
+        filterBooks(document.getElementById('search').value);
+    });
 
     /* ── Init ── */
     async function init() {
