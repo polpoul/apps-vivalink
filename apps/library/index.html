@@ -191,6 +191,14 @@
             font-size: 0.78rem; color: var(--muted);
             font-family: sans-serif; flex-shrink: 0;
         }
+        .book-page-tag {
+            display: inline-flex; align-items: center;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            color: white; font-size: 0.7rem; font-family: sans-serif;
+            font-weight: 600; padding: 0.15rem 0.5rem; border-radius: 20px;
+            flex-shrink: 0; white-space: nowrap; opacity: 0.85;
+        }
+
         .book-desc {
             font-size: 0.78rem; color: var(--muted);
             font-family: sans-serif; margin-top: 0.2rem;
@@ -578,10 +586,23 @@
             const desc    = m.description ? m.description.replace(/<[^>]*>/g,'').substring(0,120) : '';
             // On cherche l'index réel dans allBooks pour les actions
             const realIndex = allBooks.indexOf(b);
+            const cachedPage = (() => {
+                const locsRaw = localStorage.getItem('reader_locs_' + b.name);
+                const posRaw  = localStorage.getItem('reader_pos_'  + b.name);
+                if (!locsRaw || !posRaw) return null;
+                try {
+                    const tmp = ePub();
+                    tmp.locations.load(locsRaw);
+                    const page = tmp.locations.locationFromCfi(posRaw);
+                    const total = tmp.locations.length();
+                    return (page >= 0 && total > 0) ? (page + 1) + ' / ' + total : null;
+                } catch { return null; }
+            })();
             return `
             <li class="book-item" data-index="${realIndex}">
                 <div class="book-info">
-                    <div class="book-title">${b.displayName}</div>
+                    <div class="book-title">
+                        ${cachedPage ? `<span class="book-page-tag">${cachedPage}</span> ` : ''}${b.displayName}</div>
                     <div class="book-sub">
                         ${authors ? `<span class="book-author">${authors}</span>` : ''}
                         ${year    ? `<span class="book-year">${year}</span>`    : ''}
