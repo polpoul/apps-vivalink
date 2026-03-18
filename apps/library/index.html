@@ -99,13 +99,13 @@
 
         /* ── Boutons de tri ── */
         .sort-btn {
-            background: none;
-            border: 1px solid var(--border);
+            background: linear-gradient(135deg, #888, #666);
+            border: none;
             padding: 0.3rem 0.7rem;
             border-radius: 20px;
             font-size: 0.78rem;
             font-family: sans-serif;
-            color: var(--muted);
+            color: white;
             cursor: pointer;
             transition: all 0.2s;
             display: flex;
@@ -114,8 +114,8 @@
             white-space: nowrap;
         }
         .sort-btn:hover {
-            border-color: var(--accent);
-            color: var(--accent);
+            background: linear-gradient(135deg, #999, #777);
+            opacity: 1;
         }
         .sort-btn.active {
             background: linear-gradient(135deg, var(--accent), var(--accent2));
@@ -145,12 +145,14 @@
         }
         .logout-btn:hover { border-color: #dc3545; color: #dc3545; }
         .read-filter-btn {
-            background: none; border: 1px solid var(--border);
+            background: linear-gradient(135deg, #888, #666);
+            border: none;
             padding: 0.3rem 0.7rem; border-radius: 20px;
-            font-size: 0.78rem; font-family: sans-serif; color: var(--muted);
+            font-size: 0.78rem; font-family: sans-serif; color: white;
             cursor: pointer; transition: all 0.2s; white-space: nowrap;
+            display: flex; align-items: center;
         }
-        .read-filter-btn:hover { border-color: var(--accent); color: var(--accent); }
+        .read-filter-btn:hover { background: linear-gradient(135deg, #999, #777); }
         .read-filter-btn.active-read { background: linear-gradient(135deg, #43a047, #2e7d32); border-color: transparent; color: white; }
         .read-filter-btn.active-unread { background: linear-gradient(135deg, #f9a825, #f57f17); border-color: transparent; color: white; }
 
