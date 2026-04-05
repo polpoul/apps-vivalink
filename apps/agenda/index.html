@@ -377,6 +377,11 @@ function showLoader(on) { document.getElementById('loader').style.display = on ?
 async function init() {
   showLoader(true);
   loadLocal();
+  // Instances présélectionnées via URL ?instances=id1,id2
+  const urlInstances = params.get('instances');
+  if (urlInstances) {
+    state.activeInstances = urlInstances.split(',').map(s => s.trim()).filter(Boolean);
+  }
 
   // Vérifier si retour magic link dans l'URL (?token=xxx)
   // auth-service envoie un email avec un lien vers agenda.vivalink.top?token=xxx
@@ -581,7 +586,7 @@ async function loadInstances() {
   state.instances = await api('instances?select=*&order=created_at.asc') || [];
   state.activeInstances = state.activeInstances.filter(id => state.instances.find(i => i.id === id));
   if (!state.activeInstances.length && state.instances.length) {
-    state.activeInstances = [state.instances[0].id];
+    state.activeInstances = state.instances.map(i => i.id);
   }
   // Valider writeInstance
   if (!state.writeInstance || !state.instances.find(i => i.id === state.writeInstance)) {
@@ -784,7 +789,7 @@ function renderMonth(year, month, today) {
         const badge = document.createElement('div');
         badge.className = 'day-state-badge';
         badge.style.background = inst ? inst.color : state.user.color;
-        badge.dataset.tip = `${state.user.name} — ${ownState === 'maybe' ? 'Peut-être' : 'Présent'}`;
+        badge.dataset.tip = `${inst ? inst.name + ' · ' : ''}${state.user.name} — ${ownState === 'maybe' ? 'Peut-être' : 'Présent'}`;
         badge.dataset.instId = instId;
         const icon = document.createElement('div');
         icon.className = 'day-state-icon';
@@ -813,7 +818,7 @@ function renderMonth(year, month, today) {
         badge.className = 'day-state-badge';
         badge.style.background = inst ? inst.color : '#aaa';
         const userName = state.userNames[userId] || '?';
-        badge.dataset.tip = `${userName} — ${s === 'maybe' ? 'Peut-être' : 'Présent'}`;
+        badge.dataset.tip = `${inst ? inst.name + ' · ' : ''}${userName} — ${s === 'maybe' ? 'Peut-être' : 'Présent'}`;
         const dot = document.createElement('div');
         dot.className = 'day-state-icon';
         const uShape = state.userShapes[userId] || 'circle';
