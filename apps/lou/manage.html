@@ -117,13 +117,44 @@
     .list-panel-title { font-family: 'Playfair Display', serif; font-size: 1.2rem; font-weight: 400; }
     #list-count { font-size: 0.78rem; color: var(--mid-gray); }
 
-    #photo-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(155px, 1fr)); gap: 1rem; }
+    #photo-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(175px, 1fr)); gap: 1rem; }
     .photo-card { background: white; border-radius: 8px; overflow: hidden; box-shadow: var(--shadow-soft); transition: box-shadow 0.2s, transform 0.2s; position: relative; }
     .photo-card:hover { box-shadow: var(--shadow-lift); transform: translateY(-2px); }
     .photo-card img { width: 100%; aspect-ratio: 1; object-fit: cover; display: block; }
-    .photo-card-info { padding: 0.5rem 0.6rem; }
-    .photo-card-name { font-size: 0.7rem; color: var(--mid-gray); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .photo-card-size { font-size: 0.66rem; color: var(--mid-gray); margin-top: 0.12rem; opacity: 0.7; }
+
+    .photo-card-info { padding: 0.5rem 0.6rem 0.6rem; }
+    .photo-card-name { font-size: 0.7rem; color: var(--mid-gray); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 0.4rem; }
+
+    /* Date editor */
+    .date-row {
+      display: flex; align-items: center; gap: 0.3rem;
+    }
+    .date-input {
+      flex: 1;
+      font-size: 0.68rem;
+      font-family: 'DM Sans', sans-serif;
+      color: var(--dark);
+      border: 1px solid var(--warm-gray);
+      border-radius: 4px;
+      padding: 0.2rem 0.35rem;
+      outline: none;
+      background: var(--off-white);
+      transition: border-color 0.15s;
+      min-width: 0;
+    }
+    .date-input:focus { border-color: var(--accent); background: white; }
+    .btn-date-save {
+      flex-shrink: 0;
+      background: var(--dark); color: white; border: none;
+      border-radius: 4px; padding: 0.2rem 0.4rem;
+      font-size: 0.65rem; cursor: pointer; opacity: 0.7;
+      transition: opacity 0.15s;
+      white-space: nowrap;
+    }
+    .btn-date-save:hover { opacity: 1; }
+    .btn-date-save.saving { opacity: 0.4; cursor: not-allowed; }
+    .btn-date-save.saved { background: var(--success); opacity: 1; }
+
     .photo-card-delete {
       position: absolute; top: 0.4rem; right: 0.4rem;
       background: rgba(26,23,20,0.65); border: none; color: white;
@@ -236,7 +267,7 @@
   let selectedFiles = [];
   let pendingDelete = null;
 
-  // Auth — même flow que galerie
+  // Auth
   async function handleLoginCallback() {
     const p = new URLSearchParams(location.search);
     const t = p.get('token');
@@ -267,7 +298,7 @@
     try {
       await fetch(`${AUTH}/auth/request-login`, {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email })
+        body: JSON.stringify({ email, app: 'lou', redirect_url: 'https://lou.vivalink.top/manage.html' })
       });
       document.getElementById('auth-email-step').style.display = 'none';
       document.getElementById('sent-email').textContent = email;
@@ -361,7 +392,12 @@
     } catch(e) { console.error(e); }
   }
 
-function renderPhotoList(photos) {
+  function toDateInputValue(isoString) {
+    // Convertit "2024-06-15T00:00:00Z" en "2024-06-15"
+    return isoString ? isoString.substring(0, 10) : '';
+  }
+
+  function renderPhotoList(photos) {
     const list = document.getElementById('photo-list');
     const countEl = document.getElementById('list-count');
     list.innerHTML = '';
@@ -376,17 +412,60 @@ function renderPhotoList(photos) {
     photos.forEach(p => {
       const card = document.createElement('div');
       card.className = 'photo-card';
-      const kb = Math.round(p.size / 1024);
-      const sizeStr = kb > 1024 ? `${(kb/1024).toFixed(1)} Mo` : `${kb} Ko`;
       const name = p.filename.replace(/^\d+_/, '');
+      const dateVal = toDateInputValue(p.created_at);
+
       card.innerHTML = `
         <img src="${PHOTOS}/${p.filename}" loading="lazy" alt="" />
         <div class="photo-card-info">
           <div class="photo-card-name">${name}</div>
-          <div class="photo-card-size">${sizeStr}</div>
+          <div class="date-row">
+            <input type="date" class="date-input" value="${dateVal}" title="Date de la photo" />
+            <button class="btn-date-save" title="Enregistrer la date">✓</button>
+          </div>
         </div>
         <button class="photo-card-delete" title="Supprimer">✕</button>`;
+
+      // Bouton supprimer
       card.querySelector('.photo-card-delete').addEventListener('click', () => askDelete(p.filename));
+
+      // Bouton enregistrer date
+      const btnSave = card.querySelector('.btn-date-save');
+      const dateInput = card.querySelector('.date-input');
+      btnSave.addEventListener('click', async () => {
+        const date = dateInput.value;
+        if (!date) return;
+        btnSave.classList.add('saving');
+        btnSave.textContent = '…';
+        try {
+          const r = await fetch(`${API}/photos/${p.filename}/date`, {
+            method: 'PATCH',
+            headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ date })
+          });
+          if (r.ok) {
+            btnSave.classList.remove('saving');
+            btnSave.classList.add('saved');
+            btnSave.textContent = '✓';
+            showToast('Date mise à jour', 'success');
+            setTimeout(() => { btnSave.classList.remove('saved'); btnSave.textContent = '✓'; }, 2000);
+          } else {
+            btnSave.classList.remove('saving');
+            btnSave.textContent = '✓';
+            showToast('Erreur lors de la mise à jour', 'error');
+          }
+        } catch(e) {
+          btnSave.classList.remove('saving');
+          btnSave.textContent = '✓';
+          showToast('Erreur réseau', 'error');
+        }
+      });
+
+      // Sauvegarder aussi sur changement de date + Enter
+      dateInput.addEventListener('keydown', e => {
+        if (e.key === 'Enter') btnSave.click();
+      });
+
       list.appendChild(card);
     });
   }
