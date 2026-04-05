@@ -341,7 +341,17 @@ async function api(path, opts = {}) {
   if (!res.ok) throw new Error(data.error || res.statusText);
   return data;
 }
-
+  
+function updateURL() {
+  const params = new URLSearchParams(window.location.search);
+  if (state.activeInstances.length) {
+    params.set('instances', state.activeInstances.join(','));
+  } else {
+    params.delete('instances');
+  }
+  history.replaceState({}, '', `${window.location.pathname}?${params.toString()}`);
+}
+  
 // ─── AUTH (auth.vivalink.top) ──────────────────────────────
 // Gère le magic link et la session via device_token stocké en localStorage.
 
@@ -593,6 +603,7 @@ async function loadInstances() {
     state.writeInstance = state.activeInstances[0] || null;
   }
   saveLocal();
+  updateURL();
 }
 
 async function loadUsers() {
@@ -657,7 +668,7 @@ function renderSidebar() {
       e.stopPropagation();
       state.writeInstance = inst.id;
       if (!state.activeInstances.includes(inst.id)) state.activeInstances.push(inst.id);
-      saveLocal(); renderSidebar(); renderCalendar();
+      saveLocal(); updateURL(); renderSidebar(); renderCalendar();
     };
 
     const name = document.createElement('span');
@@ -680,6 +691,7 @@ function renderSidebar() {
         state.activeInstances.push(inst.id);
       }
       saveLocal(); renderSidebar();
+      updateURL();
       await Promise.all([loadUsers(), loadPresences()]);
       renderUserPanel();
       renderCalendar();
