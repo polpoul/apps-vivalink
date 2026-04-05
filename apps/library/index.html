@@ -537,7 +537,7 @@
         try {
             const r = await fetch(AUTH_URL + '/auth/request-login', {
                 method: 'POST', headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email })
+                body: JSON.stringify({ email, app: 'library', redirect_url: 'https://library.vivalink.top' })
             });
             if (r.ok) { msg.className = 'login-msg ok'; msg.textContent = '✅ Lien envoyé ! Vérifiez votre boîte mail.'; document.getElementById('login-email').value = ''; }
             else       { msg.className = 'login-msg err'; msg.textContent = '❌ Erreur lors de l\'envoi.'; }
