@@ -377,16 +377,16 @@ function showLoader(on) { document.getElementById('loader').style.display = on ?
 async function init() {
   showLoader(true);
   loadLocal();
-  // Instances présélectionnées via URL ?instances=id1,id2
-  const urlInstances = params.get('instances');
-  if (urlInstances) {
-    state.activeInstances = urlInstances.split(',').map(s => s.trim()).filter(Boolean);
-  }
 
   // Vérifier si retour magic link dans l'URL (?token=xxx)
   // auth-service envoie un email avec un lien vers agenda.vivalink.top?token=xxx
   // On échange ce token court contre un device_token persistant (comme library)
   const params = new URLSearchParams(window.location.search);
+  // Instances présélectionnées via URL ?instances=id1,id2
+  const urlInstances = params.get('instances');
+  if (urlInstances) {
+    state.activeInstances = urlInstances.split(',').map(s => s.trim()).filter(Boolean);
+  }
   const magicToken = params.get('token');
 
   if (magicToken) {
