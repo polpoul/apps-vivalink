@@ -204,8 +204,13 @@
     btn.disabled = true; btn.textContent = 'Envoi…';
     try {
       await fetch(`${AUTH}/auth/request-login`, {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email })
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          email,
+          app: 'lou',
+          redirect_url: 'https://lou.vivalink.top'
+        })
       });
       // Toujours afficher "lien envoyé" (anti-énumération côté auth-service)
       document.getElementById('auth-email-step').style.display = 'none';
