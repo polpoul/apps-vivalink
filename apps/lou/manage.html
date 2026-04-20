@@ -16,7 +16,6 @@
     }
     html, body { min-height: 100%; background: var(--off-white); color: var(--dark); font-family: 'DM Sans', sans-serif; }
 
-    /* Auth overlay */
     #auth-overlay {
       position: fixed; inset: 0; background: var(--off-white);
       display: flex; align-items: center; justify-content: center;
@@ -51,7 +50,6 @@
     .btn-link { background: none; border: none; color: var(--mid-gray); font-size: 0.8rem; cursor: pointer; text-decoration: underline; text-underline-offset: 2px; font-family: 'DM Sans', sans-serif; }
     .btn-link:hover { color: var(--dark); }
 
-    /* Header */
     header {
       position: sticky; top: 0; z-index: 100;
       background: rgba(248,246,243,0.92); backdrop-filter: blur(12px);
@@ -69,13 +67,11 @@
     }
     .btn-back:hover { border-color: var(--dark); background: var(--warm-gray); }
 
-    /* Layout */
     main {
       max-width: 1100px; margin: 0 auto; padding: 2.5rem 2.5rem 5rem;
       display: grid; grid-template-columns: 340px 1fr; gap: 2.5rem; align-items: start;
     }
 
-    /* Upload panel */
     .upload-panel { background: white; border-radius: 12px; box-shadow: var(--shadow-soft); padding: 2rem; position: sticky; top: 5rem; }
     .panel-title { font-family: 'Playfair Display', serif; font-size: 1.2rem; font-weight: 400; margin-bottom: 1.5rem; }
 
@@ -112,32 +108,52 @@
     #btn-upload:hover { opacity: 0.8; }
     #btn-upload:disabled { opacity: 0.4; cursor: not-allowed; }
 
-    /* Photo list */
     .list-header { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 1.2rem; }
     .list-panel-title { font-family: 'Playfair Display', serif; font-size: 1.2rem; font-weight: 400; }
     #list-count { font-size: 0.78rem; color: var(--mid-gray); }
 
-    #photo-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(155px, 1fr)); gap: 1rem; }
+    #photo-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(175px, 1fr)); gap: 1rem; align-items: start; }
     .photo-card { background: white; border-radius: 8px; overflow: hidden; box-shadow: var(--shadow-soft); transition: box-shadow 0.2s, transform 0.2s; position: relative; }
     .photo-card:hover { box-shadow: var(--shadow-lift); transform: translateY(-2px); }
-    .photo-card img { width: 100%; aspect-ratio: 1; object-fit: cover; display: block; }
-    .photo-card-info { padding: 0.5rem 0.6rem; }
-    .photo-card-name { font-size: 0.7rem; color: var(--mid-gray); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .photo-card-size { font-size: 0.66rem; color: var(--mid-gray); margin-top: 0.12rem; opacity: 0.7; }
-    .photo-card-delete {
-      position: absolute; top: 0.4rem; right: 0.4rem;
+    .photo-card img { width: 100%; height: auto; display: block; }
+
+    .photo-card-info { padding: 0.5rem 0.6rem 0.6rem; }
+    .photo-card-name { font-size: 0.7rem; color: var(--mid-gray); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 0.4rem; }
+
+    .date-row { display: flex; align-items: center; gap: 0.3rem; }
+    .date-input {
+      flex: 1; font-size: 0.68rem; font-family: 'DM Sans', sans-serif; color: var(--dark);
+      border: 1px solid var(--warm-gray); border-radius: 4px; padding: 0.2rem 0.35rem;
+      outline: none; background: var(--off-white); transition: border-color 0.15s; min-width: 0;
+    }
+    .date-input:focus { border-color: var(--accent); background: white; }
+    .btn-date-save {
+      flex-shrink: 0; background: var(--dark); color: white; border: none;
+      border-radius: 4px; padding: 0.2rem 0.4rem; font-size: 0.65rem; cursor: pointer;
+      opacity: 0.7; transition: opacity 0.15s; white-space: nowrap;
+    }
+    .btn-date-save:hover { opacity: 1; }
+    .btn-date-save.saving { opacity: 0.4; cursor: not-allowed; }
+    .btn-date-save.saved { background: var(--success); opacity: 1; }
+
+    /* Boutons overlay sur la photo */
+    .photo-card-delete, .photo-card-rotate {
+      position: absolute; top: 0.4rem;
       background: rgba(26,23,20,0.65); border: none; color: white;
       border-radius: 50%; width: 1.7rem; height: 1.7rem; cursor: pointer;
-      font-size: 0.8rem; display: flex; align-items: center; justify-content: center;
+      display: flex; align-items: center; justify-content: center;
       opacity: 0; transition: opacity 0.15s, background 0.15s;
     }
-    .photo-card:hover .photo-card-delete { opacity: 1; }
+    .photo-card-delete { right: 0.4rem; font-size: 0.8rem; }
+    .photo-card-rotate { right: 2.5rem; font-size: 1rem; }
+    .photo-card:hover .photo-card-delete,
+    .photo-card:hover .photo-card-rotate { opacity: 1; }
     .photo-card-delete:hover { background: var(--danger); }
+    .photo-card-rotate:hover { background: var(--accent); }
 
     .list-empty { display: flex; flex-direction: column; align-items: center; padding: 4rem 2rem; gap: 0.75rem; text-align: center; color: var(--mid-gray); font-size: 0.88rem; }
     .list-empty .icon { font-size: 2.5rem; opacity: 0.25; }
 
-    /* Confirm dialog */
     #confirm-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 400; align-items: center; justify-content: center; }
     #confirm-overlay.open { display: flex; }
     #confirm-box { background: white; border-radius: 12px; padding: 2rem; max-width: 320px; width: 90%; box-shadow: var(--shadow-lift); text-align: center; }
@@ -148,7 +164,6 @@
     #confirm-box .btn-danger { background: var(--danger); color: white; border-color: var(--danger); }
     #confirm-box .btn-danger:hover { opacity: 0.85; }
 
-    /* Toast */
     #toast { position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%); background: var(--dark); color: white; padding: 0.75rem 1.5rem; border-radius: 8px; font-size: 0.86rem; z-index: 300; opacity: 0; transition: opacity 0.25s; pointer-events: none; white-space: nowrap; }
     #toast.show { opacity: 1; }
     #toast.success { background: var(--success); }
@@ -236,7 +251,6 @@
   let selectedFiles = [];
   let pendingDelete = null;
 
-  // Auth — même flow que galerie
   async function handleLoginCallback() {
     const p = new URLSearchParams(location.search);
     const t = p.get('token');
@@ -267,7 +281,7 @@
     try {
       await fetch(`${AUTH}/auth/request-login`, {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email })
+        body: JSON.stringify({ email, app: 'lou', redirect_url: 'https://lou.vivalink.top/manage.html' })
       });
       document.getElementById('auth-email-step').style.display = 'none';
       document.getElementById('sent-email').textContent = email;
@@ -286,7 +300,6 @@
     btn.disabled = false; btn.textContent = 'Envoyer le lien';
   }
 
-  // Drop zone
   const dropZone = document.getElementById('drop-zone');
   const fileInput = document.getElementById('file-input');
   dropZone.addEventListener('click', () => fileInput.click());
@@ -326,30 +339,39 @@
     const progress = document.getElementById('upload-progress');
     btn.disabled = true;
     progress.style.display = 'block';
-    bar.style.width = '15%';
-    status.textContent = `Envoi de ${selectedFiles.length} photo(s)…`;
-    const fd = new FormData();
-    selectedFiles.forEach(f => fd.append('photos', f));
-    try {
-      bar.style.width = '45%';
-      const r = await fetch(`${API}/photos/upload`, {
-        method: 'POST', headers: { 'Authorization': `Bearer ${token}` }, body: fd
-      });
-      bar.style.width = '100%';
-      if (r.ok) {
-        const d = await r.json();
-        status.textContent = `✓ ${d.count} photo(s) ajoutée(s)`;
-        showToast(`${d.count} photo(s) ajoutée(s)`, 'success');
-        selectedFiles = []; renderQueue();
-        setTimeout(() => { progress.style.display = 'none'; bar.style.width = '0%'; }, 2000);
-        loadPhotos();
-      } else if (r.status === 401) {
-        token = ''; localStorage.removeItem('device_token'); location.reload();
-      } else {
-        showToast('Erreur lors de l\'upload', 'error');
-      }
-    } catch(e) { showToast('Erreur réseau', 'error'); }
-    finally { btn.disabled = selectedFiles.length === 0; }
+
+    const total = selectedFiles.length;
+    let done = 0;
+    let errors = 0;
+
+    for (const file of selectedFiles) {
+      status.textContent = `Photo ${done + 1} / ${total} — ${file.name}`;
+      bar.style.width = `${Math.round((done / total) * 100)}%`;
+      const fd = new FormData();
+      fd.append('photos', file);
+      try {
+        const r = await fetch(`${API}/photos/upload`, {
+          method: 'POST', headers: { 'Authorization': `Bearer ${token}` }, body: fd
+        });
+        if (r.status === 401) { token = ''; localStorage.removeItem('device_token'); location.reload(); return; }
+        if (!r.ok) errors++;
+      } catch(e) { errors++; }
+      done++;
+      bar.style.width = `${Math.round((done / total) * 100)}%`;
+    }
+
+    bar.style.width = '100%';
+    if (errors === 0) {
+      status.textContent = `✓ ${total} photo(s) ajoutée(s)`;
+      showToast(`${total} photo(s) ajoutée(s)`, 'success');
+    } else {
+      status.textContent = `${done - errors} réussie(s), ${errors} erreur(s)`;
+      showToast(`${errors} photo(s) en erreur`, 'error');
+    }
+    selectedFiles = []; renderQueue();
+    loadPhotos();
+    setTimeout(() => { progress.style.display = 'none'; bar.style.width = '0%'; }, 3000);
+    btn.disabled = selectedFiles.length === 0;
   }
 
   async function loadPhotos() {
@@ -361,7 +383,11 @@
     } catch(e) { console.error(e); }
   }
 
-function renderPhotoList(photos) {
+  function toDateInputValue(isoString) {
+    return isoString ? isoString.substring(0, 10) : '';
+  }
+
+  function renderPhotoList(photos) {
     const list = document.getElementById('photo-list');
     const countEl = document.getElementById('list-count');
     list.innerHTML = '';
@@ -376,17 +402,70 @@ function renderPhotoList(photos) {
     photos.forEach(p => {
       const card = document.createElement('div');
       card.className = 'photo-card';
-      const kb = Math.round(p.size / 1024);
-      const sizeStr = kb > 1024 ? `${(kb/1024).toFixed(1)} Mo` : `${kb} Ko`;
       const name = p.filename.replace(/^\d+_/, '');
+      const dateVal = toDateInputValue(p.created_at);
+
       card.innerHTML = `
         <img src="${PHOTOS}/${p.filename}" loading="lazy" alt="" />
         <div class="photo-card-info">
           <div class="photo-card-name">${name}</div>
-          <div class="photo-card-size">${sizeStr}</div>
+          <div class="date-row">
+            <input type="date" class="date-input" value="${dateVal}" title="Date de la photo" />
+            <button class="btn-date-save" title="Enregistrer la date">✓</button>
+          </div>
         </div>
+        <button class="photo-card-rotate" title="Pivoter 90°">↻</button>
         <button class="photo-card-delete" title="Supprimer">✕</button>`;
+
+      // Supprimer
       card.querySelector('.photo-card-delete').addEventListener('click', () => askDelete(p.filename));
+
+      // Rotation
+      card.querySelector('.photo-card-rotate').addEventListener('click', async () => {
+        const btn = card.querySelector('.photo-card-rotate');
+        btn.style.opacity = '0.4';
+        try {
+          const r = await fetch(`${API}/photos/${p.filename}/rotate`, {
+            method: 'PATCH',
+            headers: { 'Authorization': `Bearer ${token}` }
+          });
+          if (r.ok) {
+            // Cache busting pour forcer le rechargement de l'image
+            const img = card.querySelector('img');
+            img.src = `${PHOTOS}/${p.filename}?t=${Date.now()}`;
+            showToast('Photo pivotée', 'success');
+          } else {
+            showToast('Erreur lors de la rotation', 'error');
+          }
+        } catch(e) { showToast('Erreur réseau', 'error'); }
+        btn.style.opacity = '';
+      });
+
+      // Date
+      const btnSave = card.querySelector('.btn-date-save');
+      const dateInput = card.querySelector('.date-input');
+      btnSave.addEventListener('click', async () => {
+        const date = dateInput.value;
+        if (!date) return;
+        btnSave.classList.add('saving'); btnSave.textContent = '…';
+        try {
+          const r = await fetch(`${API}/photos/${p.filename}/date`, {
+            method: 'PATCH',
+            headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ date })
+          });
+          if (r.ok) {
+            btnSave.classList.remove('saving'); btnSave.classList.add('saved'); btnSave.textContent = '✓';
+            showToast('Date mise à jour', 'success');
+            setTimeout(() => { btnSave.classList.remove('saved'); btnSave.textContent = '✓'; }, 2000);
+          } else {
+            btnSave.classList.remove('saving'); btnSave.textContent = '✓';
+            showToast('Erreur lors de la mise à jour', 'error');
+          }
+        } catch(e) { btnSave.classList.remove('saving'); btnSave.textContent = '✓'; showToast('Erreur réseau', 'error'); }
+      });
+      dateInput.addEventListener('keydown', e => { if (e.key === 'Enter') btnSave.click(); });
+
       list.appendChild(card);
     });
   }
