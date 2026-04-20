@@ -108,9 +108,24 @@
     #btn-upload:hover { opacity: 0.8; }
     #btn-upload:disabled { opacity: 0.4; cursor: not-allowed; }
 
-    .list-header { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 1.2rem; }
+    /* List header avec filtre */
+    .list-header { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 0.75rem; }
     .list-panel-title { font-family: 'Playfair Display', serif; font-size: 1.2rem; font-weight: 400; }
     #list-count { font-size: 0.78rem; color: var(--mid-gray); }
+
+    #filter-bar-manage {
+      display: none; gap: 0.4rem; flex-wrap: wrap; align-items: center; margin-bottom: 1.2rem;
+    }
+    #filter-bar-manage.visible { display: flex; }
+    .filter-label { font-size: 0.72rem; color: var(--mid-gray); letter-spacing: 0.08em; text-transform: uppercase; margin-right: 0.25rem; }
+    .filter-btn {
+      font-size: 0.75rem; font-family: 'DM Sans', sans-serif;
+      padding: 0.3rem 0.8rem; border-radius: 99px;
+      border: 1px solid var(--warm-gray); background: white;
+      cursor: pointer; transition: all 0.15s; color: var(--dark);
+    }
+    .filter-btn:hover { border-color: var(--mid-gray); }
+    .filter-btn.active { background: var(--dark); color: white; border-color: var(--dark); }
 
     #photo-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(175px, 1fr)); gap: 1rem; align-items: start; }
     .photo-card { background: white; border-radius: 8px; overflow: hidden; box-shadow: var(--shadow-soft); transition: box-shadow 0.2s, transform 0.2s; position: relative; }
@@ -118,7 +133,8 @@
     .photo-card img { width: 100%; height: auto; display: block; }
 
     .photo-card-info { padding: 0.5rem 0.6rem 0.6rem; }
-    .photo-card-name { font-size: 0.7rem; color: var(--mid-gray); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 0.4rem; }
+    .photo-card-name { font-size: 0.7rem; color: var(--mid-gray); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 0.2rem; }
+    .photo-card-uploader { font-size: 0.65rem; color: var(--accent); margin-bottom: 0.4rem; font-family: monospace; }
 
     .date-row { display: flex; align-items: center; gap: 0.3rem; }
     .date-input {
@@ -136,7 +152,6 @@
     .btn-date-save.saving { opacity: 0.4; cursor: not-allowed; }
     .btn-date-save.saved { background: var(--success); opacity: 1; }
 
-    /* Boutons overlay sur la photo */
     .photo-card-delete, .photo-card-rotate {
       position: absolute; top: 0.4rem;
       background: rgba(26,23,20,0.65); border: none; color: white;
@@ -160,7 +175,7 @@
     #confirm-box h3 { font-family: 'Playfair Display', serif; font-size: 1.1rem; margin-bottom: 0.5rem; }
     #confirm-box p { color: var(--mid-gray); font-size: 0.86rem; margin-bottom: 1.5rem; }
     #confirm-box .btn-row { display: flex; gap: 0.75rem; justify-content: center; }
-    #confirm-box button { padding: 0.6rem 1.3rem; border-radius: 6px; font-family: 'DM Sans', sans-serif; font-size: 0.86rem; cursor: pointer; border: 1px solid var(--warm-gray); background: transparent; transition: background 0.15s; }
+    #confirm-box button { padding: 0.6rem 1.3rem; border-radius: 6px; font-family: 'DM Sans', sans-serif; font-size: 0.86rem; cursor: pointer; border: 1px solid var(--warm-gray); background: transparent; }
     #confirm-box .btn-danger { background: var(--danger); color: white; border-color: var(--danger); }
     #confirm-box .btn-danger:hover { opacity: 0.85; }
 
@@ -226,6 +241,9 @@
       <h2 class="list-panel-title">Bibliothèque</h2>
       <span id="list-count"></span>
     </div>
+    <div id="filter-bar-manage">
+      <span class="filter-label">Filtrer</span>
+    </div>
     <div id="photo-list"></div>
   </section>
 </main>
@@ -250,6 +268,8 @@
   let token = localStorage.getItem('device_token') || '';
   let selectedFiles = [];
   let pendingDelete = null;
+  let allPhotos = [];
+  let activeUploader = 'all';
 
   async function handleLoginCallback() {
     const p = new URLSearchParams(location.search);
@@ -339,11 +359,8 @@
     const progress = document.getElementById('upload-progress');
     btn.disabled = true;
     progress.style.display = 'block';
-
     const total = selectedFiles.length;
-    let done = 0;
-    let errors = 0;
-
+    let done = 0, errors = 0;
     for (const file of selectedFiles) {
       status.textContent = `Photo ${done + 1} / ${total} — ${file.name}`;
       bar.style.width = `${Math.round((done / total) * 100)}%`;
@@ -359,7 +376,6 @@
       done++;
       bar.style.width = `${Math.round((done / total) * 100)}%`;
     }
-
     bar.style.width = '100%';
     if (errors === 0) {
       status.textContent = `✓ ${total} photo(s) ajoutée(s)`;
@@ -378,14 +394,43 @@
     try {
       const r = await fetch(`${API}/photos/list`, { headers: { 'Authorization': `Bearer ${token}` } });
       if (r.status === 401) { token = ''; localStorage.removeItem('device_token'); location.reload(); return; }
-      const photos = await r.json() || [];
-      renderPhotoList(photos);
+      allPhotos = await r.json() || [];
+      buildFilterBar();
+      applyFilter();
     } catch(e) { console.error(e); }
   }
 
-  function toDateInputValue(isoString) {
-    return isoString ? isoString.substring(0, 10) : '';
+  function buildFilterBar() {
+    const bar = document.getElementById('filter-bar-manage');
+    bar.innerHTML = '<span class="filter-label">Filtrer</span><button class="filter-btn active" data-uploader="all">Tous</button>';
+    const uploaders = [...new Set(allPhotos.map(p => p.uploader).filter(Boolean))];
+    if (uploaders.length <= 1) { bar.classList.remove('visible'); return; }
+    uploaders.forEach(uid => {
+      const btn = document.createElement('button');
+      btn.className = 'filter-btn';
+      btn.dataset.uploader = uid;
+      btn.textContent = uid;
+      btn.addEventListener('click', () => setFilter(uid));
+      bar.appendChild(btn);
+    });
+    bar.querySelector('[data-uploader="all"]').addEventListener('click', () => setFilter('all'));
+    bar.classList.add('visible');
   }
+
+  function setFilter(uploader) {
+    activeUploader = uploader;
+    document.querySelectorAll('#filter-bar-manage .filter-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.uploader === uploader);
+    });
+    applyFilter();
+  }
+
+  function applyFilter() {
+    const photos = activeUploader === 'all' ? allPhotos : allPhotos.filter(p => p.uploader === activeUploader);
+    renderPhotoList(photos);
+  }
+
+  function toDateInputValue(s) { return s ? s.substring(0, 10) : ''; }
 
   function renderPhotoList(photos) {
     const list = document.getElementById('photo-list');
@@ -394,54 +439,53 @@
     if (!photos.length) {
       countEl.textContent = '';
       list.style.display = 'block';
-      list.innerHTML = '<div class="list-empty"><div class="icon">🖼️</div><p>Aucune photo encore.<br>Commencez par en uploader !</p></div>';
+      list.innerHTML = '<div class="list-empty"><div class="icon">🖼️</div><p>Aucune photo.</p></div>';
       return;
     }
     list.style.display = 'grid';
-    countEl.textContent = `${photos.length} photo${photos.length > 1 ? 's' : ''}`;
+    const total = allPhotos.length;
+    const shown = photos.length;
+    countEl.textContent = shown === total
+      ? `${total} photo${total > 1 ? 's' : ''}`
+      : `${shown} / ${total}`;
+
     photos.forEach(p => {
       const card = document.createElement('div');
       card.className = 'photo-card';
-      const name = p.filename.replace(/^\d+_/, '');
+      const name = p.filename.replace(/^\d+_[a-f0-9]+_/, '');
       const dateVal = toDateInputValue(p.created_at);
 
       card.innerHTML = `
-        <img src="${PHOTOS}/${p.filename}" loading="lazy" alt="" />
+        <img src="${PHOTOS}/${p.filename}?t=${new Date(p.created_at).getTime()}" loading="lazy" alt="" />
         <div class="photo-card-info">
           <div class="photo-card-name">${name}</div>
+          <div class="photo-card-uploader">${p.uploader || '—'}</div>
           <div class="date-row">
-            <input type="date" class="date-input" value="${dateVal}" title="Date de la photo" />
-            <button class="btn-date-save" title="Enregistrer la date">✓</button>
+            <input type="date" class="date-input" value="${dateVal}" />
+            <button class="btn-date-save">✓</button>
           </div>
         </div>
         <button class="photo-card-rotate" title="Pivoter 90°">↻</button>
         <button class="photo-card-delete" title="Supprimer">✕</button>`;
 
-      // Supprimer
       card.querySelector('.photo-card-delete').addEventListener('click', () => askDelete(p.filename));
 
-      // Rotation
       card.querySelector('.photo-card-rotate').addEventListener('click', async () => {
         const btn = card.querySelector('.photo-card-rotate');
         btn.style.opacity = '0.4';
         try {
           const r = await fetch(`${API}/photos/${p.filename}/rotate`, {
-            method: 'PATCH',
-            headers: { 'Authorization': `Bearer ${token}` }
+            method: 'PATCH', headers: { 'Authorization': `Bearer ${token}` }
           });
           if (r.ok) {
-            // Cache busting pour forcer le rechargement de l'image
             const img = card.querySelector('img');
             img.src = `${PHOTOS}/${p.filename}?t=${Date.now()}`;
             showToast('Photo pivotée', 'success');
-          } else {
-            showToast('Erreur lors de la rotation', 'error');
-          }
+          } else { showToast('Erreur rotation', 'error'); }
         } catch(e) { showToast('Erreur réseau', 'error'); }
         btn.style.opacity = '';
       });
 
-      // Date
       const btnSave = card.querySelector('.btn-date-save');
       const dateInput = card.querySelector('.date-input');
       btnSave.addEventListener('click', async () => {
@@ -458,10 +502,7 @@
             btnSave.classList.remove('saving'); btnSave.classList.add('saved'); btnSave.textContent = '✓';
             showToast('Date mise à jour', 'success');
             setTimeout(() => { btnSave.classList.remove('saved'); btnSave.textContent = '✓'; }, 2000);
-          } else {
-            btnSave.classList.remove('saving'); btnSave.textContent = '✓';
-            showToast('Erreur lors de la mise à jour', 'error');
-          }
+          } else { btnSave.classList.remove('saving'); btnSave.textContent = '✓'; showToast('Erreur date', 'error'); }
         } catch(e) { btnSave.classList.remove('saving'); btnSave.textContent = '✓'; showToast('Erreur réseau', 'error'); }
       });
       dateInput.addEventListener('keydown', e => { if (e.key === 'Enter') btnSave.click(); });
@@ -479,7 +520,7 @@
     try {
       const r = await fetch(`${API}/photos/${filename}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` } });
       if (r.ok) { showToast('Photo supprimée', 'success'); loadPhotos(); }
-      else showToast('Erreur lors de la suppression', 'error');
+      else showToast('Erreur suppression', 'error');
     } catch(e) { showToast('Erreur réseau', 'error'); }
   }
 
