@@ -350,7 +350,7 @@
     });
   }
 
-  async function uploadFiles() {
+async function uploadFiles() {
     if (!selectedFiles.length) return;
     const btn = document.getElementById('btn-upload');
     const bar = document.getElementById('progress-bar');
@@ -358,30 +358,47 @@
     const progress = document.getElementById('upload-progress');
     btn.disabled = true;
     progress.style.display = 'block';
-    bar.style.width = '15%';
-    status.textContent = `Envoi de ${selectedFiles.length} photo(s)…`;
-    const fd = new FormData();
-    selectedFiles.forEach(f => fd.append('photos', f));
-    try {
-      bar.style.width = '45%';
-      const r = await fetch(`${API}/photos/upload`, {
-        method: 'POST', headers: { 'Authorization': `Bearer ${token}` }, body: fd
-      });
-      bar.style.width = '100%';
-      if (r.ok) {
-        const d = await r.json();
-        status.textContent = `✓ ${d.count} photo(s) ajoutée(s)`;
-        showToast(`${d.count} photo(s) ajoutée(s)`, 'success');
-        selectedFiles = []; renderQueue();
-        setTimeout(() => { progress.style.display = 'none'; bar.style.width = '0%'; }, 2000);
-        loadPhotos();
-      } else if (r.status === 401) {
-        token = ''; localStorage.removeItem('device_token'); location.reload();
-      } else {
-        showToast('Erreur lors de l\'upload', 'error');
+
+    const total = selectedFiles.length;
+    let done = 0;
+    let errors = 0;
+
+    for (const file of selectedFiles) {
+      status.textContent = `Photo ${done + 1} / ${total} — ${file.name}`;
+      bar.style.width = `${Math.round((done / total) * 100)}%`;
+
+      const fd = new FormData();
+      fd.append('photos', file);
+      try {
+        const r = await fetch(`${API}/photos/upload`, {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${token}` },
+          body: fd
+        });
+        if (r.status === 401) {
+          token = ''; localStorage.removeItem('device_token'); location.reload(); return;
+        }
+        if (!r.ok) errors++;
+      } catch(e) {
+        errors++;
       }
-    } catch(e) { showToast('Erreur réseau', 'error'); }
-    finally { btn.disabled = selectedFiles.length === 0; }
+      done++;
+      bar.style.width = `${Math.round((done / total) * 100)}%`;
+    }
+
+    bar.style.width = '100%';
+    if (errors === 0) {
+      status.textContent = `✓ ${total} photo(s) ajoutée(s)`;
+      showToast(`${total} photo(s) ajoutée(s)`, 'success');
+    } else {
+      status.textContent = `${done - errors} réussie(s), ${errors} erreur(s)`;
+      showToast(`${errors} photo(s) en erreur`, 'error');
+    }
+
+    selectedFiles = []; renderQueue();
+    loadPhotos();
+    setTimeout(() => { progress.style.display = 'none'; bar.style.width = '0%'; }, 3000);
+    btn.disabled = selectedFiles.length === 0;
   }
 
   async function loadPhotos() {
