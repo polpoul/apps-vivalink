@@ -76,11 +76,17 @@
     #empty-state .icon { font-size: 3rem; opacity: 0.25; }
     #empty-state p { color: var(--mid-gray); }
     #empty-state a { color: var(--dark); font-weight: 500; font-size: 0.9rem; text-decoration: underline; text-underline-offset: 3px; }
-    #gallery { columns: 4 220px; gap: 1.8rem; }
-    .polaroid {
-      break-inside: avoid; display: inline-block; width: 100%;
-      background: white; padding: 0.85rem 0.85rem 2.4rem;
-      box-shadow: var(--shadow-polaroid); margin-bottom: 1.8rem;
+    #gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 1.8rem;
+    }
+      .polaroid {
+      display: block;
+      width: 100%;
+      background: white;
+      padding: 0.85rem 0.85rem 2.4rem;
+      box-shadow: var(--shadow-polaroid);
       cursor: pointer; position: relative;
       transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.3s ease;
       animation: fadeUp 0.5s ease both;
