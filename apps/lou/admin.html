@@ -1,1 +1,376 @@
 
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin — vivalink</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --off-white: #f8f6f3; --warm-gray: #e8e4df; --mid-gray: #b0a99f;
+      --dark: #1a1714; --accent: #c8a882; --danger: #c0392b; --success: #27ae60;
+      --shadow: 0 4px 24px rgba(0,0,0,0.07);
+    }
+    html, body { min-height: 100%; background: var(--off-white); color: var(--dark); font-family: 'DM Sans', sans-serif; }
+
+    /* Auth overlay */
+    #auth-overlay {
+      position: fixed; inset: 0; background: var(--off-white);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 1000; flex-direction: column; gap: 1.5rem; padding: 2rem; text-align: center;
+    }
+    #auth-overlay h1 { font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 400; }
+    #auth-overlay h1 em { font-style: italic; color: var(--accent); }
+    .auth-card {
+      background: white; border-radius: 14px; padding: 2rem;
+      width: 100%; max-width: 340px; box-shadow: 0 4px 32px rgba(0,0,0,0.08);
+      display: flex; flex-direction: column; gap: 1rem;
+    }
+    .auth-card p { color: var(--mid-gray); font-size: 0.88rem; line-height: 1.6; }
+    .auth-card input[type="email"] {
+      width: 100%; padding: 0.75rem 1rem;
+      border: 1px solid var(--warm-gray); border-radius: 8px;
+      font-family: 'DM Sans', sans-serif; font-size: 0.95rem;
+      outline: none; background: var(--off-white); transition: border-color 0.2s;
+    }
+    .auth-card input[type="email"]:focus { border-color: var(--accent); background: white; }
+    .btn-primary {
+      padding: 0.8rem 1.5rem; background: var(--dark); color: white; border: none;
+      border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 0.9rem;
+      letter-spacing: 0.04em; cursor: pointer; transition: opacity 0.2s; width: 100%;
+    }
+    .btn-primary:hover { opacity: 0.8; }
+    .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+    #auth-msg { color: var(--danger); font-size: 0.82rem; min-height: 1rem; }
+    #auth-sent { display: none; flex-direction: column; gap: 0.75rem; align-items: center; }
+    #auth-sent .sent-icon { font-size: 2.5rem; }
+    .btn-link { background: none; border: none; color: var(--mid-gray); font-size: 0.8rem; cursor: pointer; text-decoration: underline; font-family: 'DM Sans', sans-serif; }
+
+    /* Header */
+    header {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(248,246,243,0.92); backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--warm-gray);
+      padding: 1.2rem 2.5rem; display: flex; align-items: center; justify-content: space-between;
+    }
+    .brand { font-family: 'Playfair Display', serif; font-size: 1.4rem; font-weight: 400; color: var(--dark); }
+    .brand em { font-style: italic; color: var(--accent); }
+    .admin-badge { font-size: 0.72rem; color: var(--mid-gray); letter-spacing: 0.08em; text-transform: uppercase; }
+
+    /* Main */
+    main { max-width: 900px; margin: 0 auto; padding: 2.5rem 2rem 5rem; display: flex; flex-direction: column; gap: 2rem; }
+
+    /* Cards */
+    .card { background: white; border-radius: 12px; box-shadow: var(--shadow); padding: 2rem; }
+    .card-title { font-family: 'Playfair Display', serif; font-size: 1.15rem; font-weight: 400; margin-bottom: 1.5rem; }
+
+    /* Invite form */
+    .form-group { display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: 1rem; }
+    .form-group label { font-size: 0.78rem; color: var(--mid-gray); letter-spacing: 0.05em; text-transform: uppercase; }
+    .form-group input[type="email"] {
+      padding: 0.7rem 1rem; border: 1px solid var(--warm-gray); border-radius: 8px;
+      font-family: 'DM Sans', sans-serif; font-size: 0.95rem; outline: none;
+      background: var(--off-white); transition: border-color 0.2s;
+    }
+    .form-group input[type="email"]:focus { border-color: var(--accent); background: white; }
+
+    /* Services checkboxes */
+    .services-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 0.6rem; margin-bottom: 1.2rem; }
+    .service-check {
+      display: flex; align-items: center; gap: 0.6rem;
+      padding: 0.6rem 0.9rem; border: 1px solid var(--warm-gray); border-radius: 8px;
+      cursor: pointer; transition: border-color 0.15s, background 0.15s; font-size: 0.85rem;
+      user-select: none;
+    }
+    .service-check:hover { border-color: var(--accent); }
+    .service-check input[type="checkbox"] { accent-color: var(--dark); width: 14px; height: 14px; cursor: pointer; }
+    .service-check.checked { border-color: var(--dark); background: var(--off-white); font-weight: 500; }
+
+    .redirect-row { display: flex; gap: 0.75rem; align-items: flex-end; margin-bottom: 1.2rem; }
+    .redirect-row .form-group { flex: 1; margin-bottom: 0; }
+
+    /* Members list */
+    .members-list { display: flex; flex-direction: column; gap: 0.5rem; }
+    .member-row {
+      display: flex; align-items: center; gap: 0.75rem;
+      padding: 0.7rem 1rem; background: var(--off-white); border-radius: 8px;
+      font-size: 0.85rem;
+    }
+    .member-email { flex: 1; font-weight: 500; }
+    .member-services { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+    .svc-badge {
+      font-size: 0.68rem; padding: 0.15rem 0.5rem; border-radius: 99px;
+      background: var(--warm-gray); color: var(--dark); letter-spacing: 0.04em;
+    }
+    .btn-remove {
+      background: none; border: 1px solid var(--warm-gray); color: var(--mid-gray);
+      border-radius: 6px; padding: 0.25rem 0.6rem; cursor: pointer; font-size: 0.75rem;
+      font-family: 'DM Sans', sans-serif; transition: all 0.15s; white-space: nowrap;
+    }
+    .btn-remove:hover { border-color: var(--danger); color: var(--danger); }
+
+    /* Toast */
+    #toast { position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%); background: var(--dark); color: white; padding: 0.75rem 1.5rem; border-radius: 8px; font-size: 0.86rem; z-index: 300; opacity: 0; transition: opacity 0.25s; pointer-events: none; white-space: nowrap; }
+    #toast.show { opacity: 1; }
+    #toast.success { background: var(--success); }
+    #toast.error { background: var(--danger); }
+
+    .empty-state { text-align: center; color: var(--mid-gray); font-size: 0.88rem; padding: 2rem; }
+  </style>
+</head>
+<body>
+
+<div id="auth-overlay">
+  <h1>vivalink <em>admin</em></h1>
+  <div class="auth-card">
+    <div id="auth-email-step" style="display:flex; flex-direction:column; gap:1rem;">
+      <p>Connexion réservée à l'administrateur.</p>
+      <input type="email" id="email-input" placeholder="votre@email.com" autocomplete="email"
+             onkeydown="if(event.key==='Enter') sendMagicLink()" />
+      <button class="btn-primary" id="btn-send" onclick="sendMagicLink()">Envoyer le lien</button>
+      <span id="auth-msg"></span>
+    </div>
+    <div id="auth-sent">
+      <div class="sent-icon">✉️</div>
+      <p>Lien envoyé. Vérifiez votre boîte mail.</p>
+      <button class="btn-link" onclick="resetAuthForm()">Changer d'adresse</button>
+    </div>
+  </div>
+</div>
+
+<header>
+  <div class="brand">vivalink <em>admin</em></div>
+  <span class="admin-badge">Gestion des accès</span>
+</header>
+
+<main>
+  <!-- Inviter un membre -->
+  <div class="card">
+    <h2 class="card-title">Inviter un membre</h2>
+    <div class="form-group">
+      <label>Adresse email</label>
+      <input type="email" id="invite-email" placeholder="ami@example.com" />
+    </div>
+    <div class="form-group">
+      <label>Services autorisés</label>
+      <div class="services-grid" id="services-grid">
+        <label class="service-check" id="check-lou">
+          <input type="checkbox" value="lou" onchange="updateCheck(this)" /> lou
+        </label>
+        <label class="service-check" id="check-voyage">
+          <input type="checkbox" value="voyage" onchange="updateCheck(this)" /> voyage
+        </label>
+        <label class="service-check" id="check-agenda">
+          <input type="checkbox" value="agenda" onchange="updateCheck(this)" /> agenda
+        </label>
+        <label class="service-check" id="check-library">
+          <input type="checkbox" value="library" onchange="updateCheck(this)" /> library
+        </label>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>URL de redirection du lien de bienvenue</label>
+      <input type="url" id="invite-redirect" placeholder="https://voyage.vivalink.top" style="padding:0.7rem 1rem;border:1px solid var(--warm-gray);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.95rem;outline:none;background:var(--off-white);width:100%;" />
+    </div>
+    <button class="btn-primary" id="btn-invite" onclick="inviteMember()" style="width:auto;padding:0.75rem 2rem;">
+      Inviter et envoyer le lien →
+    </button>
+  </div>
+
+  <!-- Liste des membres -->
+  <div class="card">
+    <h2 class="card-title">Membres actuels</h2>
+    <div id="members-list" class="members-list">
+      <div class="empty-state">Chargement…</div>
+    </div>
+  </div>
+</main>
+
+<div id="toast"></div>
+
+<script>
+  const AUTH   = 'https://auth.vivalink.top';
+  const API    = 'https://lou.vivalink.top/api';
+  const ADMIN_EMAIL = 'deleupa@gmail.com';
+
+  let token = localStorage.getItem('device_token_admin') || '';
+  let userEmail = localStorage.getItem('admin_email') || '';
+
+  // Auth
+  async function handleLoginCallback() {
+    const p = new URLSearchParams(location.search);
+    const t = p.get('token');
+    if (!t) return false;
+    history.replaceState({}, '', location.pathname);
+    try {
+      const r = await fetch(`${AUTH}/auth/login?token=${encodeURIComponent(t)}`);
+      if (r.ok) {
+        const data = await r.json();
+        token = data.device_token;
+        localStorage.setItem('device_token_admin', token);
+        return true;
+      }
+    } catch(e) {}
+    return false;
+  }
+
+  async function checkAuth() {
+    if (!token) return false;
+    try {
+      const r = await fetch(`${AUTH}/auth/me`, { headers: { 'Authorization': `Bearer ${token}` } });
+      if (r.ok) return true;
+      token = ''; localStorage.removeItem('device_token_admin');
+      return false;
+    } catch { return false; }
+  }
+
+  async function sendMagicLink() {
+    const email = document.getElementById('email-input').value.trim();
+    const msg = document.getElementById('auth-msg');
+    const btn = document.getElementById('btn-send');
+    if (!email) { msg.textContent = 'Email requis.'; return; }
+    if (email.toLowerCase() !== ADMIN_EMAIL) {
+      msg.textContent = 'Accès réservé à l\'administrateur.';
+      return;
+    }
+    btn.disabled = true; btn.textContent = 'Envoi…';
+    try {
+      await fetch(`${AUTH}/auth/request-login`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, app: 'lou', redirect_url: 'https://lou.vivalink.top/admin.html' })
+      });
+      localStorage.setItem('admin_email', email);
+      userEmail = email;
+      document.getElementById('auth-email-step').style.display = 'none';
+      document.getElementById('auth-sent').style.display = 'flex';
+    } catch(e) {
+      msg.textContent = 'Erreur réseau.';
+      btn.disabled = false; btn.textContent = 'Envoyer le lien';
+    }
+  }
+
+  function resetAuthForm() {
+    document.getElementById('auth-sent').style.display = 'none';
+    document.getElementById('auth-email-step').style.display = 'flex';
+    document.getElementById('auth-msg').textContent = '';
+    const btn = document.getElementById('btn-send');
+    btn.disabled = false; btn.textContent = 'Envoyer le lien';
+  }
+
+  function updateCheck(cb) {
+    const label = cb.closest('.service-check');
+    label.classList.toggle('checked', cb.checked);
+  }
+
+  async function inviteMember() {
+    const email = document.getElementById('invite-email').value.trim();
+    const redirectUrl = document.getElementById('invite-redirect').value.trim();
+    const services = [...document.querySelectorAll('#services-grid input:checked')].map(cb => cb.value);
+
+    if (!email || !email.includes('@')) { showToast('Email invalide', 'error'); return; }
+    if (services.length === 0) { showToast('Sélectionnez au moins un service', 'error'); return; }
+
+    const btn = document.getElementById('btn-invite');
+    btn.disabled = true; btn.textContent = 'Envoi…';
+
+    try {
+      const r = await fetch(`${API}/admin/invite`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+          'X-Admin-Email': userEmail
+        },
+        body: JSON.stringify({
+          email,
+          services,
+          redirect_url: redirectUrl || `https://${services[0]}.vivalink.top`
+        })
+      });
+      if (r.ok) {
+        showToast(`✓ ${email} invité sur ${services.join(', ')}`, 'success');
+        document.getElementById('invite-email').value = '';
+        document.getElementById('invite-redirect').value = '';
+        document.querySelectorAll('#services-grid input').forEach(cb => {
+          cb.checked = false;
+          cb.closest('.service-check').classList.remove('checked');
+        });
+        loadMembers();
+      } else if (r.status === 403) {
+        showToast('Accès refusé', 'error');
+      } else {
+        showToast('Erreur lors de l\'invitation', 'error');
+      }
+    } catch(e) { showToast('Erreur réseau', 'error'); }
+    finally { btn.disabled = false; btn.textContent = 'Inviter et envoyer le lien →'; }
+  }
+
+  async function loadMembers() {
+    try {
+      const r = await fetch(`${API}/admin/allowlist`, {
+        headers: { 'Authorization': `Bearer ${token}`, 'X-Admin-Email': userEmail }
+      });
+      if (!r.ok) { document.getElementById('members-list').innerHTML = '<div class="empty-state">Erreur de chargement.</div>'; return; }
+      const al = await r.json();
+      renderMembers(al);
+    } catch(e) { document.getElementById('members-list').innerHTML = '<div class="empty-state">Erreur réseau.</div>'; }
+  }
+
+  function renderMembers(al) {
+    const list = document.getElementById('members-list');
+    const entries = Object.entries(al);
+    if (!entries.length) { list.innerHTML = '<div class="empty-state">Aucun membre pour le moment.</div>'; return; }
+    list.innerHTML = '';
+    entries.sort((a, b) => a[0].localeCompare(b[0])).forEach(([email, services]) => {
+      const row = document.createElement('div');
+      row.className = 'member-row';
+      row.innerHTML = `
+        <span class="member-email">${email}</span>
+        <div class="member-services">${services.map(s => `<span class="svc-badge">${s}</span>`).join('')}</div>
+        <button class="btn-remove" onclick="removeMember('${email}')">Retirer</button>
+      `;
+      list.appendChild(row);
+    });
+  }
+
+  async function removeMember(email) {
+    if (!confirm(`Retirer ${email} de tous les services ?`)) return;
+    try {
+      const r = await fetch(`${API}/admin/member`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+          'X-Admin-Email': userEmail
+        },
+        body: JSON.stringify({ email })
+      });
+      if (r.ok) { showToast(`${email} retiré`, 'success'); loadMembers(); }
+      else showToast('Erreur', 'error');
+    } catch(e) { showToast('Erreur réseau', 'error'); }
+  }
+
+  function showToast(msg, type = '') {
+    const t = document.getElementById('toast');
+    t.textContent = msg; t.className = 'show ' + type;
+    setTimeout(() => { t.className = ''; }, 3000);
+  }
+
+  (async () => {
+    const loggedIn = await handleLoginCallback();
+    if (loggedIn || await checkAuth()) {
+      // Vérifier que c'est bien l'admin
+      if (userEmail.toLowerCase() !== ADMIN_EMAIL) {
+        // Essayer de récupérer l'email depuis localStorage
+        userEmail = localStorage.getItem('admin_email') || '';
+      }
+      document.getElementById('auth-overlay').style.display = 'none';
+      loadMembers();
+    }
+  })();
+</script>
+</body>
+</html>
