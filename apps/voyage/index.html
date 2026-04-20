@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -27,8 +26,7 @@
     #auth-overlay h1 em { font-style: italic; color: var(--accent); }
     .auth-card {
       background: white; border-radius: 14px; padding: 2rem;
-      width: 100%; max-width: 340px;
-      box-shadow: 0 4px 32px rgba(0,0,0,0.08);
+      width: 100%; max-width: 340px; box-shadow: 0 4px 32px rgba(0,0,0,0.08);
       display: flex; flex-direction: column; gap: 1rem;
     }
     .auth-card p { color: var(--mid-gray); font-size: 0.88rem; line-height: 1.6; }
@@ -59,35 +57,60 @@
       background: rgba(248,246,243,0.92); backdrop-filter: blur(12px);
       border-bottom: 1px solid var(--warm-gray);
       padding: 1.2rem 2.5rem; display: flex; align-items: center; justify-content: space-between;
+      gap: 1rem; flex-wrap: wrap;
     }
-    .brand { font-family: 'Playfair Display', serif; font-size: 1.6rem; font-weight: 400; color: var(--dark); text-decoration: none; }
+    .brand { font-family: 'Playfair Display', serif; font-size: 1.6rem; font-weight: 400; color: var(--dark); text-decoration: none; white-space: nowrap; }
     .brand em { font-style: italic; color: var(--accent); }
-    .header-right { display: flex; align-items: center; gap: 1.5rem; }
-    .photo-count { font-size: 0.78rem; color: var(--mid-gray); letter-spacing: 0.06em; text-transform: uppercase; }
+    .header-right { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+    .photo-count { font-size: 0.78rem; color: var(--mid-gray); letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap; }
     .btn-manage {
       display: flex; align-items: center; gap: 0.5rem;
       background: var(--dark); color: white; text-decoration: none;
-      padding: 0.5rem 1.1rem; border-radius: 6px; font-size: 0.82rem; letter-spacing: 0.04em; transition: opacity 0.2s;
+      padding: 0.5rem 1.1rem; border-radius: 6px; font-size: 0.82rem; letter-spacing: 0.04em; transition: opacity 0.2s; white-space: nowrap;
     }
     .btn-manage:hover { opacity: 0.75; }
 
+    /* Filtre uploaders */
+    #filter-bar {
+      display: none;
+      padding: 0.8rem 2.5rem;
+      background: rgba(248,246,243,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--warm-gray);
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    #filter-bar.visible { display: flex; }
+    .filter-label { font-size: 0.72rem; color: var(--mid-gray); letter-spacing: 0.08em; text-transform: uppercase; margin-right: 0.25rem; white-space: nowrap; }
+    .filter-btn {
+      font-size: 0.75rem; font-family: 'DM Sans', sans-serif;
+      padding: 0.3rem 0.8rem; border-radius: 99px;
+      border: 1px solid var(--warm-gray); background: white;
+      cursor: pointer; transition: all 0.15s; color: var(--dark);
+      letter-spacing: 0.03em;
+    }
+    .filter-btn:hover { border-color: var(--mid-gray); }
+    .filter-btn.active { background: var(--dark); color: white; border-color: var(--dark); }
+
     /* Gallery */
-    main { padding: 3rem 2.5rem 5rem; max-width: 1400px; margin: 0 auto; }
+    main { padding: 2rem 2.5rem 5rem; max-width: 1400px; margin: 0 auto; }
+
     #empty-state { display: none; flex-direction: column; align-items: center; padding: 8rem 2rem; gap: 1rem; text-align: center; }
     #empty-state .icon { font-size: 3rem; opacity: 0.25; }
     #empty-state p { color: var(--mid-gray); }
     #empty-state a { color: var(--dark); font-weight: 500; font-size: 0.9rem; text-decoration: underline; text-underline-offset: 3px; }
+
     #gallery {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
       gap: 1.8rem;
       align-items: start;
     }
+
     .polaroid {
-      display: block;
-      width: 100%;
-      background: white;
-      padding: 0.85rem 0.85rem 2.4rem;
+      display: block; width: 100%;
+      background: white; padding: 0.85rem 0.85rem 2.4rem;
       box-shadow: var(--shadow-polaroid);
       cursor: pointer; position: relative;
       transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.3s ease;
@@ -150,6 +173,11 @@
   </div>
 </header>
 
+<div id="filter-bar">
+  <span class="filter-label">Filtrer</span>
+  <button class="filter-btn active" data-uploader="all">Tous</button>
+</div>
+
 <main>
   <div id="empty-state">
     <div class="icon">📷</div>
@@ -174,9 +202,11 @@
   const API    = 'https://voyage.vivalink.top/api';
   const PHOTOS = 'https://voyage.vivalink.top/photos';
   let token = localStorage.getItem('device_token') || '';
-  let photos = [], lbIdx = 0;
+  let allPhotos = [];
+  let filteredPhotos = [];
+  let activeUploader = 'all';
+  let lbIdx = 0;
 
-  // Retour du magic link : GET /auth/login?token=XXX
   async function handleLoginCallback() {
     const p = new URLSearchParams(location.search);
     const t = p.get('token');
@@ -184,12 +214,7 @@
     history.replaceState({}, '', location.pathname);
     try {
       const r = await fetch(`${AUTH}/auth/login?token=${encodeURIComponent(t)}`);
-      if (r.ok) {
-        const data = await r.json();
-        token = data.device_token;
-        localStorage.setItem('device_token', token);
-        return true;
-      }
+      if (r.ok) { const d = await r.json(); token = d.device_token; localStorage.setItem('device_token', token); return true; }
     } catch(e) {}
     return false;
   }
@@ -199,8 +224,7 @@
     try {
       const r = await fetch(`${AUTH}/auth/me`, { headers: { 'Authorization': `Bearer ${token}` } });
       if (r.ok) return true;
-      token = ''; localStorage.removeItem('device_token');
-      return false;
+      token = ''; localStorage.removeItem('device_token'); return false;
     } catch { return false; }
   }
 
@@ -215,7 +239,6 @@
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, app: 'voyage', redirect_url: 'https://voyage.vivalink.top' })
       });
-      // Toujours afficher "lien envoyé" (anti-énumération côté auth-service)
       document.getElementById('auth-email-step').style.display = 'none';
       document.getElementById('sent-email').textContent = email;
       document.getElementById('auth-sent').style.display = 'flex';
@@ -237,34 +260,94 @@
     try {
       const r = await fetch(`${API}/gallery/list`, { headers: { 'Authorization': `Bearer ${token}` } });
       if (r.status === 401) { token = ''; localStorage.removeItem('device_token'); location.reload(); return; }
-      photos = await r.json() || [];
-      renderGallery();
+      allPhotos = await r.json() || [];
+      buildFilterBar();
+      applyFilter();
     } catch(e) { console.error(e); }
+  }
+
+  // Construire la barre de filtres depuis les uploaders distincts
+  function buildFilterBar() {
+    const bar = document.getElementById('filter-bar');
+    // Garder uniquement le bouton "Tous"
+    bar.innerHTML = '<span class="filter-label">Filtrer</span><button class="filter-btn active" data-uploader="all">Tous</button>';
+
+    const uploaders = [...new Set(allPhotos.map(p => p.uploader).filter(Boolean))];
+    if (uploaders.length <= 1) {
+      // Pas besoin de filtre si un seul uploader
+      bar.classList.remove('visible');
+      return;
+    }
+
+    uploaders.forEach(uid => {
+      const btn = document.createElement('button');
+      btn.className = 'filter-btn';
+      btn.dataset.uploader = uid;
+      btn.textContent = uid;
+      btn.addEventListener('click', () => setFilter(uid));
+      bar.appendChild(btn);
+    });
+
+    bar.querySelector('[data-uploader="all"]').addEventListener('click', () => setFilter('all'));
+    bar.classList.add('visible');
+  }
+
+  function setFilter(uploader) {
+    activeUploader = uploader;
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.uploader === uploader);
+    });
+    applyFilter();
+  }
+
+  function applyFilter() {
+    if (activeUploader === 'all') {
+      filteredPhotos = allPhotos;
+    } else {
+      filteredPhotos = allPhotos.filter(p => p.uploader === activeUploader);
+    }
+    renderGallery();
   }
 
   function renderGallery() {
     const gallery = document.getElementById('gallery');
     const empty = document.getElementById('empty-state');
+    const countEl = document.getElementById('photo-count');
     gallery.innerHTML = '';
-    if (!photos.length) { empty.style.display = 'flex'; return; }
+
+    if (!filteredPhotos.length) {
+      empty.style.display = 'flex';
+      countEl.textContent = '';
+      return;
+    }
     empty.style.display = 'none';
-    document.getElementById('photo-count').textContent = `${photos.length} photo${photos.length > 1 ? 's' : ''}`;
-    photos.forEach((p, i) => {
+    const total = allPhotos.length;
+    const shown = filteredPhotos.length;
+    countEl.textContent = shown === total
+      ? `${total} photo${total > 1 ? 's' : ''}`
+      : `${shown} / ${total} photo${total > 1 ? 's' : ''}`;
+
+    filteredPhotos.forEach((p, i) => {
       const div = document.createElement('div');
       div.className = 'polaroid';
       div.style.animationDelay = `${i * 0.035}s`;
       const d = new Date(p.created_at);
       const label = d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
-      div.innerHTML = `<img src="${PHOTOS}/${p.filename}" loading="lazy" alt="" onerror="this.closest('.polaroid').style.display='none'" /><div class="caption">${label}</div>`;
+      div.innerHTML = `<img src="${PHOTOS}/${p.filename}?t=${new Date(p.created_at).getTime()}" loading="lazy" alt="" onerror="this.closest('.polaroid').style.display='none'" /><div class="caption">${label}</div>`;
       div.addEventListener('click', () => openLightbox(i));
       gallery.appendChild(div);
     });
   }
 
+  // Lightbox
   function openLightbox(idx) { lbIdx = idx; updateLb(); document.getElementById('lightbox').classList.add('open'); document.body.style.overflow = 'hidden'; }
   function closeLightbox() { document.getElementById('lightbox').classList.remove('open'); document.body.style.overflow = ''; }
-  function updateLb() { document.getElementById('lb-img').src = `${PHOTOS}/${photos[lbIdx].filename}`; document.getElementById('lb-counter').textContent = `${lbIdx+1} / ${photos.length}`; }
-  function navLightbox(d) { lbIdx = (lbIdx + d + photos.length) % photos.length; updateLb(); }
+  function updateLb() {
+    const p = filteredPhotos[lbIdx];
+    document.getElementById('lb-img').src = `${PHOTOS}/${p.filename}?t=${new Date(p.created_at).getTime()}`;
+    document.getElementById('lb-counter').textContent = `${lbIdx + 1} / ${filteredPhotos.length}`;
+  }
+  function navLightbox(d) { lbIdx = (lbIdx + d + filteredPhotos.length) % filteredPhotos.length; updateLb(); }
   document.getElementById('lightbox').addEventListener('click', e => { if (e.target === e.currentTarget) closeLightbox(); });
   document.addEventListener('keydown', e => {
     if (!document.getElementById('lightbox').classList.contains('open')) return;
