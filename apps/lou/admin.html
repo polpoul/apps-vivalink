@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -119,6 +118,25 @@
     #toast.error { background: var(--danger); }
 
     .empty-state { text-align: center; color: var(--mid-gray); font-size: 0.88rem; padding: 2rem; }
+
+    /* Pseudos */
+    .pseudo-row { display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.5rem; }
+    .pseudo-row input {
+      padding: 0.5rem 0.75rem; border: 1px solid var(--warm-gray); border-radius: 7px;
+      font-family: 'DM Sans', sans-serif; font-size: 0.85rem; outline: none;
+      background: var(--off-white); transition: border-color 0.2s;
+    }
+    .pseudo-row input:focus { border-color: var(--accent); background: white; }
+    .pseudo-row input.uid { width: 110px; font-family: monospace; }
+    .pseudo-row input.name { flex: 1; }
+    .pseudo-row .sep { color: var(--mid-gray); font-size: 0.8rem; }
+    .btn-add-pseudo {
+      display: flex; align-items: center; gap: 0.5rem; margin-top: 0.75rem;
+      background: transparent; border: 1.5px dashed var(--warm-gray); color: var(--mid-gray);
+      padding: 0.5rem 1rem; border-radius: 7px; font-family: 'DM Sans', sans-serif;
+      font-size: 0.82rem; cursor: pointer; transition: all 0.2s;
+    }
+    .btn-add-pseudo:hover { border-color: var(--mid-gray); color: var(--dark); }
   </style>
 </head>
 <body>
@@ -185,6 +203,19 @@
     <h2 class="card-title">Membres actuels</h2>
     <div id="members-list" class="members-list">
       <div class="empty-state">Chargement…</div>
+    </div>
+  </div>
+
+  <!-- Pseudos uploaders -->
+  <div class="card">
+    <h2 class="card-title">Pseudos des uploaders</h2>
+    <p style="color:var(--mid-gray);font-size:0.84rem;margin-bottom:1.2rem;line-height:1.6;">
+      Associez un user_id (8 caractères) à un prénom lisible affiché dans la galerie et le filtre.
+    </p>
+    <div id="pseudo-rows"></div>
+    <button class="btn-add-pseudo" onclick="addPseudoRow()">＋ Ajouter une équivalence</button>
+    <div style="margin-top:1.2rem;">
+      <button class="btn-primary" style="width:auto;padding:0.75rem 2rem;" onclick="savePseudos()">Enregistrer les pseudos</button>
     </div>
   </div>
 </main>
@@ -362,15 +393,74 @@
   (async () => {
     const loggedIn = await handleLoginCallback();
     if (loggedIn || await checkAuth()) {
-      // Vérifier que c'est bien l'admin
       if (userEmail.toLowerCase() !== ADMIN_EMAIL) {
-        // Essayer de récupérer l'email depuis localStorage
         userEmail = localStorage.getItem('admin_email') || '';
       }
       document.getElementById('auth-overlay').style.display = 'none';
       loadMembers();
+      loadPseudos();
     }
   })();
+
+  // ── Pseudos ───────────────────────────────────────────────────────────────
+
+  async function loadPseudos() {
+    try {
+      const r = await fetch(`${API}/admin/members`, {
+        headers: { 'Authorization': `Bearer ${token}`, 'X-Admin-Email': userEmail }
+      });
+      if (!r.ok) return;
+      const m = await r.json();
+      renderPseudos(m);
+    } catch(e) {}
+  }
+
+  function renderPseudos(m) {
+    const container = document.getElementById('pseudo-rows');
+    container.innerHTML = '';
+    const entries = Object.entries(m || {});
+    if (!entries.length) {
+      addPseudoRow();
+      return;
+    }
+    entries.forEach(([uid, name]) => addPseudoRow(uid, name));
+  }
+
+  function addPseudoRow(uid = '', name = '') {
+    const container = document.getElementById('pseudo-rows');
+    const row = document.createElement('div');
+    row.className = 'pseudo-row';
+    row.innerHTML = `
+      <input class="uid" type="text" placeholder="a3f2b1c4" maxlength="8" value="${uid}" />
+      <span class="sep">→</span>
+      <input class="name" type="text" placeholder="Pascal" value="${name}" />
+      <button class="btn-remove" onclick="this.closest('.pseudo-row').remove()">✕</button>`;
+    container.appendChild(row);
+    row.querySelector('.uid').focus();
+  }
+
+  async function savePseudos() {
+    const rows = document.querySelectorAll('.pseudo-row');
+    const m = {};
+    rows.forEach(row => {
+      const uid = row.querySelector('.uid').value.trim();
+      const name = row.querySelector('.name').value.trim();
+      if (uid && name) m[uid] = name;
+    });
+    try {
+      const r = await fetch(`${API}/admin/members`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+          'X-Admin-Email': userEmail
+        },
+        body: JSON.stringify(m)
+      });
+      if (r.ok) { showToast('Pseudos enregistrés', 'success'); }
+      else showToast('Erreur lors de l\'enregistrement', 'error');
+    } catch(e) { showToast('Erreur réseau', 'error'); }
+  }
 </script>
 </body>
 </html>
