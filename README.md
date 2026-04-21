@@ -1,5 +1,3 @@
-Voici un README complet pour ton projet apps-vivalink :
-
 README.md
 # apps-vivalink
 
@@ -7,7 +5,17 @@ Une plateforme multi-applications hébergée sur sous-domaines du domaine `vival
 
 ## 📋 Description
 
-apps-vivalink/ ├── Dockerfile # Configuration Docker (Alpine Nginx) ├── nginx.conf # Configuration Nginx multi-apps └── apps/ # Dossier contenant les apps ├── lou/ ├── voyage/ ├── agenda/ └── library/
+apps-vivalink/ 
+├── Dockerfile 
+# Configuration Docker (Alpine Nginx) 
+├── nginx.conf 
+# Configuration Nginx multi-apps 
+└── apps/ 
+# Dossier contenant les apps 
+├── lou/ 
+├── voyage/ 
+├── agenda/ 
+└── library/
 
 Code
 
@@ -120,25 +128,4 @@ Copie de notre configuration et des applications
 ✅ Cache intelligent : index.html jamais en cache, assets en cache
 ✅ Alpine Linux : image Docker minimale (~25 MB)
 ✅ SPA support : toutes les routes redirigent vers index.html
-🤝 Contribution
-Les contributions sont bienvenues ! Pour proposer des améliorations :
 
-Fork le repository
-Créer une branche (git checkout -b feature/amelioration)
-Commit les changements (git commit -m 'Ajouter une amélioration')
-Push la branche (git push origin feature/amelioration)
-Ouvrir une Pull Request
-📄 Licence
-Ce projet est en domaine public. Libre d'utilisation !
-
-📞 Support
-Pour toute question ou problème :
-
-Créer une issue
-Contacter : @polpoul
-Dernière mise à jour : Avril 2026
-
-Code
-
-Ce README couvre tous les aspects du projet : description, architecture, installation, configuration, guide d'ajout d'apps, Docker, performance et contribution. Ajuste-le selon tes besoins ! 😊
-You said: met le a jour
