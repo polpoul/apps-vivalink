@@ -1,43 +1,144 @@
+Voici un README complet pour ton projet apps-vivalink :
+
+README.md
 # apps-vivalink
 
-## Project Description
-apps-vivalink is a multi-app platform that leverages Nginx and Docker to provide a scalable and manageable environment for deploying various applications easily.
+Une plateforme multi-applications hébergée sur sous-domaines du domaine `vivalink.top`. Le projet utilise **Nginx** containerisé avec **Docker** pour servir plusieurs applications web (SPA) en parallèle.
 
-## Architecture Overview
-The architecture consists of containerized applications managed through Docker, with Nginx serving as the reverse proxy and load balancer. This setup allows for efficient routing, SSL termination, and static content delivery.
+## 📋 Description
 
-## Quick Start Guide
-1. Clone the repository:
+apps-vivalink/ ├── Dockerfile # Configuration Docker (Alpine Nginx) ├── nginx.conf # Configuration Nginx multi-apps └── apps/ # Dossier contenant les apps ├── lou/ ├── voyage/ ├── agenda/ └── library/
+
+Code
+
+### Stack technique
+
+- **Serveur Web** : Nginx (image Alpine)
+- **Containerisation** : Docker
+- **Routage** : Traefik (via sous-domaines)
+- **Type d'apps** : Static HTML/CSS/JavaScript (SPA)
+
+## 🚀 Démarrage rapide
+
+### Prérequis
+
+- Docker et Docker Compose installés
+- Accès au domaine `vivalink.top`
+
+### Installation
+
+1. **Cloner le repository**
    ```bash
    git clone https://github.com/polpoul/apps-vivalink.git
    cd apps-vivalink
-   ```
-2. Build the Docker images:
-   ```bash
-   docker-compose build
-   ```
-3. Start the application:
-   ```bash
-   docker-compose up
-   ```
+Ajouter vos applications dans le dossier apps/
 
-## Nginx Configuration Details
-Nginx configuration is handled within the `nginx/` directory. Customize the configuration files to set up virtual hosts and adjust buffering as required.
+bash
+apps/
+├── lou/index.html
+├── voyage/index.html
+├── agenda/index.html
+└── library/index.html
+Construire l'image Docker
 
-## Instructions for Adding New Applications
-1. Create a new Dockerfile in the `apps/` directory for the application you wish to add.
-2. Update the `docker-compose.yml` to include the new service.
-3. Modify the Nginx configuration to add a new location block for routing traffic to the new application.
+bash
+docker build -t apps-vivalink .
+Lancer le conteneur
 
-## Docker Information
-Apps are containerized using Docker for portability and consistency. Ensure Docker is installed on your machine to work with this repository.
+bash
+docker run -d -p 80:80 --name apps-vivalink apps-vivalink
+📝 Configuration Nginx
+La configuration Nginx (nginx.conf) expose 4 applications sur des sous-domaines distincts :
 
-## Performance Features
-- Load balancing with Nginx to distribute traffic efficiently.
-- Cache management to reduce latency in serving static files.
+Chaque app est une SPA : les routes non trouvées redirigent vers index.html
+Cache optimisé : index.html n'est jamais en cache pour les mises à jour immédiates
+Compression Gzip : activée pour HTML, CSS, JavaScript et JSON
+Port 80 : exposé pour HTTP (géré par Traefik pour HTTPS)
+Exemple de bloc server (nginx.conf)
+Nginx
+server {
+    listen 80;
+    server_name lou.vivalink.top;
+    root /usr/share/nginx/apps/lou;
+    index index.html;
+    
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+    
+    location = /index.html {
+        add_header Cache-Control "no-cache, no-store, must-revalidate";
+    }
+    
+    gzip on;
+    gzip_types text/html text/css application/javascript application/json;
+}
+🔧 Ajouter une nouvelle application
+Créer un dossier pour la nouvelle app dans apps/
 
-## Contribution Guidelines
-Contributions are welcome! Please fork the repository and submit a pull request with your changes. Ensure to follow the coding standards.
+bash
+mkdir apps/monapp
+Ajouter les fichiers (minimum index.html)
 
-## Support Information
-For support, please open an issue in the GitHub repository or contact the maintainer directly.
+bash
+cp -r mon-app-dist/* apps/monapp/
+Ajouter un bloc server dans nginx.conf
+
+Nginx
+server {
+    listen 80;
+    server_name monapp.vivalink.top;
+    root /usr/share/nginx/apps/monapp;
+    index index.html;
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+    location = /index.html {
+        add_header Cache-Control "no-cache, no-store, must-revalidate";
+    }
+    gzip on;
+    gzip_types text/html text/css application/javascript application/json;
+}
+Rebuildérer et relancer le conteneur
+
+bash
+docker build -t apps-vivalink .
+docker restart apps-vivalink
+🐳 Docker
+Dockerfile
+Dockerfile
+FROM nginx:alpine
+RUN rm /etc/nginx/conf.d/default.conf
+COPY nginx.conf /etc/nginx/conf.d/apps.conf
+COPY apps/ /usr/share/nginx/apps/
+EXPOSE 80
+Image de base : nginx:alpine (léger et performant)
+Suppression de la configuration Nginx par défaut
+Copie de notre configuration et des applications
+📊 Performance
+✅ Gzip activé pour réduire la taille des fichiers
+✅ Cache intelligent : index.html jamais en cache, assets en cache
+✅ Alpine Linux : image Docker minimale (~25 MB)
+✅ SPA support : toutes les routes redirigent vers index.html
+🤝 Contribution
+Les contributions sont bienvenues ! Pour proposer des améliorations :
+
+Fork le repository
+Créer une branche (git checkout -b feature/amelioration)
+Commit les changements (git commit -m 'Ajouter une amélioration')
+Push la branche (git push origin feature/amelioration)
+Ouvrir une Pull Request
+📄 Licence
+Ce projet est en domaine public. Libre d'utilisation !
+
+📞 Support
+Pour toute question ou problème :
+
+Créer une issue
+Contacter : @polpoul
+Dernière mise à jour : Avril 2026
+
+Code
+
+Ce README couvre tous les aspects du projet : description, architecture, installation, configuration, guide d'ajout d'apps, Docker, performance et contribution. Ajuste-le selon tes besoins ! 😊
+You said: met le a jour
