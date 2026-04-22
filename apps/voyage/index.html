@@ -93,6 +93,9 @@
     .filter-btn:hover { border-color: var(--mid-gray); }
     .filter-btn.active { background: var(--dark); color: white; border-color: var(--dark); }
 
+    /* Séparateur entre filtres uploader et tags */
+    .filter-sep { width: 1px; height: 1.2rem; background: var(--warm-gray); margin: 0 0.25rem; }
+
     /* Gallery */
     main { padding: 2rem 2.5rem 5rem; max-width: 1400px; margin: 0 auto; }
 
@@ -205,6 +208,8 @@
   let allPhotos = [];
   let filteredPhotos = [];
   let activeUploader = 'all';
+  let activeTags = []; // intersection — photo doit avoir TOUS ces tags
+  let availableTags = [];
   let lbIdx = 0;
 
   async function handleLoginCallback() {
@@ -261,51 +266,99 @@
       const r = await fetch(`${API}/gallery/list`, { headers: { 'Authorization': `Bearer ${token}` } });
       if (r.status === 401) { token = ''; localStorage.removeItem('device_token'); location.reload(); return; }
       allPhotos = await r.json() || [];
+      await loadTags();
       buildFilterBar();
       applyFilter();
     } catch(e) { console.error(e); }
   }
 
-  // Construire la barre de filtres depuis les uploaders distincts
-  function buildFilterBar() {
-    const bar = document.getElementById('filter-bar');
-    // Garder uniquement le bouton "Tous"
-    bar.innerHTML = '<span class="filter-label">Filtrer</span><button class="filter-btn active" data-uploader="all">Tous</button>';
-
-    const uploaders = [...new Set(allPhotos.map(p => p.uploader).filter(Boolean))];
-    if (uploaders.length <= 1) {
-      // Pas besoin de filtre si un seul uploader
-      bar.classList.remove('visible');
-      return;
-    }
-
-    uploaders.forEach(uid => {
-      const btn = document.createElement('button');
-      btn.className = 'filter-btn';
-      btn.dataset.uploader = uid;
-      btn.textContent = uid;
-      btn.addEventListener('click', () => setFilter(uid));
-      bar.appendChild(btn);
-    });
-
-    bar.querySelector('[data-uploader="all"]').addEventListener('click', () => setFilter('all'));
-    bar.classList.add('visible');
+  async function loadTags() {
+    try {
+      const r = await fetch(`${API}/tags`, { headers: { 'Authorization': `Bearer ${token}` } });
+      if (r.ok) availableTags = await r.json() || [];
+    } catch(e) {}
   }
 
-  function setFilter(uploader) {
+  function buildFilterBar() {
+    const bar = document.getElementById('filter-bar');
+    bar.innerHTML = '<span class="filter-label">Qui</span><button class="filter-btn active" data-uploader="all">Tous</button>';
+
+    const uploaders = [...new Set(allPhotos.map(p => p.uploader).filter(Boolean))];
+    if (uploaders.length > 1) {
+      uploaders.forEach(uid => {
+        const btn = document.createElement('button');
+        btn.className = 'filter-btn';
+        btn.dataset.uploader = uid;
+        btn.textContent = uid;
+        btn.addEventListener('click', () => setUploaderFilter(uid));
+        bar.appendChild(btn);
+      });
+      bar.querySelector('[data-uploader="all"]').addEventListener('click', () => setUploaderFilter('all'));
+    }
+
+    // Tags
+    if (availableTags.length) {
+      const sep = document.createElement('div');
+      sep.className = 'filter-sep';
+      bar.appendChild(sep);
+
+      const tagLabel = document.createElement('span');
+      tagLabel.className = 'filter-label';
+      tagLabel.textContent = 'Tags';
+      bar.appendChild(tagLabel);
+
+      availableTags.forEach(tag => {
+        const btn = document.createElement('button');
+        btn.className = 'filter-btn';
+        btn.dataset.tag = tag;
+        btn.textContent = tag;
+        btn.addEventListener('click', () => toggleTagFilter(tag));
+        bar.appendChild(btn);
+      });
+    }
+
+    const hasUploaders = uploaders.length > 1;
+    const hasTags = availableTags.length > 0;
+    if (hasUploaders || hasTags) {
+      bar.classList.add('visible');
+    } else {
+      bar.classList.remove('visible');
+    }
+  }
+
+  function setUploaderFilter(uploader) {
     activeUploader = uploader;
-    document.querySelectorAll('.filter-btn').forEach(btn => {
+    document.querySelectorAll('#filter-bar [data-uploader]').forEach(btn => {
       btn.classList.toggle('active', btn.dataset.uploader === uploader);
     });
     applyFilter();
   }
 
-  function applyFilter() {
-    if (activeUploader === 'all') {
-      filteredPhotos = allPhotos;
+  function toggleTagFilter(tag) {
+    if (activeTags.includes(tag)) {
+      activeTags = activeTags.filter(t => t !== tag);
     } else {
-      filteredPhotos = allPhotos.filter(p => p.uploader === activeUploader);
+      activeTags = [...activeTags, tag];
     }
+    document.querySelectorAll('#filter-bar [data-tag]').forEach(btn => {
+      btn.classList.toggle('active', activeTags.includes(btn.dataset.tag));
+    });
+    applyFilter();
+  }
+
+  function applyFilter() {
+    let photos = allPhotos;
+    if (activeUploader !== 'all') {
+      photos = photos.filter(p => p.uploader === activeUploader);
+    }
+    // Intersection : photo doit avoir TOUS les tags actifs
+    if (activeTags.length > 0) {
+      photos = photos.filter(p => {
+        const pt = p.tags || [];
+        return activeTags.every(t => pt.includes(t));
+      });
+    }
+    filteredPhotos = photos;
     renderGallery();
   }
 
