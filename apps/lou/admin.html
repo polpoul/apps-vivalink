@@ -218,6 +218,20 @@
       <button class="btn-primary" style="width:auto;padding:0.75rem 2rem;" onclick="savePseudos()">Enregistrer les pseudos</button>
     </div>
   </div>
+
+  <!-- Tags voyage -->
+  <div class="card">
+    <h2 class="card-title">Tags — voyage</h2>
+    <p style="color:var(--mid-gray);font-size:0.84rem;margin-bottom:1.2rem;line-height:1.6;">
+      Définissez les tags disponibles pour la galerie voyage. Les membres pourront les affecter aux photos depuis la page Gérer.
+    </p>
+    <div id="tag-rows"></div>
+    <button class="btn-add-pseudo" onclick="addTagRow()">＋ Ajouter un tag</button>
+    <div style="margin-top:1.2rem;">
+      <button class="btn-primary" style="width:auto;padding:0.75rem 2rem;" onclick="saveTags()">Enregistrer les tags</button>
+    </div>
+  </div>
+
 </main>
 
 <div id="toast"></div>
@@ -399,10 +413,60 @@
       document.getElementById('auth-overlay').style.display = 'none';
       loadMembers();
       loadPseudos();
+      loadTagsAdmin();
     }
   })();
 
-  // ── Pseudos ───────────────────────────────────────────────────────────────
+  // ── Tags ──────────────────────────────────────────────────────────────────
+
+  const VOYAGE_API = 'https://voyage.vivalink.top/api';
+
+  async function loadTagsAdmin() {
+    try {
+      const r = await fetch(`${VOYAGE_API}/tags`, {
+        headers: { 'Authorization': `Bearer ${token}`, 'X-Admin-Email': userEmail }
+      });
+      if (!r.ok) return;
+      const tags = await r.json();
+      renderTags(tags);
+    } catch(e) {}
+  }
+
+  function renderTags(tags) {
+    const container = document.getElementById('tag-rows');
+    container.innerHTML = '';
+    if (!tags || !tags.length) { addTagRow(); return; }
+    tags.forEach(t => addTagRow(t));
+  }
+
+  function addTagRow(value = '') {
+    const container = document.getElementById('tag-rows');
+    const row = document.createElement('div');
+    row.className = 'pseudo-row';
+    row.innerHTML = `
+      <input class="name" type="text" placeholder="Ex: Plage, Randonnée…" value="${value}" style="flex:1;" />
+      <button class="btn-remove" onclick="this.closest('.pseudo-row').remove()">✕</button>`;
+    container.appendChild(row);
+    if (!value) row.querySelector('input').focus();
+  }
+
+  async function saveTags() {
+    const rows = document.querySelectorAll('#tag-rows .pseudo-row');
+    const tags = [...rows].map(r => r.querySelector('input').value.trim()).filter(Boolean);
+    try {
+      const r = await fetch(`${VOYAGE_API}/admin/tags`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+          'X-Admin-Email': userEmail
+        },
+        body: JSON.stringify(tags)
+      });
+      if (r.ok) showToast('Tags enregistrés', 'success');
+      else showToast('Erreur', 'error');
+    } catch(e) { showToast('Erreur réseau', 'error'); }
+  }
 
   async function loadPseudos() {
     try {
