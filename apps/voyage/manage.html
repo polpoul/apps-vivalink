@@ -169,6 +169,18 @@
     .list-empty { display: flex; flex-direction: column; align-items: center; padding: 4rem 2rem; gap: 0.75rem; text-align: center; color: var(--mid-gray); font-size: 0.88rem; }
     .list-empty .icon { font-size: 2.5rem; opacity: 0.25; }
 
+    /* Tags */
+    .photo-tags { display: flex; flex-wrap: wrap; gap: 0.3rem; margin-top: 0.4rem; }
+    .tag-btn {
+      font-size: 0.65rem; font-family: 'DM Sans', sans-serif;
+      padding: 0.15rem 0.5rem; border-radius: 99px;
+      border: 1px solid var(--warm-gray); background: white;
+      cursor: pointer; transition: all 0.15s; color: var(--mid-gray);
+      line-height: 1.6;
+    }
+    .tag-btn:hover { border-color: var(--accent); color: var(--dark); }
+    .tag-btn.active { background: var(--dark); color: white; border-color: var(--dark); }
+
     #confirm-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 400; align-items: center; justify-content: center; }
     #confirm-overlay.open { display: flex; }
     #confirm-box { background: white; border-radius: 12px; padding: 2rem; max-width: 320px; width: 90%; box-shadow: var(--shadow-lift); text-align: center; }
@@ -270,6 +282,7 @@
   let pendingDelete = null;
   let allPhotos = [];
   let activeUploader = 'all';
+  let availableTags = [];
 
   async function handleLoginCallback() {
     const p = new URLSearchParams(location.search);
@@ -400,6 +413,13 @@
     } catch(e) { console.error(e); }
   }
 
+  async function loadTags() {
+    try {
+      const r = await fetch(`${API}/tags`, { headers: { 'Authorization': `Bearer ${token}` } });
+      if (r.ok) availableTags = await r.json() || [];
+    } catch(e) {}
+  }
+
   function buildFilterBar() {
     const bar = document.getElementById('filter-bar-manage');
     bar.innerHTML = '<span class="filter-label">Filtrer</span><button class="filter-btn active" data-uploader="all">Tous</button>';
@@ -464,9 +484,41 @@
             <input type="date" class="date-input" value="${dateVal}" />
             <button class="btn-date-save">✓</button>
           </div>
+          ${availableTags.length ? `<div class="photo-tags"></div>` : ''}
         </div>
         <button class="photo-card-rotate" title="Pivoter 90°">↻</button>
         <button class="photo-card-delete" title="Supprimer">✕</button>`;
+
+      // Tags
+      if (availableTags.length) {
+        const tagsDiv = card.querySelector('.photo-tags');
+        const photoTags = p.tags || [];
+        availableTags.forEach(tag => {
+          const btn = document.createElement('button');
+          btn.className = 'tag-btn' + (photoTags.includes(tag) ? ' active' : '');
+          btn.textContent = tag;
+          btn.addEventListener('click', async () => {
+            const current = [...card.querySelectorAll('.tag-btn.active')].map(b => b.textContent);
+            let next;
+            if (current.includes(tag)) {
+              next = current.filter(t => t !== tag);
+            } else {
+              next = [...current, tag];
+            }
+            try {
+              const r = await fetch(`${API}/photos/${p.filename}/tags`, {
+                method: 'PATCH',
+                headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+                body: JSON.stringify({ tags: next })
+              });
+              if (r.ok) {
+                btn.classList.toggle('active', next.includes(tag));
+              } else { showToast('Erreur tags', 'error'); }
+            } catch(e) { showToast('Erreur réseau', 'error'); }
+          });
+          tagsDiv.appendChild(btn);
+        });
+      }
 
       card.querySelector('.photo-card-delete').addEventListener('click', () => askDelete(p.filename));
 
@@ -534,6 +586,7 @@
     const loggedIn = await handleLoginCallback();
     if (loggedIn || await checkAuth()) {
       document.getElementById('auth-overlay').style.display = 'none';
+      await loadTags();
       loadPhotos();
     }
   })();
