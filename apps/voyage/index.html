@@ -173,6 +173,9 @@
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
       Gérer
     </a>
+    <button id="btn-diaporama" onclick="toggleDiaporama()" style="display:flex;align-items:center;gap:0.5rem;background:transparent;border:1px solid var(--warm-gray);color:var(--dark);padding:0.5rem 1.1rem;border-radius:6px;font-size:0.82rem;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all 0.2s;">
+    ▶ Diaporama
+    </button>
   </div>
 </header>
 
@@ -416,6 +419,50 @@
       loadGallery();
     }
   })();
+
+  // Diorama
+  let diaporamaInterval = null;
+let diaporamaDelay = 4000; // 4 secondes par photo
+
+function toggleDiaporama() {
+  if (diaporamaInterval) {
+    stopDiaporama();
+  } else {
+    startDiaporama();
+  }
+}
+
+function startDiaporama() {
+  // Ouvrir la lightbox si pas déjà ouverte
+  if (!document.getElementById('lightbox').classList.contains('open')) {
+    openLightbox(0);
+  }
+  diaporamaInterval = setInterval(() => {
+    lbIdx = (lbIdx + 1) % filteredPhotos.length;
+    updateLb();
+  }, diaporamaDelay);
+  const btn = document.getElementById('btn-diaporama');
+  btn.textContent = '⏹ Stop';
+  btn.style.background = 'var(--dark)';
+  btn.style.color = 'white';
+  btn.style.borderColor = 'var(--dark)';
+}
+
+function stopDiaporama() {
+  clearInterval(diaporamaInterval);
+  diaporamaInterval = null;
+  const btn = document.getElementById('btn-diaporama');
+  btn.textContent = '▶ Diaporama';
+  btn.style.background = 'transparent';
+  btn.style.color = 'var(--dark)';
+  btn.style.borderColor = 'var(--warm-gray)';
+}
+
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('open');
+  document.body.style.overflow = '';
+  stopDiaporama();
+} 
 </script>
 </body>
 </html>
