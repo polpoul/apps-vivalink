@@ -167,16 +167,14 @@
 
 <header>
   <a class="brand" href="/">Voyage <em>&</em> Photos</a>
-  <div class="header-right">
-    <span class="photo-count" id="photo-count"></span>
-    <a class="btn-manage" href="/manage.html">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
-      Gérer
-    </a>
-    <button id="btn-diaporama" onclick="toggleDiaporama()" style="display:flex;align-items:center;gap:0.5rem;background:transparent;border:1px solid var(--warm-gray);color:var(--dark);padding:0.5rem 1.1rem;border-radius:6px;font-size:0.82rem;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all 0.2s;">
-    ▶ Diaporama
-    </button>
-  </div>
+<div class="header-right">
+  <span class="photo-count" id="photo-count"></span>
+  <label style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;font-size:0.82rem;color:var(--mid-gray);">
+    <input type="checkbox" id="diaporama-toggle" onchange="onDiaporamaToggle()" style="width:14px;height:14px;accent-color:var(--dark);cursor:pointer;" />
+    Diaporama
+  </label>
+  <a class="btn-manage" href="/manage.html">...</a>
+</div>
 </header>
 
 <div id="filter-bar">
@@ -403,7 +401,13 @@
     document.getElementById('lb-img').src = `${PHOTOS}/${p.filename}?t=${new Date(p.created_at).getTime()}`;
     document.getElementById('lb-counter').textContent = `${lbIdx + 1} / ${filteredPhotos.length}`;
   }
-  function navLightbox(d) { lbIdx = (lbIdx + d + filteredPhotos.length) % filteredPhotos.length; updateLb(); }
+
+  function navLightbox(d) {
+  lbIdx = (lbIdx + d + filteredPhotos.length) % filteredPhotos.length;
+  updateLb();
+  // Relancer le timer pour éviter un saut immédiat après navigation manuelle
+  if (document.getElementById('diaporama-toggle').checked) startDiaporama();
+}
   document.getElementById('lightbox').addEventListener('click', e => { if (e.target === e.currentTarget) closeLightbox(); });
   document.addEventListener('keydown', e => {
     if (!document.getElementById('lightbox').classList.contains('open')) return;
@@ -421,9 +425,33 @@
   })();
 
   // Diorama
-  let diaporamaInterval = null;
+let diaporamaInterval = null;
 let diaporamaDelay = 4000; // 4 secondes par photo
 
+let diaporamaInterval = null;
+const DELAY = 4000;
+
+function onDiaporamaToggle() {
+  const on = document.getElementById('diaporama-toggle').checked;
+  if (on && document.getElementById('lightbox').classList.contains('open')) {
+    startDiaporama();
+  } else {
+    stopDiaporama();
+  }
+}
+
+function startDiaporama() {
+  stopDiaporama();
+  diaporamaInterval = setInterval(() => {
+    lbIdx = (lbIdx + 1) % filteredPhotos.length;
+    updateLb();
+  }, DELAY);
+}
+
+function stopDiaporama() {
+  if (diaporamaInterval) { clearInterval(diaporamaInterval); diaporamaInterval = null; }
+}
+  
 function toggleDiaporama() {
   if (diaporamaInterval) {
     stopDiaporama();
@@ -432,37 +460,18 @@ function toggleDiaporama() {
   }
 }
 
-function startDiaporama() {
-  // Ouvrir la lightbox si pas déjà ouverte
-  if (!document.getElementById('lightbox').classList.contains('open')) {
-    openLightbox(0);
-  }
-  diaporamaInterval = setInterval(() => {
-    lbIdx = (lbIdx + 1) % filteredPhotos.length;
-    updateLb();
-  }, diaporamaDelay);
-  const btn = document.getElementById('btn-diaporama');
-  btn.textContent = '⏹ Stop';
-  btn.style.background = 'var(--dark)';
-  btn.style.color = 'white';
-  btn.style.borderColor = 'var(--dark)';
-}
-
-function stopDiaporama() {
-  clearInterval(diaporamaInterval);
-  diaporamaInterval = null;
-  const btn = document.getElementById('btn-diaporama');
-  btn.textContent = '▶ Diaporama';
-  btn.style.background = 'transparent';
-  btn.style.color = 'var(--dark)';
-  btn.style.borderColor = 'var(--warm-gray)';
+function openLightbox(idx) {
+  lbIdx = idx; updateLb();
+  document.getElementById('lightbox').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  if (document.getElementById('diaporama-toggle').checked) startDiaporama();
 }
 
 function closeLightbox() {
   document.getElementById('lightbox').classList.remove('open');
   document.body.style.overflow = '';
   stopDiaporama();
-} 
+}
 </script>
 </body>
 </html>
