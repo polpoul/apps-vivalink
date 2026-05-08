@@ -405,9 +405,9 @@
 <div id="page-login" style="display:flex">
     <div class="login-card">
         <h1>📚 <i>Library</i></h1>
-        <p>Entrez votre email pour recevoir un lien de connexion</p>
+        <p>Entrez votre email pour vous connecter</p>
         <input type="email" id="login-email" class="login-input" placeholder="votre@email.com" />
-        <button id="login-btn" class="login-btn">Envoyer le lien</button>
+        <button id="login-btn" class="login-btn">Se connecter</button>
         <div id="login-msg" class="login-msg"></div>
     </div>
 </div>
@@ -530,20 +530,34 @@
         return false;
     }
 
-    async function requestMagicLink(email) {
+    async function handleLogin(email) {
         const btn = document.getElementById('login-btn');
         const msg = document.getElementById('login-msg');
-        btn.disabled = true; btn.textContent = 'Envoi…'; msg.className = 'login-msg';
+        btn.disabled = true; btn.textContent = 'Connexion…'; msg.className = 'login-msg';
         try {
+            // Tentative de connexion instantanée (sans email)
+            const instant = await fetch(AUTH_URL + '/auth/instant-login', {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email })
+            });
+            if (instant.ok) {
+                const d = await instant.json();
+                if (d.device_token) {
+                    setToken(d.device_token);
+                    showPage('library');
+                    loadBooks();
+                    return;
+                }
+            }
+            // Repli : flow magic link par email
             const r = await fetch(AUTH_URL + '/auth/request-login', {
                 method: 'POST', headers: { 'Content-Type': 'application/json' },
-                // body: JSON.stringify({ email })
                 body: JSON.stringify({ email, app: 'library', redirect_url: 'https://library.vivalink.top' })
             });
             if (r.ok) { msg.className = 'login-msg ok'; msg.textContent = '✅ Lien envoyé ! Vérifiez votre boîte mail.'; document.getElementById('login-email').value = ''; }
             else       { msg.className = 'login-msg err'; msg.textContent = '❌ Erreur lors de l\'envoi.'; }
         } catch    { msg.className = 'login-msg err'; msg.textContent = '❌ Service indisponible.'; }
-        finally    { btn.disabled = false; btn.textContent = 'Envoyer le lien'; }
+        finally    { btn.disabled = false; btn.textContent = 'Se connecter'; }
     }
 
     async function logout() {
@@ -868,7 +882,7 @@
     /* ── Événements bibliothèque ── */
     document.getElementById('login-btn').addEventListener('click', () => {
         const email = document.getElementById('login-email').value.trim();
-        if (email) requestMagicLink(email);
+        if (email) handleLogin(email);
     });
     document.getElementById('login-email').addEventListener('keydown', e => {
         if (e.key === 'Enter') document.getElementById('login-btn').click();
