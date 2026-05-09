@@ -70,14 +70,31 @@
     <ul id="liste"></ul>
     <script>
         var API = 'https://library-api.vivalink.top';
+        var msg = document.getElementById('msg');
+
+        function showError(detail) {
+            msg.style.color = '#c00';
+            msg.style.fontStyle = 'normal';
+            msg.style.fontSize = '0.85rem';
+            msg.innerHTML = '<strong>Erreur de chargement</strong><br>' + detail;
+            msg.style.display = '';
+        }
+
         fetch(API + '/api/books/public')
-            .then(function(r) { return r.json(); })
+            .then(function(r) {
+                if (!r.ok) {
+                    showError('HTTP ' + r.status + ' sur ' + API + '/api/books/public');
+                    return null;
+                }
+                return r.json();
+            })
             .then(function(d) {
-                document.getElementById('msg').style.display = 'none';
+                if (!d) return;
+                msg.style.display = 'none';
                 var liste = document.getElementById('liste');
                 if (!d.files || d.files.length === 0) {
-                    document.getElementById('msg').textContent = 'Aucun livre disponible.';
-                    document.getElementById('msg').style.display = '';
+                    msg.textContent = 'Aucun livre disponible.';
+                    msg.style.display = '';
                     return;
                 }
                 d.files.forEach(function(b) {
@@ -94,8 +111,8 @@
                     liste.appendChild(li);
                 });
             })
-            .catch(function() {
-                document.getElementById('msg').textContent = 'Erreur de chargement.';
+            .catch(function(e) {
+                showError('fetch() a échoué : ' + e.message + '<br>URL : ' + API + '/api/books/public');
             });
     </script>
 </body>
