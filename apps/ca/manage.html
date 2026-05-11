@@ -83,6 +83,44 @@
     .status-filter-btn.active { background: var(--dark); color: white; border-color: var(--dark); }
     #total-count { font-size: 0.78rem; color: var(--mid-gray); margin-left: auto; }
 
+    /* Panneau gestion tags */
+    #tags-panel-toggle {
+      font-size: 0.78rem; font-family: 'DM Sans', sans-serif;
+      padding: 0.3rem 0.9rem; border-radius: 6px;
+      border: 1px solid var(--warm-gray); background: white;
+      cursor: pointer; color: var(--dark); transition: all 0.15s;
+    }
+    #tags-panel-toggle:hover { border-color: var(--dark); }
+    #tags-panel {
+      display: none; padding: 0.9rem 2.5rem;
+      background: white; border-bottom: 1px solid var(--warm-gray);
+      gap: 0.5rem; flex-wrap: wrap; align-items: center;
+    }
+    #tags-panel.open { display: flex; }
+    .tag-pill {
+      display: inline-flex; align-items: center; gap: 0.3rem;
+      font-size: 0.75rem; padding: 0.25rem 0.6rem; border-radius: 99px;
+      background: var(--warm-gray); color: var(--dark);
+    }
+    .tag-pill button {
+      background: none; border: none; cursor: pointer; color: var(--mid-gray);
+      font-size: 0.8rem; line-height: 1; padding: 0; transition: color 0.15s;
+    }
+    .tag-pill button:hover { color: var(--danger); }
+    #tag-new-input {
+      font-family: 'DM Sans', sans-serif; font-size: 0.82rem;
+      padding: 0.3rem 0.7rem; border: 1px solid var(--warm-gray);
+      border-radius: 6px; outline: none; width: 140px;
+    }
+    #tag-new-input:focus { border-color: var(--accent); }
+    #tag-add-btn {
+      font-family: 'DM Sans', sans-serif; font-size: 0.78rem;
+      padding: 0.3rem 0.8rem; border-radius: 6px;
+      border: 1px solid var(--dark); background: var(--dark); color: white;
+      cursor: pointer; transition: opacity 0.15s;
+    }
+    #tag-add-btn:hover { opacity: 0.8; }
+
     main { max-width: 1300px; margin: 0 auto; padding: 2rem 2.5rem 5rem; }
 
     #photo-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1.2rem; align-items: start; }
@@ -191,6 +229,15 @@
   <button class="status-filter-btn" data-status="approved">Approuvées</button>
   <button class="status-filter-btn" data-status="refused">Refusées</button>
   <span id="total-count"></span>
+  <button id="tags-panel-toggle" onclick="toggleTagsPanel()">Tags</button>
+</div>
+
+<div id="tags-panel">
+  <span class="filter-label">Tags</span>
+  <div id="tag-pills"></div>
+  <input type="text" id="tag-new-input" placeholder="Nouveau tag…" maxlength="40"
+         onkeydown="if(event.key==='Enter') addTag()" />
+  <button id="tag-add-btn" onclick="addTag()">Ajouter</button>
 </div>
 
 <main>
@@ -285,6 +332,50 @@
       const r = await fetch(`${API}/tags`, { headers: modHeaders() });
       if (r.ok) availableTags = await r.json() || [];
     } catch(e) {}
+    renderTagPills();
+  }
+
+  async function saveTags() {
+    try {
+      await fetch(`${API}/admin/tags`, {
+        method: 'POST', headers: modHeaders({ 'Content-Type': 'application/json' }),
+        body: JSON.stringify(availableTags)
+      });
+    } catch(e) { showToast('Erreur sauvegarde tags', 'error'); }
+  }
+
+  function renderTagPills() {
+    const container = document.getElementById('tag-pills');
+    if (!container) return;
+    container.innerHTML = '';
+    availableTags.forEach(tag => {
+      const pill = document.createElement('span');
+      pill.className = 'tag-pill';
+      pill.innerHTML = `${tag}<button title="Supprimer" onclick="removeTag('${tag.replace(/'/g, "\\'")}')">✕</button>`;
+      container.appendChild(pill);
+    });
+  }
+
+  async function addTag() {
+    const input = document.getElementById('tag-new-input');
+    const val = input.value.trim();
+    if (!val || availableTags.includes(val)) { input.focus(); return; }
+    availableTags = [...availableTags, val];
+    input.value = '';
+    renderTagPills();
+    await saveTags();
+    showToast('Tag ajouté', 'success');
+  }
+
+  async function removeTag(tag) {
+    availableTags = availableTags.filter(t => t !== tag);
+    renderTagPills();
+    await saveTags();
+    showToast('Tag supprimé', 'success');
+  }
+
+  function toggleTagsPanel() {
+    document.getElementById('tags-panel').classList.toggle('open');
   }
 
   async function loadPhotos() {
