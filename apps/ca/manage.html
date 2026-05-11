@@ -337,11 +337,12 @@
 
   async function saveTags() {
     try {
-      await fetch(`${API}/admin/tags`, {
+      const r = await fetch(`${API}/mod/tags`, {
         method: 'POST', headers: modHeaders({ 'Content-Type': 'application/json' }),
         body: JSON.stringify(availableTags)
       });
-    } catch(e) { showToast('Erreur sauvegarde tags', 'error'); }
+      if (!r.ok) showToast('Erreur sauvegarde tags', 'error');
+    } catch(e) { showToast('Erreur réseau', 'error'); }
   }
 
   function renderTagPills() {
