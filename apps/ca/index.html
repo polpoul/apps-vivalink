@@ -16,42 +16,6 @@
     }
     html, body { min-height: 100%; background: var(--off-white); color: var(--dark); font-family: 'DM Sans', sans-serif; }
 
-    /* Auth overlay */
-    #auth-overlay {
-      position: fixed; inset: 0; background: var(--off-white);
-      display: flex; align-items: center; justify-content: center;
-      z-index: 1000; flex-direction: column; gap: 1.5rem; padding: 2rem; text-align: center;
-    }
-    #auth-overlay h1 { font-family: 'Playfair Display', serif; font-size: 2.2rem; font-weight: 400; }
-    #auth-overlay h1 em { font-style: italic; color: var(--accent); }
-    .auth-card {
-      background: white; border-radius: 14px; padding: 2rem;
-      width: 100%; max-width: 340px; box-shadow: 0 4px 32px rgba(0,0,0,0.08);
-      display: flex; flex-direction: column; gap: 1rem;
-    }
-    .auth-card p { color: var(--mid-gray); font-size: 0.88rem; line-height: 1.6; }
-    .auth-card p strong { color: var(--dark); }
-    .auth-card input[type="email"] {
-      width: 100%; padding: 0.75rem 1rem;
-      border: 1px solid var(--warm-gray); border-radius: 8px;
-      font-family: 'DM Sans', sans-serif; font-size: 0.95rem;
-      outline: none; background: var(--off-white); transition: border-color 0.2s;
-    }
-    .auth-card input[type="email"]:focus { border-color: var(--accent); background: white; }
-    .auth-card .btn-primary {
-      width: 100%; padding: 0.8rem; background: var(--dark); color: white; border: none;
-      border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 0.9rem;
-      letter-spacing: 0.04em; cursor: pointer; transition: opacity 0.2s;
-    }
-    .auth-card .btn-primary:hover { opacity: 0.8; }
-    .auth-card .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
-    #auth-msg { color: #c0392b; font-size: 0.82rem; min-height: 1rem; }
-    #auth-sent { display: none; flex-direction: column; gap: 0.75rem; align-items: center; }
-    #auth-sent .sent-icon { font-size: 2.5rem; }
-    .btn-link { background: none; border: none; color: var(--mid-gray); font-size: 0.8rem; cursor: pointer; text-decoration: underline; text-underline-offset: 2px; font-family: 'DM Sans', sans-serif; }
-    .btn-link:hover { color: var(--dark); }
-
-    /* Header */
     header {
       position: sticky; top: 0; z-index: 100;
       background: rgba(248,246,243,0.92); backdrop-filter: blur(12px);
@@ -63,23 +27,18 @@
     .brand em { font-style: italic; color: var(--accent); }
     .header-right { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
     .photo-count { font-size: 0.78rem; color: var(--mid-gray); letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap; }
-    .btn-manage {
+    .btn-share {
       display: flex; align-items: center; gap: 0.5rem;
-      background: var(--dark); color: white; text-decoration: none;
+      background: var(--accent); color: white; text-decoration: none;
       padding: 0.5rem 1.1rem; border-radius: 6px; font-size: 0.82rem; letter-spacing: 0.04em; transition: opacity 0.2s; white-space: nowrap;
     }
-    .btn-manage:hover { opacity: 0.75; }
+    .btn-share:hover { opacity: 0.75; }
 
-    /* Filtre uploaders */
     #filter-bar {
-      display: none;
-      padding: 0.8rem 2.5rem;
-      background: rgba(248,246,243,0.92);
-      backdrop-filter: blur(12px);
+      display: none; padding: 0.8rem 2.5rem;
+      background: rgba(248,246,243,0.92); backdrop-filter: blur(12px);
       border-bottom: 1px solid var(--warm-gray);
-      gap: 0.5rem;
-      flex-wrap: wrap;
-      align-items: center;
+      gap: 0.5rem; flex-wrap: wrap; align-items: center;
     }
     #filter-bar.visible { display: flex; }
     .filter-label { font-size: 0.72rem; color: var(--mid-gray); letter-spacing: 0.08em; text-transform: uppercase; margin-right: 0.25rem; white-space: nowrap; }
@@ -87,16 +46,12 @@
       font-size: 0.75rem; font-family: 'DM Sans', sans-serif;
       padding: 0.3rem 0.8rem; border-radius: 99px;
       border: 1px solid var(--warm-gray); background: white;
-      cursor: pointer; transition: all 0.15s; color: var(--dark);
-      letter-spacing: 0.03em;
+      cursor: pointer; transition: all 0.15s; color: var(--dark); letter-spacing: 0.03em;
     }
     .filter-btn:hover { border-color: var(--mid-gray); }
     .filter-btn.active { background: var(--dark); color: white; border-color: var(--dark); }
-
-    /* Séparateur entre filtres uploader et tags */
     .filter-sep { width: 1px; height: 1.2rem; background: var(--warm-gray); margin: 0 0.25rem; }
 
-    /* Gallery */
     main { padding: 2rem 2.5rem 5rem; max-width: 1400px; margin: 0 auto; }
 
     #empty-state { display: none; flex-direction: column; align-items: center; padding: 8rem 2rem; gap: 1rem; text-align: center; }
@@ -105,17 +60,12 @@
     #empty-state a { color: var(--dark); font-weight: 500; font-size: 0.9rem; text-decoration: underline; text-underline-offset: 3px; }
 
     #gallery {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-      gap: 1.8rem;
-      align-items: start;
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 1.8rem; align-items: start;
     }
-
     .polaroid {
-      display: block; width: 100%;
-      background: white; padding: 0.85rem 0.85rem 2.4rem;
-      box-shadow: var(--shadow-polaroid);
-      cursor: pointer; position: relative;
+      display: block; width: 100%; background: white; padding: 0.85rem 0.85rem 2.4rem;
+      box-shadow: var(--shadow-polaroid); cursor: pointer; position: relative;
       transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.3s ease;
       animation: fadeUp 0.5s ease both;
     }
@@ -131,7 +81,6 @@
       color: var(--mid-gray); padding: 0 0.5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
 
-    /* Lightbox */
     #lightbox { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 500; align-items: center; justify-content: center; }
     #lightbox.open { display: flex; }
     #lightbox img { max-width: 92vw; max-height: 90vh; object-fit: contain; }
@@ -147,46 +96,28 @@
 </head>
 <body>
 
-<div id="auth-overlay">
-  <h1>Ca <em>&</em> Photos</h1>
-  <div class="auth-card">
-    <div id="auth-email-step" style="display:flex; flex-direction:column; gap:1rem;">
-      <p>Entrez votre adresse email pour recevoir un <strong>lien de connexion</strong>.</p>
-      <input type="email" id="email-input" placeholder="votre@email.com" autocomplete="email"
-             onkeydown="if(event.key==='Enter') sendMagicLink()" />
-      <button class="btn-primary" id="btn-send" onclick="sendMagicLink()">Envoyer le lien</button>
-      <span id="auth-msg"></span>
-    </div>
-    <div id="auth-sent">
-      <div class="sent-icon">✉️</div>
-      <p>Lien envoyé à <strong id="sent-email"></strong>.<br><br>Cliquez sur le lien dans votre email pour accéder à la galerie.</p>
-      <button class="btn-link" onclick="resetAuthForm()">Utiliser une autre adresse</button>
-    </div>
-  </div>
-</div>
-
 <header>
   <a class="brand" href="/">Ca <em>&</em> Photos</a>
-<div class="header-right">
-  <span class="photo-count" id="photo-count"></span>
-  <label style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;font-size:0.82rem;color:var(--mid-gray);">
-    <input type="checkbox" id="diaporama-toggle" onchange="onDiaporamaToggle()" style="width:14px;height:14px;accent-color:var(--dark);cursor:pointer;" />
-    Diaporama
-  </label>
-  <a class="btn-manage" href="/manage.html">Gérer</a>
-</div>
+  <div class="header-right">
+    <span class="photo-count" id="photo-count"></span>
+    <label style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;font-size:0.82rem;color:var(--mid-gray);">
+      <input type="checkbox" id="diaporama-toggle" onchange="onDiaporamaToggle()" style="width:14px;height:14px;accent-color:var(--dark);cursor:pointer;" />
+      Diaporama
+    </label>
+    <a class="btn-share" href="/mes-photos.html">Partager vos photos</a>
+  </div>
 </header>
 
 <div id="filter-bar">
   <span class="filter-label">Filtrer</span>
-  <button class="filter-btn active" data-uploader="all">Tous</button>
+  <button class="filter-btn active" data-tag="all">Tous</button>
 </div>
 
 <main>
   <div id="empty-state">
     <div class="icon">📷</div>
     <p>Aucune photo pour le moment.</p>
-    <a href="/manage.html">Ajouter des photos →</a>
+    <a href="/mes-photos.html">Partager vos photos →</a>
   </div>
   <div id="gallery"></div>
 </main>
@@ -202,70 +133,18 @@
 </div>
 
 <script>
-  const AUTH   = 'https://auth.vivalink.top';
   const API    = 'https://ca.vivalink.top/api';
   const PHOTOS = 'https://ca.vivalink.top/photos';
-  let token = localStorage.getItem('device_token') || '';
   let allPhotos = [];
   let filteredPhotos = [];
-  let activeUploader = 'all';
-  let activeTags = []; // intersection — photo doit avoir TOUS ces tags
+  let activeTags = [];
   let availableTags = [];
   let lbIdx = 0;
 
-  async function handleLoginCallback() {
-    const p = new URLSearchParams(location.search);
-    const t = p.get('token');
-    if (!t) return false;
-    history.replaceState({}, '', location.pathname);
-    try {
-      const r = await fetch(`${AUTH}/auth/login?token=${encodeURIComponent(t)}`);
-      if (r.ok) { const d = await r.json(); token = d.device_token; localStorage.setItem('device_token', token); return true; }
-    } catch(e) {}
-    return false;
-  }
-
-  async function checkAuth() {
-    if (!token) return false;
-    try {
-      const r = await fetch(`${AUTH}/auth/me`, { headers: { 'Authorization': `Bearer ${token}` } });
-      if (r.ok) return true;
-      token = ''; localStorage.removeItem('device_token'); return false;
-    } catch { return false; }
-  }
-
-  async function sendMagicLink() {
-    const email = document.getElementById('email-input').value.trim();
-    const msg = document.getElementById('auth-msg');
-    const btn = document.getElementById('btn-send');
-    if (!email) { msg.textContent = 'Adresse email requise.'; return; }
-    btn.disabled = true; btn.textContent = 'Envoi…';
-    try {
-      await fetch(`${AUTH}/auth/request-login`, {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, app: 'ca', redirect_url: 'https://ca.vivalink.top' })
-      });
-      document.getElementById('auth-email-step').style.display = 'none';
-      document.getElementById('sent-email').textContent = email;
-      document.getElementById('auth-sent').style.display = 'flex';
-    } catch(e) {
-      msg.textContent = 'Erreur réseau, réessayez.';
-      btn.disabled = false; btn.textContent = 'Envoyer le lien';
-    }
-  }
-
-  function resetAuthForm() {
-    document.getElementById('auth-sent').style.display = 'none';
-    document.getElementById('auth-email-step').style.display = 'flex';
-    document.getElementById('auth-msg').textContent = '';
-    const btn = document.getElementById('btn-send');
-    btn.disabled = false; btn.textContent = 'Envoyer le lien';
-  }
-
   async function loadGallery() {
     try {
-      const r = await fetch(`${API}/gallery/list`, { headers: { 'Authorization': `Bearer ${token}` } });
-      if (r.status === 401) { token = ''; localStorage.removeItem('device_token'); location.reload(); return; }
+      const r = await fetch(`${API}/gallery/list`);
+      if (!r.ok) return;
       allPhotos = await r.json() || [];
       await loadTags();
       buildFilterBar();
@@ -275,91 +154,39 @@
 
   async function loadTags() {
     try {
-      const r = await fetch(`${API}/tags`, { headers: { 'Authorization': `Bearer ${token}` } });
+      const r = await fetch(`${API}/tags`);
       if (r.ok) availableTags = await r.json() || [];
     } catch(e) {}
   }
 
   function buildFilterBar() {
     const bar = document.getElementById('filter-bar');
-    bar.innerHTML = '<span class="filter-label">Qui</span><button class="filter-btn active" data-uploader="all">Tous</button>';
-
-    const uploaders = [...new Set(allPhotos.map(p => p.uploader).filter(Boolean))];
-    if (uploaders.length > 1) {
-      uploaders.forEach(uid => {
-        const btn = document.createElement('button');
-        btn.className = 'filter-btn';
-        btn.dataset.uploader = uid;
-        btn.textContent = uid;
-        btn.addEventListener('click', () => setUploaderFilter(uid));
-        bar.appendChild(btn);
-      });
-      bar.querySelector('[data-uploader="all"]').addEventListener('click', () => setUploaderFilter('all'));
-    }
-
-    // Tags
-    if (availableTags.length) {
-      const sep = document.createElement('div');
-      sep.className = 'filter-sep';
-      bar.appendChild(sep);
-
-      const tagLabel = document.createElement('span');
-      tagLabel.className = 'filter-label';
-      tagLabel.textContent = 'Tags';
-      bar.appendChild(tagLabel);
-
-      availableTags.forEach(tag => {
-        const btn = document.createElement('button');
-        btn.className = 'filter-btn';
-        btn.dataset.tag = tag;
-        btn.textContent = tag;
-        btn.addEventListener('click', () => toggleTagFilter(tag));
-        bar.appendChild(btn);
-      });
-    }
-
-    const hasUploaders = uploaders.length > 1;
-    const hasTags = availableTags.length > 0;
-    if (hasUploaders || hasTags) {
-      bar.classList.add('visible');
-    } else {
-      bar.classList.remove('visible');
-    }
-  }
-
-  function setUploaderFilter(uploader) {
-    activeUploader = uploader;
-    document.querySelectorAll('#filter-bar [data-uploader]').forEach(btn => {
-      btn.classList.toggle('active', btn.dataset.uploader === uploader);
+    if (!availableTags.length) { bar.classList.remove('visible'); return; }
+    bar.innerHTML = '<span class="filter-label">Tags</span><button class="filter-btn active" data-tag="all">Tous</button>';
+    availableTags.forEach(tag => {
+      const btn = document.createElement('button');
+      btn.className = 'filter-btn'; btn.dataset.tag = tag; btn.textContent = tag;
+      btn.addEventListener('click', () => toggleTagFilter(tag));
+      bar.appendChild(btn);
     });
-    applyFilter();
+    bar.querySelector('[data-tag="all"]').addEventListener('click', () => { activeTags = []; document.querySelectorAll('#filter-bar .filter-btn').forEach(b => b.classList.toggle('active', b.dataset.tag === 'all')); applyFilter(); });
+    bar.classList.add('visible');
   }
 
   function toggleTagFilter(tag) {
-    if (activeTags.includes(tag)) {
-      activeTags = activeTags.filter(t => t !== tag);
-    } else {
-      activeTags = [...activeTags, tag];
-    }
+    if (activeTags.includes(tag)) { activeTags = activeTags.filter(t => t !== tag); }
+    else { activeTags = [...activeTags, tag]; }
     document.querySelectorAll('#filter-bar [data-tag]').forEach(btn => {
-      btn.classList.toggle('active', activeTags.includes(btn.dataset.tag));
+      btn.classList.toggle('active', activeTags.length === 0 ? btn.dataset.tag === 'all' : activeTags.includes(btn.dataset.tag));
     });
     applyFilter();
   }
 
   function applyFilter() {
-    let photos = allPhotos;
-    if (activeUploader !== 'all') {
-      photos = photos.filter(p => p.uploader === activeUploader);
-    }
-    // Intersection : photo doit avoir TOUS les tags actifs
-    if (activeTags.length > 0) {
-      photos = photos.filter(p => {
-        const pt = p.tags || [];
-        return activeTags.every(t => pt.includes(t));
-      });
-    }
-    filteredPhotos = photos;
+    filteredPhotos = activeTags.length === 0 ? allPhotos : allPhotos.filter(p => {
+      const pt = p.tags || [];
+      return activeTags.every(t => pt.includes(t));
+    });
     renderGallery();
   }
 
@@ -368,46 +195,26 @@
     const empty = document.getElementById('empty-state');
     const countEl = document.getElementById('photo-count');
     gallery.innerHTML = '';
-
     if (!filteredPhotos.length) {
-      empty.style.display = 'flex';
-      countEl.textContent = '';
-      return;
+      empty.style.display = 'flex'; countEl.textContent = ''; return;
     }
     empty.style.display = 'none';
-    const total = allPhotos.length;
-    const shown = filteredPhotos.length;
-    countEl.textContent = shown === total
-      ? `${total} photo${total > 1 ? 's' : ''}`
-      : `${shown} / ${total} photo${total > 1 ? 's' : ''}`;
-
+    const total = allPhotos.length, shown = filteredPhotos.length;
+    countEl.textContent = shown === total ? `${total} photo${total > 1 ? 's' : ''}` : `${shown} / ${total} photo${total > 1 ? 's' : ''}`;
     filteredPhotos.forEach((p, i) => {
       const div = document.createElement('div');
-      div.className = 'polaroid';
-      div.style.animationDelay = `${i * 0.035}s`;
-      const d = new Date(p.created_at);
-      const label = d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+      div.className = 'polaroid'; div.style.animationDelay = `${i * 0.035}s`;
+      const label = new Date(p.created_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
       div.innerHTML = `<img src="${PHOTOS}/${p.filename}?t=${new Date(p.created_at).getTime()}" loading="lazy" alt="" onerror="this.closest('.polaroid').style.display='none'" /><div class="caption">${label}</div>`;
       div.addEventListener('click', () => openLightbox(i));
       gallery.appendChild(div);
     });
   }
 
-  // Lightbox
-  function openLightbox(idx) { lbIdx = idx; updateLb(); document.getElementById('lightbox').classList.add('open'); document.body.style.overflow = 'hidden'; }
-  function closeLightbox() { document.getElementById('lightbox').classList.remove('open'); document.body.style.overflow = ''; }
-  function updateLb() {
-    const p = filteredPhotos[lbIdx];
-    document.getElementById('lb-img').src = `${PHOTOS}/${p.filename}?t=${new Date(p.created_at).getTime()}`;
-    document.getElementById('lb-counter').textContent = `${lbIdx + 1} / ${filteredPhotos.length}`;
-  }
-
-  function navLightbox(d) {
-  lbIdx = (lbIdx + d + filteredPhotos.length) % filteredPhotos.length;
-  updateLb();
-  // Relancer le timer pour éviter un saut immédiat après navigation manuelle
-  if (document.getElementById('diaporama-toggle').checked) startDiaporama();
-}
+  function openLightbox(idx) { lbIdx = idx; updateLb(); document.getElementById('lightbox').classList.add('open'); document.body.style.overflow = 'hidden'; if (document.getElementById('diaporama-toggle').checked) startDiaporama(); }
+  function closeLightbox() { document.getElementById('lightbox').classList.remove('open'); document.body.style.overflow = ''; stopDiaporama(); }
+  function updateLb() { const p = filteredPhotos[lbIdx]; document.getElementById('lb-img').src = `${PHOTOS}/${p.filename}?t=${new Date(p.created_at).getTime()}`; document.getElementById('lb-counter').textContent = `${lbIdx + 1} / ${filteredPhotos.length}`; }
+  function navLightbox(d) { lbIdx = (lbIdx + d + filteredPhotos.length) % filteredPhotos.length; updateLb(); if (document.getElementById('diaporama-toggle').checked) startDiaporama(); }
   document.getElementById('lightbox').addEventListener('click', e => { if (e.target === e.currentTarget) closeLightbox(); });
   document.addEventListener('keydown', e => {
     if (!document.getElementById('lightbox').classList.contains('open')) return;
@@ -416,60 +223,13 @@
     if (e.key === 'ArrowLeft') navLightbox(-1);
   });
 
-  (async () => {
-    const loggedIn = await handleLoginCallback();
-    if (loggedIn || await checkAuth()) {
-      document.getElementById('auth-overlay').style.display = 'none';
-      loadGallery();
-    }
-  })();
+  let diaporamaInterval = null;
+  const DELAY = 3500;
+  function onDiaporamaToggle() { const on = document.getElementById('diaporama-toggle').checked; if (on && document.getElementById('lightbox').classList.contains('open')) startDiaporama(); else stopDiaporama(); }
+  function startDiaporama() { stopDiaporama(); diaporamaInterval = setInterval(() => { lbIdx = (lbIdx + 1) % filteredPhotos.length; updateLb(); }, DELAY); }
+  function stopDiaporama() { if (diaporamaInterval) { clearInterval(diaporamaInterval); diaporamaInterval = null; } }
 
-  // Diorama
-let diaporamaInterval = null;
-let diaporamaDelay = 4000; // 4 secondes par photo
-const DELAY = 3500;
-
-function onDiaporamaToggle() {
-  const on = document.getElementById('diaporama-toggle').checked;
-  if (on && document.getElementById('lightbox').classList.contains('open')) {
-    startDiaporama();
-  } else {
-    stopDiaporama();
-  }
-}
-
-function startDiaporama() {
-  stopDiaporama();
-  diaporamaInterval = setInterval(() => {
-    lbIdx = (lbIdx + 1) % filteredPhotos.length;
-    updateLb();
-  }, DELAY);
-}
-
-function stopDiaporama() {
-  if (diaporamaInterval) { clearInterval(diaporamaInterval); diaporamaInterval = null; }
-}
-
-function toggleDiaporama() {
-  if (diaporamaInterval) {
-    stopDiaporama();
-  } else {
-    startDiaporama();
-  }
-}
-
-function openLightbox(idx) {
-  lbIdx = idx; updateLb();
-  document.getElementById('lightbox').classList.add('open');
-  document.body.style.overflow = 'hidden';
-  if (document.getElementById('diaporama-toggle').checked) startDiaporama();
-}
-
-function closeLightbox() {
-  document.getElementById('lightbox').classList.remove('open');
-  document.body.style.overflow = '';
-  stopDiaporama();
-}
+  loadGallery();
 </script>
 </body>
 </html>
