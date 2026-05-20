@@ -205,7 +205,7 @@
 <div id="quota-bar">
   <span class="quota-label">Quota</span>
   <div class="quota-track"><div class="quota-fill" id="quota-fill" style="width:0%"></div></div>
-  <span class="quota-text" id="quota-text">0 / 100</span>
+  <span class="quota-text" id="quota-text">0 / 250</span>
   <span id="user-email"></span>
 </div>
 
@@ -258,7 +258,7 @@
   let selectedFiles = [];
   let pendingDelete = null;
   let allPhotos = [];
-  let quotaUsed = 0, quotaMax = 100;
+  let quotaUsed = 0, quotaMax = 250;
 
   // ── Auth ──────────────────────────────────────────────────────────────────
 
@@ -372,7 +372,7 @@
           method: 'POST', headers: { 'Authorization': `Bearer ${uploaderToken}` }, body: fd
         });
         if (r.status === 401) { uploaderToken = ''; localStorage.removeItem('uploader_token'); location.reload(); return; }
-        if (r.status === 403) { showToast('Quota atteint (100 photos max)', 'error'); break; }
+        if (r.status === 403) { showToast(`Quota atteint (${quotaMax} photos max)`, 'error'); break; }
         if (!r.ok) errors++;
       } catch(e) { errors++; }
       done++;
