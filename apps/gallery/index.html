@@ -1,1 +1,412 @@
 
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Galerie</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f5f0e8;
+    --surface: #fffdf8;
+    --border: #e0d8cc;
+    --text: #2a2520;
+    --text-muted: #8a8078;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { height: 100%; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100dvh; }
+
+  #loader { position: fixed; inset: 0; background: var(--bg); display: flex; align-items: center; justify-content: center; z-index: 999; font-family: 'Playfair Display', serif; font-size: 1rem; color: var(--text-muted); gap: 10px; }
+  .spinner { width: 18px; height: 18px; border: 2px solid var(--border); border-top-color: var(--text-muted); border-radius: 50%; animation: spin .7s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  header { display: flex; align-items: center; justify-content: space-between; padding: 16px 22px; border-bottom: 1px solid var(--border); background: var(--surface); position: sticky; top: 0; z-index: 50; }
+  .logo { font-family: 'Playfair Display', serif; font-size: 1.2rem; letter-spacing: -0.02em; cursor: pointer; }
+  .logo span { color: var(--text-muted); font-weight: 400; }
+  .header-right { display: flex; align-items: center; gap: 14px; }
+  .breadcrumb { font-size: .85rem; color: var(--text-muted); }
+  .breadcrumb .current { color: var(--text); }
+  .icon-btn { border: 1px solid var(--border); background: var(--bg); border-radius: 8px; padding: 6px 12px; font-size: .78rem; cursor: pointer; font-family: inherit; color: var(--text-muted); }
+  .icon-btn:hover { background: var(--border); color: var(--text); }
+
+  main { padding: 22px; max-width: 1200px; margin: 0 auto; }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 16px; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; cursor: pointer; transition: transform .15s, box-shadow .15s; }
+  .card:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(0,0,0,.08); }
+  .card-thumb { width: 100%; aspect-ratio: 1; background: var(--bg); display: flex; align-items: center; justify-content: center; overflow: hidden; }
+  .card-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .card-thumb .placeholder { color: var(--text-muted); font-size: .75rem; }
+  .card-label { padding: 10px 12px; }
+  .card-title { font-size: .9rem; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .card-meta { font-size: .72rem; color: var(--text-muted); margin-top: 2px; }
+
+  .empty-state { text-align: center; padding: 60px 20px; color: var(--text-muted); }
+  .empty-state h2 { font-family: 'Playfair Display', serif; font-weight: 400; margin-bottom: 8px; color: var(--text); }
+
+  /* ── LIGHTBOX ── */
+  .lightbox { position: fixed; inset: 0; background: rgba(20,16,12,.94); z-index: 400; display: none; align-items: center; justify-content: center; }
+  .lightbox.open { display: flex; }
+  .lightbox img { max-width: 92vw; max-height: 88vh; object-fit: contain; border-radius: 4px; }
+  .lightbox-nav { position: absolute; top: 0; bottom: 0; width: 15%; display: flex; align-items: center; cursor: pointer; }
+  .lightbox-nav.prev { left: 0; justify-content: flex-start; padding-left: 16px; }
+  .lightbox-nav.next { right: 0; justify-content: flex-end; padding-right: 16px; }
+  .lightbox-nav span { font-size: 2rem; color: rgba(255,255,255,.6); user-select: none; }
+  .lightbox-nav:hover span { color: #fff; }
+  .lightbox-close { position: absolute; top: 18px; right: 22px; font-size: 1.6rem; color: rgba(255,255,255,.7); cursor: pointer; z-index: 2; }
+  .lightbox-close:hover { color: #fff; }
+  .lightbox-caption { position: absolute; bottom: 18px; left: 0; right: 0; text-align: center; color: rgba(255,255,255,.6); font-size: .8rem; }
+
+  /* ── LOGIN MODAL ── */
+  .modal-overlay { position: fixed; inset: 0; background: rgba(42,37,32,.4); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 500; opacity: 0; pointer-events: none; transition: opacity .2s; }
+  .modal-overlay.open { opacity: 1; pointer-events: all; }
+  .modal { background: var(--surface); border-radius: 16px; padding: 26px; width: 330px; border: 1px solid var(--border); transform: translateY(8px); transition: transform .2s; box-shadow: 0 20px 60px rgba(0,0,0,.12); }
+  .modal-overlay.open .modal { transform: translateY(0); }
+  .modal h2 { font-family: 'Playfair Display', serif; font-size: 1.15rem; margin-bottom: 5px; }
+  .modal p { font-size: .83rem; color: var(--text-muted); margin-bottom: 18px; line-height: 1.5; }
+  .modal input { width: 100%; padding: 9px 13px; border: 1.5px solid var(--border); border-radius: 8px; font-family: inherit; font-size: .88rem; background: var(--bg); color: var(--text); outline: none; transition: border-color .15s; margin-bottom: 10px; }
+  .modal input:focus { border-color: var(--text-muted); }
+  .modal-actions { display: flex; gap: 8px; justify-content: flex-end; }
+  .btn { padding: 8px 16px; border-radius: 8px; font-family: inherit; font-size: .85rem; cursor: pointer; border: none; transition: all .15s; font-weight: 500; }
+  .btn-primary { background: var(--text); color: #fff; }
+  .btn-primary:hover { opacity: .85; }
+
+  .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: var(--text); color: #fff; padding: 8px 18px; border-radius: 50px; font-size: .82rem; z-index: 999; opacity: 0; transition: opacity .2s; pointer-events: none; }
+  .toast.show { opacity: 1; }
+</style>
+</head>
+<body>
+
+<div id="loader"><div class="spinner"></div> Chargement…</div>
+
+<header>
+  <div class="logo" id="homeLink">Galerie<span>photos</span></div>
+  <div class="header-right">
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <button class="icon-btn" id="refreshBtn" title="Rafraîchir la liste des albums">↻ Actualiser</button>
+  </div>
+</header>
+
+<main>
+  <div class="grid" id="grid"></div>
+  <div class="empty-state" id="emptyState" style="display:none">
+    <h2>Aucune photo ici</h2>
+    <p>Synchronisez un album pour le voir apparaître.</p>
+  </div>
+</main>
+
+<div class="lightbox" id="lightbox">
+  <div class="lightbox-close" id="lightboxClose">×</div>
+  <div class="lightbox-nav prev" id="lightboxPrev"><span>‹</span></div>
+  <img id="lightboxImg" alt="">
+  <div class="lightbox-nav next" id="lightboxNext"><span>›</span></div>
+  <div class="lightbox-caption" id="lightboxCaption"></div>
+</div>
+
+<!-- Modal auth magic link -->
+<div class="modal-overlay" id="identModal">
+  <div class="modal">
+    <div id="step1">
+      <h2>Connexion</h2>
+      <p>Entrez votre email — vous recevrez un lien de connexion instantané, sans mot de passe.</p>
+      <input type="email" id="emailInput" placeholder="votre@email.com" maxlength="100" />
+      <div class="modal-actions">
+        <button class="btn btn-primary" id="sendLinkBtn">Envoyer le lien →</button>
+      </div>
+    </div>
+    <div id="step2" style="display:none">
+      <h2>Vérifiez vos emails ✉️</h2>
+      <p>Un lien de connexion vient d'être envoyé. Cliquez dessus pour accéder à la galerie — le lien est valable 1 heure.</p>
+      <p style="margin-top:8px;font-size:.75rem;color:var(--text-muted)">Pensez à vérifier vos spams.</p>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ─── CONFIG ────────────────────────────────────────────────
+const API_URL  = 'https://api-gallery.vivalink.top';
+const AUTH_URL = 'https://auth.vivalink.top';
+const APP_NAME = 'gallery';
+
+// ─── SESSION (device_token en localStorage) ────────────────
+let deviceToken = null;
+
+function saveSession(token, userId) {
+  localStorage.setItem('gallery_session', JSON.stringify({ token, userId }));
+}
+function loadSession() {
+  try { return JSON.parse(localStorage.getItem('gallery_session') || 'null'); }
+  catch (e) { return null; }
+}
+function clearSession() {
+  localStorage.removeItem('gallery_session');
+}
+
+async function verifyToken(token) {
+  try {
+    const res = await fetch(`${AUTH_URL}/auth/me`, { headers: { 'Authorization': `Bearer ${token}` } });
+    if (!res.ok) return null;
+    const data = await res.json();
+    return data.user_id || null;
+  } catch (e) { return null; }
+}
+
+// ─── API GALLERY ────────────────────────────────────────────
+async function api(path) {
+  const res = await fetch(`${API_URL}/${path}`, {
+    headers: { 'Authorization': `Bearer ${deviceToken}` },
+  });
+  if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
+  return res.json();
+}
+
+function showLoader(on) { document.getElementById('loader').style.display = on ? 'flex' : 'none'; }
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ─── LOGIN MODAL ─────────────────────────────────────────────
+function showLoginModal() {
+  const modal = document.getElementById('identModal');
+  modal.classList.add('open');
+  const emailInput = document.getElementById('emailInput');
+  const step1 = document.getElementById('step1');
+  const step2 = document.getElementById('step2');
+  step1.style.display = 'block';
+  step2.style.display = 'none';
+  setTimeout(() => emailInput.focus(), 150);
+
+  async function sendLink() {
+    const email = emailInput.value.trim();
+    if (!email || !email.includes('@')) { showToast('Email invalide'); return; }
+    showLoader(true);
+    try {
+      const res = await fetch(`${AUTH_URL}/auth/request-login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, app: APP_NAME, redirect_url: window.location.origin }),
+      });
+      if (!res.ok) throw new Error('Erreur serveur');
+      step1.style.display = 'none';
+      step2.style.display = 'block';
+    } catch (e) {
+      showToast('Erreur : ' + e.message);
+    } finally {
+      showLoader(false);
+    }
+  }
+  document.getElementById('sendLinkBtn').onclick = sendLink;
+  emailInput.onkeydown = e => { if (e.key === 'Enter') sendLink(); };
+}
+
+// ─── STATE + NAVIGATION (albums <-> photos) ─────────────────
+let albums = [];
+let currentAlbum = null;
+let currentPhotos = [];
+let lightboxIndex = -1;
+
+function renderBreadcrumb() {
+  const el = document.getElementById('breadcrumb');
+  if (!currentAlbum) { el.textContent = ''; return; }
+  el.innerHTML = `<span id="crumbAlbums" style="cursor:pointer">Albums</span> / <span class="current">${escapeHtml(currentAlbum.name)}</span>`;
+  document.getElementById('crumbAlbums').onclick = showAlbums;
+}
+
+function escapeHtml(s) {
+  return s.replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+}
+
+async function showAlbums() {
+  currentAlbum = null;
+  renderBreadcrumb();
+  showLoader(true);
+  try {
+    albums = await api('albums');
+  } catch (e) {
+    showToast('Erreur de chargement : ' + e.message);
+    albums = [];
+  }
+  showLoader(false);
+  renderAlbumGrid();
+}
+
+function renderAlbumGrid() {
+  const grid = document.getElementById('grid');
+  const empty = document.getElementById('emptyState');
+  grid.innerHTML = '';
+  if (!albums.length) { empty.style.display = 'block'; return; }
+  empty.style.display = 'none';
+
+  albums.forEach(a => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML = `
+      <div class="card-thumb">
+        ${a.coverThumbUrl ? `<img loading="lazy" src="${API_URL}${a.coverThumbUrl}" alt="">` : `<span class="placeholder">Vide</span>`}
+      </div>
+      <div class="card-label">
+        <div class="card-title">${escapeHtml(a.name)}</div>
+        <div class="card-meta">${a.photoCount} photo${a.photoCount > 1 ? 's' : ''}</div>
+      </div>
+    `;
+    const img = card.querySelector('img');
+    if (img) attachAuthedImage(img, a.coverThumbUrl);
+    card.onclick = () => openAlbum(a);
+    grid.appendChild(card);
+  });
+}
+
+async function openAlbum(album) {
+  currentAlbum = album;
+  renderBreadcrumb();
+  showLoader(true);
+  try {
+    currentPhotos = await api(`albums/${album.id}/photos`);
+  } catch (e) {
+    showToast('Erreur de chargement : ' + e.message);
+    currentPhotos = [];
+  }
+  showLoader(false);
+  renderPhotoGrid();
+}
+
+function renderPhotoGrid() {
+  const grid = document.getElementById('grid');
+  const empty = document.getElementById('emptyState');
+  grid.innerHTML = '';
+  if (!currentPhotos.length) { empty.style.display = 'block'; return; }
+  empty.style.display = 'none';
+
+  currentPhotos.forEach((p, i) => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML = `
+      <div class="card-thumb"><img loading="lazy" alt=""></div>
+      <div class="card-label"><div class="card-title">${escapeHtml(p.filename)}</div></div>
+    `;
+    attachAuthedImage(card.querySelector('img'), p.thumbUrl);
+    card.onclick = () => openLightbox(i);
+    grid.appendChild(card);
+  });
+}
+
+document.getElementById('homeLink').onclick = showAlbums;
+document.getElementById('refreshBtn').onclick = async () => {
+  showLoader(true);
+  try {
+    await fetch(`${API_URL}/admin/refresh`, {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${deviceToken}` },
+    });
+    showToast('Index rafraîchi');
+  } catch (e) {
+    showToast('Erreur : ' + e.message);
+  }
+  if (currentAlbum) await openAlbum(currentAlbum); else await showAlbums();
+};
+
+// Images require a Bearer header, so <img src> alone won't authenticate —
+// fetch as a blob and swap in an object URL.
+const blobUrlCache = new Map();
+async function attachAuthedImage(img, path) {
+  if (!path) return;
+  if (blobUrlCache.has(path)) { img.src = blobUrlCache.get(path); return; }
+  try {
+    const res = await fetch(`${API_URL}${path}`, { headers: { 'Authorization': `Bearer ${deviceToken}` } });
+    if (!res.ok) return;
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    blobUrlCache.set(path, url);
+    img.src = url;
+  } catch (e) { /* leave placeholder */ }
+}
+
+// ─── LIGHTBOX ────────────────────────────────────────────────
+function openLightbox(index) {
+  lightboxIndex = index;
+  renderLightbox();
+  document.getElementById('lightbox').classList.add('open');
+}
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('open');
+  lightboxIndex = -1;
+}
+function renderLightbox() {
+  const photo = currentPhotos[lightboxIndex];
+  if (!photo) return;
+  const img = document.getElementById('lightboxImg');
+  attachAuthedImage(img, photo.fullUrl);
+  document.getElementById('lightboxCaption').textContent =
+    `${photo.filename} — ${lightboxIndex + 1} / ${currentPhotos.length}`;
+}
+function lightboxPrev() { if (lightboxIndex > 0) { lightboxIndex--; renderLightbox(); } }
+function lightboxNext() { if (lightboxIndex < currentPhotos.length - 1) { lightboxIndex++; renderLightbox(); } }
+
+document.getElementById('lightboxClose').onclick = closeLightbox;
+document.getElementById('lightboxPrev').onclick = lightboxPrev;
+document.getElementById('lightboxNext').onclick = lightboxNext;
+document.getElementById('lightbox').addEventListener('click', e => {
+  if (e.target.id === 'lightbox') closeLightbox();
+});
+document.addEventListener('keydown', e => {
+  if (!document.getElementById('lightbox').classList.contains('open')) return;
+  if (e.key === 'Escape') closeLightbox();
+  if (e.key === 'ArrowLeft') lightboxPrev();
+  if (e.key === 'ArrowRight') lightboxNext();
+});
+
+// ─── INIT ────────────────────────────────────────────────────
+async function init() {
+  showLoader(true);
+
+  const params = new URLSearchParams(window.location.search);
+  const magicToken = params.get('token');
+
+  if (magicToken) {
+    window.history.replaceState({}, '', window.location.pathname);
+    try {
+      const resp = await fetch(`${AUTH_URL}/auth/login?token=${encodeURIComponent(magicToken)}`);
+      if (!resp.ok) throw new Error('Token invalide ou expiré');
+      const data = await resp.json();
+      if (data.device_token) {
+        saveSession(data.device_token, data.user_id);
+        deviceToken = data.device_token;
+        showLoader(false);
+        await showAlbums();
+        return;
+      }
+    } catch (e) {
+      showLoader(false);
+      showToast('Lien invalide ou expiré, veuillez vous reconnecter.');
+      showLoginModal();
+      return;
+    }
+  }
+
+  const session = loadSession();
+  if (session) {
+    const userId = await verifyToken(session.token);
+    if (userId) {
+      deviceToken = session.token;
+      showLoader(false);
+      await showAlbums();
+      return;
+    } else {
+      clearSession();
+    }
+  }
+
+  showLoader(false);
+  showLoginModal();
+}
+
+init();
+</script>
+</body>
+</html>
