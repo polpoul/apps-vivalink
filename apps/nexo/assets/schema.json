@@ -444,6 +444,9 @@
                 "clientId.nom",
                 "montantTotal",
                 "statut"
+            ],
+            "actions": [
+                { "id": "exporter", "label": "Exporter en PDF", "icon": "picture_as_pdf" }
             ]
         },
         {
