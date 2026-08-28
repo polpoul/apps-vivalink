@@ -1,0 +1,2153 @@
+{
+  "types": [
+    {
+      "id": "foyer",
+      "label": "Foyer",
+      "icon": "home",
+      "color": "var(--color-bleu-strong, #395A7E)",
+      "titleFields": [
+        "nom"
+      ],
+      "fields": [
+        {
+          "key": "nom",
+          "label": "Nom du foyer",
+          "category": "identite",
+          "order": 0,
+          "displayMode": "tous"
+        },
+        {
+          "key": "type",
+          "label": "Type",
+          "category": "identite",
+          "order": 1,
+          "displayMode": "tous",
+          "type": "picklist",
+          "options": [
+            "Célibataire",
+            "Couple",
+            "Couple avec enfants",
+            "Autre"
+          ]
+        },
+        {
+          "key": "adresse",
+          "label": "Adresse",
+          "category": "coordonnees",
+          "order": 0,
+          "displayMode": "tous"
+        },
+        {
+          "key": "totalDons",
+          "label": "Total des dons",
+          "category": "dons",
+          "order": 0,
+          "displayMode": "tous",
+          "type": "number"
+        },
+        {
+          "key": "nbDons",
+          "label": "Nombre de dons",
+          "category": "dons",
+          "order": 1,
+          "displayMode": "complet",
+          "type": "number"
+        },
+        {
+          "key": "receuParMail",
+          "label": "Reçu par mail",
+          "type": "checkbox",
+          "derivesField": {
+            "key": "canal",
+            "whenTrue": "Mail",
+            "whenFalse": "Papier"
+          },
+          "category": "dons",
+          "order": 2,
+          "displayMode": "tous"
+        },
+        {
+          "key": "canal",
+          "label": "Canal du reçu",
+          "category": "dons",
+          "order": 3,
+          "displayMode": "tous",
+          "type": "picklist",
+          "options": [
+            "Mail",
+            "Papier"
+          ]
+        },
+        {
+          "key": "envoiRecuFiscal",
+          "label": "Envoi du reçu fiscal",
+          "category": "dons",
+          "order": 4,
+          "displayMode": "complet",
+          "type": "picklist",
+          "options": [
+            "Par email",
+            "Par courrier"
+          ]
+        },
+        {
+          "key": "preferenceRenseignee",
+          "label": "Préférence fiscale renseignée",
+          "category": "dons",
+          "order": 5,
+          "displayMode": "complet",
+          "type": "checkbox"
+        },
+        {
+          "key": "synthDonsFaite",
+          "label": "Synthèse des dons faite",
+          "category": "dons",
+          "order": 6,
+          "displayMode": "complet",
+          "type": "checkbox"
+        },
+        {
+          "key": "civilite",
+          "label": "Civilité",
+          "category": "identite",
+          "order": 2,
+          "displayMode": "complet",
+          "type": "picklist",
+          "options": [
+            "M.",
+            "Mme",
+            "Mlle",
+            "M. et Mme"
+          ]
+        },
+        {
+          "key": "nom1",
+          "label": "Nom (1)",
+          "category": "identite",
+          "order": 3,
+          "displayMode": "complet"
+        },
+        {
+          "key": "prenom1",
+          "label": "Prénom (1)",
+          "category": "identite",
+          "order": 4,
+          "displayMode": "complet"
+        },
+        {
+          "key": "nom2",
+          "label": "Nom (2)",
+          "category": "identite",
+          "order": 5,
+          "displayMode": "complet"
+        },
+        {
+          "key": "prenom2",
+          "label": "Prénom (2)",
+          "category": "identite",
+          "order": 6,
+          "displayMode": "complet"
+        },
+        {
+          "key": "formulePolitesse",
+          "label": "Formule de politesse",
+          "category": "identite",
+          "order": 7,
+          "displayMode": "complet",
+          "type": "picklist",
+          "options": [
+            "Cher Monsieur,",
+            "Chère Madame,",
+            "Cher Monsieur, chère Madame,"
+          ]
+        },
+        {
+          "key": "email",
+          "label": "Email",
+          "category": "coordonnees",
+          "order": 1,
+          "displayMode": "complet"
+        },
+        {
+          "key": "telephone",
+          "label": "Téléphone",
+          "category": "coordonnees",
+          "order": 2,
+          "displayMode": "complet"
+        },
+        {
+          "key": "nbPersonnes",
+          "label": "Nombre de personnes",
+          "category": "composition",
+          "order": 0,
+          "displayMode": "complet",
+          "type": "number"
+        },
+        {
+          "key": "nbConjoints",
+          "label": "Nombre de conjoints",
+          "category": "composition",
+          "order": 1,
+          "displayMode": "complet",
+          "type": "number"
+        },
+        {
+          "key": "nbEnfants",
+          "label": "Nombre d'enfants",
+          "category": "composition",
+          "order": 2,
+          "displayMode": "complet",
+          "type": "number"
+        },
+        {
+          "key": "paroisseOrigine",
+          "label": "Paroisse d'origine",
+          "category": "paroisse",
+          "order": 0,
+          "displayMode": "complet"
+        },
+        {
+          "key": "dateArriveeParoisse",
+          "label": "Date d'arrivée dans la paroisse",
+          "category": "paroisse",
+          "order": 1,
+          "displayMode": "complet",
+          "type": "date"
+        },
+        {
+          "key": "dateDepartParoisse",
+          "label": "Date de départ de la paroisse",
+          "category": "paroisse",
+          "order": 2,
+          "displayMode": "complet",
+          "type": "date"
+        },
+        {
+          "key": "horsParoisse",
+          "label": "Hors paroisse",
+          "type": "checkbox",
+          "category": "identite",
+          "order": 8,
+          "displayMode": "complet"
+        },
+        {
+          "key": "alerteDeces",
+          "label": "Alerte décès",
+          "type": "checkbox",
+          "category": "paroisse",
+          "order": 4,
+          "displayMode": "complet"
+        },
+        {
+          "key": "datePremierContact",
+          "label": "Date de premier contact",
+          "category": "paroisse",
+          "order": 5,
+          "displayMode": "complet",
+          "type": "date"
+        },
+        {
+          "key": "adresseInvalide",
+          "label": "Adresse invalide (NPAI)",
+          "type": "checkbox",
+          "category": "coordonnees",
+          "order": 3,
+          "displayMode": "complet"
+        },
+        {
+          "key": "emailInvalide",
+          "label": "Email invalide",
+          "type": "checkbox",
+          "category": "coordonnees",
+          "order": 4,
+          "displayMode": "complet"
+        },
+        {
+          "key": "stopcom",
+          "label": "Stop com (tags)",
+          "category": "coordonnees",
+          "order": 5,
+          "displayMode": "complet"
+        },
+        {
+          "key": "emailOptOut",
+          "label": "Opt-out email",
+          "type": "checkbox",
+          "category": "coordonnees",
+          "order": 6,
+          "displayMode": "complet"
+        },
+        {
+          "key": "nepasappeler",
+          "label": "Ne pas appeler",
+          "type": "checkbox",
+          "category": "coordonnees",
+          "order": 7,
+          "displayMode": "complet"
+        },
+        {
+          "key": "aucunCourrier",
+          "label": "Aucun courrier",
+          "type": "checkbox",
+          "category": "coordonnees",
+          "order": 8,
+          "displayMode": "complet"
+        },
+        {
+          "key": "utiliserMonsieur",
+          "label": "Utiliser Monsieur",
+          "type": "checkbox",
+          "category": "identite",
+          "order": 9,
+          "displayMode": "complet"
+        },
+        {
+          "key": "utiliserMadame",
+          "label": "Utiliser Madame",
+          "type": "checkbox",
+          "category": "identite",
+          "order": 10,
+          "displayMode": "complet"
+        },
+        {
+          "key": "idDonateur",
+          "label": "Id donateur",
+          "category": "identite",
+          "order": 11,
+          "displayMode": "complet"
+        },
+        {
+          "key": "nomFormate",
+          "label": "Nom formaté",
+          "category": "identite",
+          "order": 12,
+          "displayMode": "complet"
+        },
+        {
+          "key": "archive",
+          "label": "Archivé",
+          "type": "checkbox",
+          "category": "identite",
+          "order": 13,
+          "displayMode": "complet"
+        },
+        {
+          "key": "dateArchive",
+          "label": "Date d'archivage",
+          "type": "date",
+          "category": "identite",
+          "order": 14,
+          "displayMode": "complet"
+        },
+        {
+          "key": "typeRecuFiscal",
+          "label": "Type de reçu fiscal",
+          "category": "dons",
+          "order": 7,
+          "displayMode": "complet",
+          "type": "picklist",
+          "options": ["Reçu unique annuel", "Reçu par don", "Non applicable"]
+        },
+        {
+          "key": "estPartage",
+          "label": "Partagé (cloisonnement faible)",
+          "category": "identite",
+          "order": 13,
+          "displayMode": "complet",
+          "type": "checkbox"
+        }
+      ],
+      "categories": [
+        {
+          "id": "identite",
+          "label": "Identité",
+          "order": 0
+        },
+        {
+          "id": "coordonnees",
+          "label": "Coordonnées",
+          "order": 1
+        },
+        {
+          "id": "composition",
+          "label": "Composition du foyer",
+          "order": 2
+        },
+        {
+          "id": "paroisse",
+          "label": "Paroisse",
+          "order": 3
+        },
+        {
+          "id": "dons",
+          "label": "Dons",
+          "order": 4
+        }
+      ],
+      "listColumns": [
+        "type",
+        "nbPersonnes",
+        "paroisseId.nom"
+      ],
+      "actions": [
+        { "id": "exporter", "label": "Exporter en PDF", "icon": "picture_as_pdf" }
+      ]
+    },
+    {
+      "id": "personne",
+      "label": "Personne",
+      "icon": "person",
+      "color": "var(--color-bleu-base, #4C78A8)",
+      "titleFields": [
+        "prenom",
+        "nom"
+      ],
+      "fields": [
+        {
+          "key": "civilite",
+          "label": "Civilité",
+          "category": "identite",
+          "order": 0,
+          "displayMode": "tous",
+          "type": "picklist",
+          "options": [
+            "M.",
+            "Mme",
+            "Mlle",
+            "Enfant"
+          ]
+        },
+        {
+          "key": "prenom",
+          "label": "Prénom",
+          "category": "identite",
+          "order": 1,
+          "displayMode": "tous"
+        },
+        {
+          "key": "nom",
+          "label": "Nom",
+          "category": "identite",
+          "order": 2,
+          "displayMode": "tous"
+        },
+        {
+          "key": "dateNaissance",
+          "label": "Date de naissance",
+          "category": "identite",
+          "order": 3,
+          "displayMode": "tous",
+          "type": "date"
+        },
+        {
+          "key": "roleFoyer",
+          "label": "Rôle dans le foyer",
+          "category": "identite",
+          "order": 4,
+          "displayMode": "tous",
+          "type": "picklist",
+          "options": [
+            "Père",
+            "Mère",
+            "Enfant",
+            "Autre"
+          ],
+          "optionColors": {
+            "Mère": "#e8c7b7",
+            "Père": "#b7c5e8"
+          }
+        },
+        {
+          "key": "sexe",
+          "label": "Sexe",
+          "category": "identite",
+          "order": 5,
+          "displayMode": "complet",
+          "type": "picklist",
+          "options": [
+            "F",
+            "M"
+          ]
+        },
+        {
+          "key": "situationMaritale",
+          "label": "Situation maritale",
+          "category": "identite",
+          "order": 6,
+          "displayMode": "complet",
+          "type": "picklist",
+          "options": [
+            "Célibataire",
+            "Marié",
+            "Mariée",
+            "Veuf",
+            "Veuve",
+            "Divorcé",
+            "Divorcée"
+          ]
+        },
+        {
+          "key": "email",
+          "label": "Email",
+          "category": "coordonnees",
+          "order": 0,
+          "displayMode": "complet"
+        },
+        {
+          "key": "emailPro",
+          "label": "Email professionnel",
+          "category": "coordonnees",
+          "order": 1,
+          "displayMode": "complet"
+        },
+        {
+          "key": "mobile",
+          "label": "Mobile",
+          "category": "coordonnees",
+          "order": 2,
+          "displayMode": "complet"
+        },
+        {
+          "key": "telephoneFixe",
+          "label": "Téléphone fixe",
+          "category": "coordonnees",
+          "order": 3,
+          "displayMode": "complet"
+        },
+        {
+          "key": "stopcom",
+          "label": "Stop com (tags)",
+          "category": "coordonnees",
+          "order": 4,
+          "displayMode": "complet"
+        },
+        {
+          "key": "emailOptOut",
+          "label": "Email désactivé",
+          "type": "checkbox",
+          "category": "coordonnees",
+          "order": 5,
+          "displayMode": "complet"
+        },
+        {
+          "key": "npai",
+          "label": "NPAI (adresse invalide)",
+          "type": "checkbox",
+          "category": "coordonnees",
+          "order": 6,
+          "displayMode": "complet"
+        },
+        {
+          "key": "majAutoPrefFiscale",
+          "label": "MAJ auto préférence fiscale",
+          "type": "checkbox",
+          "category": "dons",
+          "order": 3,
+          "displayMode": "complet"
+        },
+        {
+          "key": "envoiRecuFiscal",
+          "label": "Envoi du reçu fiscal",
+          "category": "dons",
+          "order": 4,
+          "displayMode": "complet",
+          "type": "picklist",
+          "options": ["Par email", "Par courrier"]
+        },
+        {
+          "key": "dateDepartParoisse",
+          "label": "Date de départ de la paroisse",
+          "category": "identite",
+          "order": 8,
+          "displayMode": "complet",
+          "type": "date"
+        },
+        {
+          "key": "baptise",
+          "label": "Baptisé",
+          "type": "checkbox",
+          "category": "sacrements",
+          "order": 0,
+          "displayMode": "complet"
+        },
+        {
+          "key": "dateBapteme",
+          "label": "Date de baptême",
+          "category": "sacrements",
+          "order": 1,
+          "displayMode": "aucun",
+          "type": "date"
+        },
+        {
+          "key": "communion",
+          "label": "Communion",
+          "type": "checkbox",
+          "category": "sacrements",
+          "order": 2,
+          "displayMode": "complet"
+        },
+        {
+          "key": "dateCommunion",
+          "label": "Date de communion",
+          "category": "sacrements",
+          "order": 3,
+          "displayMode": "complet",
+          "type": "date"
+        },
+        {
+          "key": "confirmation",
+          "label": "Confirmation",
+          "type": "checkbox",
+          "category": "sacrements",
+          "order": 4,
+          "displayMode": "complet"
+        },
+        {
+          "key": "dateConfirmation",
+          "label": "Date de confirmation",
+          "category": "sacrements",
+          "order": 5,
+          "displayMode": "complet",
+          "type": "date"
+        },
+        {
+          "key": "marie",
+          "label": "Marié(e)",
+          "type": "checkbox",
+          "category": "sacrements",
+          "order": 6,
+          "displayMode": "complet"
+        },
+        {
+          "key": "dateMariage",
+          "label": "Date de mariage",
+          "category": "sacrements",
+          "order": 7,
+          "displayMode": "complet",
+          "type": "date"
+        },
+        {
+          "key": "decede",
+          "label": "Décédé(e)",
+          "type": "checkbox",
+          "category": "deces",
+          "order": 0,
+          "displayMode": "complet"
+        },
+        {
+          "key": "dateDeces",
+          "label": "Date de décès",
+          "category": "deces",
+          "order": 1,
+          "displayMode": "complet",
+          "type": "date"
+        },
+        {
+          "key": "profession",
+          "label": "Profession",
+          "category": "identite",
+          "order": 7,
+          "displayMode": "complet"
+        },
+        {
+          "key": "datePremierDon",
+          "label": "Date du 1er don",
+          "category": "dons",
+          "order": 0,
+          "displayMode": "complet",
+          "type": "date"
+        },
+        {
+          "key": "dateDernierDon",
+          "label": "Date du dernier don",
+          "category": "dons",
+          "order": 1,
+          "displayMode": "complet",
+          "type": "date"
+        },
+        {
+          "key": "montantDernierDon",
+          "label": "Montant du dernier don",
+          "category": "dons",
+          "order": 2,
+          "displayMode": "complet",
+          "type": "number"
+        },
+        {
+          "key": "cumulDons",
+          "label": "Cumul des dons",
+          "category": "dons",
+          "order": 3,
+          "displayMode": "complet",
+          "type": "number"
+        },
+        {
+          "key": "consentementRgpd",
+          "label": "Consentement RGPD",
+          "type": "checkbox",
+          "category": "rgpd",
+          "order": 0,
+          "displayMode": "complet"
+        },
+        {
+          "key": "dateConsentement",
+          "label": "Date du consentement",
+          "category": "rgpd",
+          "order": 1,
+          "displayMode": "complet",
+          "type": "date"
+        },
+        {
+          "key": "preferenceRenseignee",
+          "label": "Préférence fiscale renseignée",
+          "category": "dons",
+          "order": 4,
+          "displayMode": "complet",
+          "type": "checkbox"
+        },
+        {
+          "key": "formulePolitesse",
+          "label": "Formule de politesse",
+          "category": "identite",
+          "order": 9,
+          "displayMode": "complet",
+          "type": "picklist",
+          "options": [
+            "Cher Monsieur,",
+            "Chère Madame,"
+          ]
+        },
+        {
+          "key": "statut",
+          "label": "Statut",
+          "category": "identite",
+          "order": 10,
+          "displayMode": "complet",
+          "type": "picklist",
+          "options": [
+            "Laïc",
+            "Clerc"
+          ]
+        },
+        {
+          "key": "diacre",
+          "label": "Diacre",
+          "category": "identite",
+          "order": 11,
+          "displayMode": "complet",
+          "type": "checkbox"
+        },
+        {
+          "key": "aucunCourrier",
+          "label": "Aucun courrier",
+          "category": "coordonnees",
+          "order": 7,
+          "displayMode": "complet",
+          "type": "checkbox"
+        },
+        {
+          "key": "donotcall",
+          "label": "Ne pas appeler",
+          "category": "coordonnees",
+          "order": 8,
+          "displayMode": "complet",
+          "type": "checkbox"
+        },
+        {
+          "key": "adresse",
+          "label": "Adresse",
+          "category": "coordonnees",
+          "order": 9,
+          "displayMode": "complet"
+        },
+        {
+          "key": "idDonateur",
+          "label": "Id donateur",
+          "category": "identite",
+          "order": 12,
+          "displayMode": "complet"
+        },
+        {
+          "key": "aNaitre",
+          "label": "À naître",
+          "type": "checkbox",
+          "category": "identite",
+          "order": 13,
+          "displayMode": "complet"
+        },
+        {
+          "key": "nomFormate",
+          "label": "Nom formaté",
+          "category": "identite",
+          "order": 14,
+          "displayMode": "complet"
+        },
+        {
+          "key": "typeRecuFiscal",
+          "label": "Type de reçu fiscal",
+          "category": "dons",
+          "order": 5,
+          "displayMode": "complet",
+          "type": "picklist",
+          "options": ["Reçu unique annuel", "Reçu par don", "Non applicable"]
+        },
+        {
+          "key": "estPartage",
+          "label": "Partagé (cloisonnement faible)",
+          "category": "identite",
+          "order": 15,
+          "displayMode": "complet",
+          "type": "checkbox"
+        },
+        {
+          "key": "parent1Id",
+          "label": "Parent 1",
+          "category": "identite",
+          "order": 16,
+          "displayMode": "complet"
+        },
+        {
+          "key": "parent2Id",
+          "label": "Parent 2",
+          "category": "identite",
+          "order": 17,
+          "displayMode": "complet"
+        }
+      ],
+      "categories": [
+        {
+          "id": "identite",
+          "label": "Identité",
+          "order": 0
+        },
+        {
+          "id": "coordonnees",
+          "label": "Coordonnées",
+          "order": 1
+        },
+        {
+          "id": "sacrements",
+          "label": "Sacrements",
+          "order": 2
+        },
+        {
+          "id": "deces",
+          "label": "Décès",
+          "order": 3
+        },
+        {
+          "id": "dons",
+          "label": "Dons",
+          "order": 4
+        },
+        {
+          "id": "rgpd",
+          "label": "RGPD",
+          "order": 5
+        }
+      ],
+      "listColumns": [
+        "roleFoyer",
+        "foyerId.nom",
+        "foyerId.paroisseId.nom"
+      ]
+    },
+    {
+      "id": "don",
+      "label": "Don",
+      "icon": "payments",
+      "color": "var(--color-vert-strong, #43793B)",
+      "titleFields": [
+        "type",
+        "montant"
+      ],
+      "fields": [
+        {
+          "key": "montant",
+          "label": "Montant",
+          "category": "informations",
+          "order": 0,
+          "displayMode": "tous",
+          "type": "number"
+        },
+        {
+          "key": "date",
+          "label": "Date",
+          "category": "informations",
+          "order": 1,
+          "displayMode": "tous",
+          "type": "date"
+        },
+        {
+          "key": "type",
+          "label": "Type",
+          "category": "informations",
+          "order": 2,
+          "displayMode": "tous",
+          "type": "picklist",
+          "options": [
+            "Denier de l'Église",
+            "Quête",
+            "Don ponctuel",
+            "Prélèvement automatique",
+            "Legs"
+          ]
+        },
+        {
+          "key": "statut",
+          "label": "Statut",
+          "category": "informations",
+          "order": 3,
+          "displayMode": "tous",
+          "type": "picklist",
+          "options": [
+            "Valide",
+            "Annulé",
+            "En attente"
+          ]
+        },
+        {
+          "key": "paroisseId",
+          "label": "Paroisse (réaffectation)",
+          "category": "affectation",
+          "order": 0,
+          "displayMode": "tous"
+        },
+        {
+          "key": "numero",
+          "label": "Numéro du don",
+          "category": "informations",
+          "order": 4,
+          "displayMode": "complet"
+        },
+        {
+          "key": "dateSaisie",
+          "label": "Date de saisie",
+          "category": "informations",
+          "order": 5,
+          "displayMode": "complet",
+          "type": "date"
+        },
+        {
+          "key": "typeAffectation",
+          "label": "Type d'affectation",
+          "category": "affectation",
+          "order": 1,
+          "displayMode": "complet",
+          "type": "picklist",
+          "options": [
+            "Denier",
+            "Quête",
+            "Don ponctuel"
+          ]
+        },
+        {
+          "key": "typeRecuFiscal",
+          "label": "Type de reçu fiscal",
+          "category": "fiscalite",
+          "order": 0,
+          "displayMode": "complet",
+          "type": "picklist",
+          "options": [
+            "Reçu unique annuel",
+            "Reçu par don",
+            "Non applicable"
+          ]
+        },
+        {
+          "key": "anneeFiscale",
+          "label": "Année fiscale",
+          "category": "informations",
+          "order": 6,
+          "displayMode": "complet",
+          "type": "number"
+        },
+        {
+          "key": "motifAnnulation",
+          "label": "Motif d'annulation",
+          "category": "annulation",
+          "order": 0,
+          "displayMode": "complet"
+        },
+        {
+          "key": "dateAnnulation",
+          "label": "Date d'annulation",
+          "category": "annulation",
+          "order": 1,
+          "displayMode": "complet",
+          "type": "date"
+        },
+        {
+          "key": "numeroCheque",
+          "label": "N° de chèque",
+          "category": "paiement",
+          "order": 0,
+          "displayMode": "complet"
+        },
+        {
+          "key": "statutRemerciement",
+          "label": "Statut du remerciement",
+          "category": "fiscalite",
+          "order": 1,
+          "displayMode": "complet",
+          "type": "picklist",
+          "options": [
+            "Envoyé",
+            "À envoyer",
+            "Non applicable"
+          ]
+        },
+        {
+          "key": "recuFiscalEnvoye",
+          "label": "Reçu fiscal envoyé",
+          "type": "checkbox",
+          "category": "fiscalite",
+          "order": 2,
+          "displayMode": "complet"
+        },
+        {
+          "key": "importe",
+          "label": "Importé",
+          "type": "checkbox",
+          "category": "informations",
+          "order": 7,
+          "displayMode": "complet"
+        }
+      ],
+      "categories": [
+        {
+          "id": "informations",
+          "label": "Informations",
+          "order": 0
+        },
+        {
+          "id": "affectation",
+          "label": "Affectation",
+          "order": 1
+        },
+        {
+          "id": "fiscalite",
+          "label": "Fiscalité",
+          "order": 2
+        },
+        {
+          "id": "paiement",
+          "label": "Paiement",
+          "order": 3
+        },
+        {
+          "id": "annulation",
+          "label": "Annulation",
+          "order": 4
+        }
+      ],
+      "listColumns": [
+        "montant",
+        "date",
+        "statut",
+        "foyerId.nom"
+      ]
+    },
+    {
+      "id": "activite",
+      "label": "Activité / campagne",
+      "icon": "target",
+      "color": "var(--color-orange-strong, #B66B20)",
+      "titleFields": [
+        "nom"
+      ],
+      "fields": [
+        {
+          "key": "nom",
+          "label": "Nom de l'activité",
+          "category": "informations",
+          "order": 0,
+          "displayMode": "tous"
+        },
+        {
+          "key": "tarif",
+          "label": "Tarif",
+          "category": "informations",
+          "order": 1,
+          "displayMode": "tous",
+          "type": "number"
+        },
+        {
+          "key": "dateDebut",
+          "label": "Début de la campagne",
+          "category": "informations",
+          "order": 2,
+          "displayMode": "tous",
+          "type": "date"
+        },
+        {
+          "key": "dateFin",
+          "label": "Fin de la campagne",
+          "category": "informations",
+          "order": 3,
+          "displayMode": "tous",
+          "type": "date"
+        }
+      ],
+      "categories": [
+        {
+          "id": "informations",
+          "label": "Informations",
+          "order": 0
+        }
+      ],
+      "textColor": "#1a1a2e"
+    },
+    {
+      "id": "groupe",
+      "label": "Groupe",
+      "icon": "group_work",
+      "color": "var(--color-turquoise-strong, #598986)",
+      "titleFields": [
+        "nom"
+      ],
+      "fields": [
+        {
+          "key": "nom",
+          "label": "Nom du groupe",
+          "category": "informations",
+          "order": 0,
+          "displayMode": "tous"
+        },
+        {
+          "key": "rang",
+          "label": "Rang",
+          "category": "informations",
+          "order": 1,
+          "displayMode": "tous",
+          "type": "picklist",
+          "options": [
+            "Groupe",
+            "Sous-groupe",
+            "Équipe"
+          ],
+          "optionColors": {
+            "Groupe": {
+              "bgColor": "#ede4f7",
+              "textColor": "#5b3a87"
+            },
+            "Sous-groupe": {
+              "bgColor": "#f3eefa",
+              "textColor": "#7b4fb5"
+            },
+            "Équipe": {
+              "bgColor": "#f8f5fc",
+              "textColor": "#9a76c9"
+            }
+          }
+        },
+        {
+          "key": "niveau",
+          "label": "Niveau",
+          "category": "informations",
+          "order": 2,
+          "displayMode": "tous"
+        },
+        {
+          "key": "jourHeure",
+          "label": "Jour et heure",
+          "category": "sessions",
+          "order": 0,
+          "displayMode": "complet"
+        },
+        {
+          "key": "lieu",
+          "label": "Lieu",
+          "category": "sessions",
+          "order": 1,
+          "displayMode": "complet"
+        }
+      ],
+      "categories": [
+        {
+          "id": "informations",
+          "label": "Informations",
+          "order": 0
+        },
+        {
+          "id": "sessions",
+          "label": "Sessions",
+          "order": 1
+        }
+      ],
+      "textColor": "#1a1a2e"
+    },
+    {
+      "id": "inscription",
+      "label": "Inscription caté",
+      "icon": "how_to_reg",
+      "color": "var(--color-turquoise-base, #76B7B2)",
+      "textColor": "#1a1a2e",
+      "titleFields": [
+        "prenomDeclare",
+        "nomDeclare"
+      ],
+      "fields": [
+        {
+          "key": "nomDeclare",
+          "label": "Nom déclaré",
+          "category": "declare",
+          "order": 0,
+          "displayMode": "tous"
+        },
+        {
+          "key": "prenomDeclare",
+          "label": "Prénom déclaré",
+          "category": "declare",
+          "order": 1,
+          "displayMode": "tous"
+        },
+        {
+          "key": "dateNaissanceDeclaree",
+          "label": "Date de naissance déclarée",
+          "category": "declare",
+          "order": 2,
+          "displayMode": "tous",
+          "type": "date"
+        },
+        {
+          "key": "catechismeDemande",
+          "label": "Catéchisme demandé",
+          "category": "demande",
+          "order": 0,
+          "displayMode": "tous",
+          "type": "picklist",
+          "options": [
+            "Catéchisme",
+            "Aumônerie",
+            "Patronage"
+          ]
+        },
+        {
+          "key": "niveauDemande",
+          "label": "Niveau demandé",
+          "category": "demande",
+          "order": 1,
+          "displayMode": "tous"
+        },
+        {
+          "key": "dateDemande",
+          "label": "Date de la demande",
+          "category": "demande",
+          "order": 2,
+          "displayMode": "tous",
+          "type": "date"
+        },
+        {
+          "key": "statut",
+          "label": "Statut",
+          "category": "demande",
+          "order": 3,
+          "displayMode": "tous",
+          "type": "picklist",
+          "options": [
+            "En attente",
+            "Validée",
+            "Annulée"
+          ],
+          "optionColors": {
+            "En attente": {
+              "bgColor": "#fdf0dc",
+              "textColor": "#a15c0d"
+            },
+            "Validée": {
+              "bgColor": "#e3f4e6",
+              "textColor": "#1f7a34"
+            },
+            "Annulée": {
+              "bgColor": "#f2f3f5",
+              "textColor": "#6b7280"
+            }
+          }
+        }
+      ],
+      "categories": [
+        {
+          "id": "declare",
+          "label": "Déclaré par la famille",
+          "order": 0
+        },
+        {
+          "id": "demande",
+          "label": "Demande",
+          "order": 1
+        }
+      ]
+    },
+    {
+      "id": "participant",
+      "label": "Participant",
+      "icon": "event",
+      "color": "var(--color-orange-base, #F28E2B)",
+      "textColor": "#1a1a2e",
+      "titleFields": [
+        "personneId.prenom",
+        "personneId.nom",
+        "groupe"
+      ],
+      "fields": [
+        {
+          "key": "date",
+          "label": "Date",
+          "category": "informations",
+          "order": 0,
+          "displayMode": "tous",
+          "type": "date"
+        },
+        {
+          "key": "groupe",
+          "label": "Groupe",
+          "category": "informations",
+          "order": 1,
+          "displayMode": "tous"
+        }
+      ],
+      "rollupFields": [
+        {
+          "key": "tarif",
+          "label": "Tarif",
+          "via": "activiteId",
+          "sourceType": "activite",
+          "sourceField": "tarif",
+          "category": "informations",
+          "order": 2,
+          "displayMode": "tous"
+        }
+      ],
+      "categories": [
+        {
+          "id": "informations",
+          "label": "Informations",
+          "order": 0
+        }
+      ]
+    },
+    {
+      "id": "bordereau",
+      "label": "Bordereau",
+      "icon": "description",
+      "color": "var(--color-mauve-strong, #845C79)",
+      "titleFields": [
+        "numero"
+      ],
+      "fields": [
+        {
+          "key": "numero",
+          "label": "Référence",
+          "category": "informations",
+          "order": 0,
+          "displayMode": "tous"
+        },
+        {
+          "key": "date",
+          "label": "Date",
+          "category": "informations",
+          "order": 1,
+          "displayMode": "tous",
+          "type": "date"
+        },
+        {
+          "key": "controle",
+          "label": "Contrôle",
+          "category": "informations",
+          "order": 2,
+          "displayMode": "tous",
+          "type": "picklist",
+          "options": [
+            "OK",
+            "À vérifier",
+            "Anomalie"
+          ]
+        },
+        {
+          "key": "statut",
+          "label": "Statut",
+          "category": "informations",
+          "order": 3,
+          "displayMode": "complet",
+          "type": "picklist",
+          "options": [
+            "Validé",
+            "À vérifier",
+            "Brouillon"
+          ]
+        },
+        {
+          "key": "dateDebut",
+          "label": "Date de début",
+          "category": "periode",
+          "order": 0,
+          "displayMode": "complet",
+          "type": "date"
+        },
+        {
+          "key": "dateFin",
+          "label": "Date de fin",
+          "category": "periode",
+          "order": 1,
+          "displayMode": "complet",
+          "type": "date"
+        },
+        {
+          "key": "modePaiement",
+          "label": "Mode de paiement",
+          "category": "contenu",
+          "order": 0,
+          "displayMode": "complet",
+          "type": "picklist",
+          "options": [
+            "Chèque",
+            "Espèces",
+            "Virement",
+            "Carte bancaire",
+            "Prélèvement"
+          ]
+        },
+        {
+          "key": "natureDon",
+          "label": "Nature du don",
+          "category": "contenu",
+          "order": 1,
+          "displayMode": "complet",
+          "type": "picklist",
+          "options": [
+            "Denier",
+            "Quête",
+            "Don ponctuel",
+            "Don ponctuel / Denier"
+          ]
+        },
+        {
+          "key": "nbDons",
+          "label": "Nombre de dons",
+          "category": "contenu",
+          "order": 2,
+          "displayMode": "complet",
+          "type": "number"
+        },
+        {
+          "key": "montantTotal",
+          "label": "Montant total",
+          "category": "contenu",
+          "order": 3,
+          "displayMode": "complet",
+          "type": "number"
+        },
+        {
+          "key": "anneeFiscale",
+          "label": "Année fiscale",
+          "category": "periode",
+          "order": 2,
+          "displayMode": "complet",
+          "type": "number"
+        }
+      ],
+      "categories": [
+        {
+          "id": "informations",
+          "label": "Informations",
+          "order": 0
+        },
+        {
+          "id": "periode",
+          "label": "Période",
+          "order": 1
+        },
+        {
+          "id": "contenu",
+          "label": "Contenu",
+          "order": 2
+        }
+      ],
+      "listColumns": [
+        "date",
+        "montantTotal",
+        "statut"
+      ]
+    },
+    {
+      "id": "mandat",
+      "label": "Mandat / PA",
+      "icon": "autorenew",
+      "color": "var(--color-vert-base, #59A14F)",
+      "textColor": "#1a1a2e",
+      "titleFields": [
+        "reference"
+      ],
+      "fields": [
+        {
+          "key": "reference",
+          "label": "Référence",
+          "category": "informations",
+          "order": 0,
+          "displayMode": "tous"
+        },
+        {
+          "key": "montant",
+          "label": "Montant",
+          "category": "informations",
+          "order": 1,
+          "displayMode": "tous",
+          "type": "number"
+        },
+        {
+          "key": "frequence",
+          "label": "Fréquence",
+          "category": "informations",
+          "order": 2,
+          "displayMode": "tous",
+          "type": "picklist",
+          "options": [
+            "Mensuel",
+            "Trimestriel",
+            "Semestriel",
+            "Annuel"
+          ]
+        },
+        {
+          "key": "dateDebut",
+          "label": "Date de début",
+          "category": "informations",
+          "order": 3,
+          "displayMode": "tous",
+          "type": "date"
+        },
+        {
+          "key": "statut",
+          "label": "Statut",
+          "category": "informations",
+          "order": 4,
+          "displayMode": "tous",
+          "type": "picklist",
+          "options": [
+            "Actif",
+            "Suspendu",
+            "Clos"
+          ],
+          "optionColors": {
+            "Actif": "#2e9b7a",
+            "Suspendu": "#b8860b",
+            "Clos": "#6b7280"
+          }
+        }
+      ],
+      "categories": [
+        {
+          "id": "informations",
+          "label": "Informations",
+          "order": 0
+        }
+      ]
+    },
+    {
+      "id": "recu",
+      "label": "Reçu fiscal",
+      "icon": "receipt_long",
+      "color": "var(--color-vert-light, #9BC795)",
+      "textColor": "#1a1a2e",
+      "titleFields": [
+        "numero"
+      ],
+      "fields": [
+        {
+          "key": "numero",
+          "label": "Numéro",
+          "category": "informations",
+          "order": 0,
+          "displayMode": "tous"
+        },
+        {
+          "key": "annee",
+          "label": "Année",
+          "category": "informations",
+          "order": 1,
+          "displayMode": "tous",
+          "type": "number"
+        },
+        {
+          "key": "montantTotal",
+          "label": "Montant total",
+          "category": "informations",
+          "order": 2,
+          "displayMode": "tous",
+          "type": "number"
+        },
+        {
+          "key": "statut",
+          "label": "Statut",
+          "category": "informations",
+          "order": 3,
+          "displayMode": "complet",
+          "type": "picklist",
+          "options": [
+            "Édité",
+            "À éditer",
+            "Annulé"
+          ],
+          "optionColors": {
+            "Édité": "#2e9b7a",
+            "À éditer": "#b8860b",
+            "Annulé": "#c0392b"
+          }
+        },
+        {
+          "key": "typeRecu",
+          "label": "Type de reçu",
+          "category": "informations",
+          "order": 4,
+          "displayMode": "complet",
+          "type": "picklist",
+          "options": [
+            "Reçu unique annuel",
+            "Reçu par don"
+          ]
+        },
+        {
+          "key": "dateEdition",
+          "label": "Date d'édition",
+          "category": "informations",
+          "order": 5,
+          "displayMode": "complet",
+          "type": "date"
+        },
+        {
+          "key": "nbDons",
+          "label": "Nombre de dons",
+          "category": "contenu",
+          "order": 0,
+          "displayMode": "complet",
+          "type": "number"
+        },
+        {
+          "key": "nbImputations",
+          "label": "Nombre d'imputations",
+          "category": "contenu",
+          "order": 1,
+          "displayMode": "complet",
+          "type": "number"
+        },
+        {
+          "key": "modeEnvoi",
+          "label": "Mode d'envoi",
+          "category": "destinataire",
+          "order": 0,
+          "displayMode": "complet",
+          "type": "picklist",
+          "options": [
+            "Mail",
+            "Papier"
+          ]
+        },
+        {
+          "key": "emailDestinataire",
+          "label": "Email du destinataire",
+          "category": "destinataire",
+          "order": 1,
+          "displayMode": "complet"
+        },
+        {
+          "key": "telephoneDestinataire",
+          "label": "Téléphone du destinataire",
+          "category": "destinataire",
+          "order": 2,
+          "displayMode": "complet"
+        },
+        {
+          "key": "adresseDestinataire",
+          "label": "Adresse du destinataire",
+          "category": "destinataire",
+          "order": 3,
+          "displayMode": "complet"
+        }
+      ],
+      "actions": [
+        {
+          "id": "reeditor",
+          "label": "Rééditer",
+          "icon": "print"
+        },
+        {
+          "id": "envoyerEmail",
+          "label": "Envoyer par email",
+          "icon": "mail"
+        }
+      ],
+      "categories": [
+        {
+          "id": "informations",
+          "label": "Informations",
+          "order": 0
+        },
+        {
+          "id": "contenu",
+          "label": "Contenu",
+          "order": 1
+        },
+        {
+          "id": "destinataire",
+          "label": "Destinataire",
+          "order": 2
+        }
+      ],
+      "listColumns": [
+        "annee",
+        "montantTotal",
+        "statut"
+      ]
+    },
+    {
+      "id": "remise",
+      "label": "Remise en banque",
+      "icon": "account_balance",
+      "color": "var(--color-mauve-base, #B07AA1)",
+      "titleFields": [
+        "reference"
+      ],
+      "fields": [
+        {
+          "key": "reference",
+          "label": "Référence",
+          "category": "informations",
+          "order": 0,
+          "displayMode": "tous"
+        },
+        {
+          "key": "date",
+          "label": "Date",
+          "category": "informations",
+          "order": 1,
+          "displayMode": "tous",
+          "type": "date"
+        },
+        {
+          "key": "banque",
+          "label": "Banque",
+          "category": "informations",
+          "order": 2,
+          "displayMode": "tous"
+        },
+        {
+          "key": "montantTotal",
+          "label": "Montant total",
+          "category": "informations",
+          "order": 3,
+          "displayMode": "tous",
+          "type": "number"
+        }
+      ],
+      "categories": [
+        {
+          "id": "informations",
+          "label": "Informations",
+          "order": 0
+        }
+      ],
+      "textColor": "#1a1a2e"
+    },
+    {
+      "id": "arrete",
+      "label": "Arrêté / reversement",
+      "icon": "gavel",
+      "color": "var(--color-mauve-light, #D0AFC7)",
+      "textColor": "#1a1a2e",
+      "titleFields": [
+        "reference"
+      ],
+      "fields": [
+        {
+          "key": "reference",
+          "label": "Référence",
+          "category": "informations",
+          "order": 0,
+          "displayMode": "tous"
+        },
+        {
+          "key": "date",
+          "label": "Date",
+          "category": "informations",
+          "order": 1,
+          "displayMode": "tous",
+          "type": "date"
+        },
+        {
+          "key": "montantBrut",
+          "label": "Montant brut",
+          "category": "informations",
+          "order": 2,
+          "displayMode": "tous",
+          "type": "number"
+        },
+        {
+          "key": "montantFrais",
+          "label": "Frais",
+          "category": "informations",
+          "order": 3,
+          "displayMode": "tous",
+          "type": "number"
+        },
+        {
+          "key": "montantNet",
+          "label": "Montant net",
+          "category": "informations",
+          "order": 4,
+          "displayMode": "tous",
+          "type": "number"
+        }
+      ],
+      "categories": [
+        {
+          "id": "informations",
+          "label": "Informations",
+          "order": 0
+        }
+      ]
+    },
+    {
+      "id": "paroisse",
+      "label": "Paroisse",
+      "icon": "church",
+      "color": "var(--color-bleu-light, #94AECB)",
+      "textColor": "#1a1a2e",
+      "titleFields": [
+        "nom"
+      ],
+      "fields": [
+        {
+          "key": "nom",
+          "label": "Nom",
+          "category": "identite",
+          "order": 0,
+          "displayMode": "tous"
+        },
+        {
+          "key": "adresse",
+          "label": "Adresse",
+          "category": "coordonnees",
+          "order": 0,
+          "displayMode": "tous"
+        },
+        {
+          "key": "totalDons",
+          "label": "Total des dons",
+          "category": "dons",
+          "order": 0,
+          "displayMode": "tous",
+          "type": "number"
+        },
+        {
+          "key": "codeParoisse",
+          "label": "Code paroisse",
+          "category": "identite",
+          "order": 1,
+          "displayMode": "complet"
+        },
+        {
+          "key": "typeEntite",
+          "label": "Type d'entité",
+          "category": "identite",
+          "order": 2,
+          "displayMode": "complet",
+          "type": "picklist",
+          "options": [
+            "Paroisse",
+            "Doyenné",
+            "Diocèse",
+            "Chapelle"
+          ]
+        },
+        {
+          "key": "regroupement",
+          "label": "Regroupement",
+          "category": "identite",
+          "order": 3,
+          "displayMode": "complet"
+        },
+        {
+          "key": "email",
+          "label": "Email",
+          "category": "coordonnees",
+          "order": 1,
+          "displayMode": "complet"
+        },
+        {
+          "key": "telephone",
+          "label": "Téléphone",
+          "category": "coordonnees",
+          "order": 2,
+          "displayMode": "complet"
+        },
+        {
+          "key": "ville",
+          "label": "Ville",
+          "category": "coordonnees",
+          "order": 3,
+          "displayMode": "complet"
+        },
+        {
+          "key": "nbFoyers",
+          "label": "Nombre de foyers",
+          "category": "effectifs",
+          "order": 0,
+          "displayMode": "complet",
+          "type": "number"
+        },
+        {
+          "key": "nbPersonnes",
+          "label": "Nombre de personnes",
+          "category": "effectifs",
+          "order": 1,
+          "displayMode": "complet",
+          "type": "number"
+        },
+        {
+          "key": "fraisReversement",
+          "label": "Frais de reversement",
+          "category": "dons",
+          "order": 1,
+          "displayMode": "complet",
+          "type": "number"
+        },
+        {
+          "key": "responsable",
+          "label": "Responsable de l'entité",
+          "category": "identite",
+          "order": 4,
+          "displayMode": "complet"
+        }
+      ],
+      "categories": [
+        {
+          "id": "identite",
+          "label": "Identité",
+          "order": 0
+        },
+        {
+          "id": "coordonnees",
+          "label": "Coordonnées",
+          "order": 1
+        },
+        {
+          "id": "effectifs",
+          "label": "Effectifs",
+          "order": 2
+        },
+        {
+          "id": "dons",
+          "label": "Dons",
+          "order": 3
+        }
+      ]
+    },
+    {
+      "id": "liaison",
+      "label": "Liaison Foyer-Personne",
+      "icon": "link",
+      "color": "var(--color-gris, #6b7280)",
+      "titleFields": ["foyerId.nom", "personneId.prenom", "personneId.nom"],
+      "categories": [
+        {
+          "id": "identite",
+          "label": "Identité",
+          "order": 0
+        }
+      ],
+      "fields": [
+        {
+          "key": "foyerId",
+          "label": "Foyer",
+          "category": "identite",
+          "order": 0
+        },
+        {
+          "key": "personneId",
+          "label": "Personne",
+          "category": "identite",
+          "order": 1
+        },
+        {
+          "key": "statut",
+          "label": "Statut",
+          "category": "identite",
+          "order": 2,
+          "displayMode": "tous",
+          "type": "picklist",
+          "options": ["Principal", "Secondaire"]
+        },
+        {
+          "key": "role",
+          "label": "Rôle",
+          "category": "identite",
+          "order": 3,
+          "displayMode": "tous",
+          "type": "picklist",
+          "options": ["Père", "Mère", "Enfant", "Autre"]
+        },
+        {
+          "key": "intitule",
+          "label": "Intitulé",
+          "category": "identite",
+          "order": 4,
+          "displayMode": "complet"
+        }
+      ],
+      "rollupFields": [
+        {
+          "key": "deces",
+          "label": "Décès",
+          "via": "personneId",
+          "sourceType": "personne",
+          "sourceField": "decede",
+          "category": "identite",
+          "order": 4,
+          "displayMode": "complet"
+        }
+      ],
+      "listColumns": ["foyerId.nom", "personneId.prenom", "personneId.nom", "statut", "role"]
+    }
+  ],
+  "relations": [
+    {
+      "from": "paroisse",
+      "to": "foyer",
+      "via": "paroisseId",
+      "label": "Foyers"
+    },
+    {
+      "from": "foyer",
+      "to": "personne",
+      "via": "foyerId",
+      "label": "Membres du foyer"
+    },
+    {
+      "from": "personne",
+      "to": "don",
+      "via": "personneId",
+      "label": "Dons"
+    },
+    {
+      "from": "personne",
+      "to": "participant",
+      "via": "personneId",
+      "label": "Participants"
+    },
+    {
+      "from": "activite",
+      "to": "participant",
+      "via": "activiteId",
+      "label": "Participants"
+    },
+    {
+      "from": "foyer",
+      "to": "don",
+      "via": "foyerId",
+      "label": "Dons du foyer"
+    },
+    {
+      "from": "foyer",
+      "to": "mandat",
+      "via": "foyerId",
+      "label": "Mandats"
+    },
+    {
+      "from": "foyer",
+      "to": "recu",
+      "via": "foyerId",
+      "label": "Reçus fiscaux"
+    },
+    {
+      "from": "bordereau",
+      "to": "don",
+      "via": "bordereauId",
+      "label": "Dons du bordereau"
+    },
+    {
+      "from": "paroisse",
+      "to": "bordereau",
+      "via": "paroisseId",
+      "label": "Bordereaux"
+    },
+    {
+      "from": "mandat",
+      "to": "don",
+      "via": "mandatId",
+      "label": "Dons générés"
+    },
+    {
+      "from": "recu",
+      "to": "don",
+      "via": "recuId",
+      "label": "Dons couverts"
+    },
+    {
+      "from": "remise",
+      "to": "don",
+      "via": "remiseId",
+      "label": "Dons remisés"
+    },
+    {
+      "from": "arrete",
+      "to": "don",
+      "via": "arreteId",
+      "label": "Dons reversés"
+    },
+    {
+      "from": "paroisse",
+      "to": "don",
+      "via": "paroisseId",
+      "label": "Dons"
+    },
+    {
+      "from": "paroisse",
+      "to": "arrete",
+      "via": "paroisseId",
+      "label": "Arrêtés"
+    },
+    {
+      "from": "arrete",
+      "to": "don",
+      "via": "arreteAnnulationId",
+      "label": "Dons annulés post-arrêté"
+    },
+    {
+      "from": "activite",
+      "to": "groupe",
+      "via": "activiteId",
+      "label": "Groupes"
+    },
+    {
+      "from": "groupe",
+      "to": "groupe",
+      "via": "groupeParentId",
+      "label": "Sous-groupes"
+    },
+    {
+      "from": "groupe",
+      "to": "participant",
+      "via": "groupeId",
+      "label": "Participants"
+    },
+    {
+      "from": "participant",
+      "to": "inscription",
+      "via": "participantId",
+      "label": "Inscription d'origine"
+    },
+    {
+      "from": "foyer",
+      "to": "liaison",
+      "via": "foyerId",
+      "label": "Liaisons"
+    },
+    {
+      "from": "personne",
+      "to": "liaison",
+      "via": "personneId",
+      "label": "Liaisons"
+    }
+  ]
+}

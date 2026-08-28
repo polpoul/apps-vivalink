@@ -1,0 +1,1127 @@
+[
+    {
+        "id": "bapteme-date-visible",
+        "typeId": "personne",
+        "when": {
+            "field": "baptise",
+            "equals": "true"
+        },
+        "then": [
+            {
+                "effect": "fieldVisible",
+                "field": "dateBapteme",
+                "value": true
+            }
+        ]
+    },
+    {
+        "id": "hors-paroisse-masque-bloc",
+        "typeId": "foyer",
+        "when": {
+            "field": "horsParoisse",
+            "equals": "true"
+        },
+        "then": [
+            {
+                "effect": "blockVisible",
+                "category": "paroisse",
+                "value": false
+            }
+        ]
+    },
+    {
+        "id": "deces-date-obligatoire",
+        "typeId": "personne",
+        "when": {
+            "field": "decede",
+            "equals": "true"
+        },
+        "then": [
+            {
+                "effect": "fieldRequired",
+                "field": "dateDeces",
+                "value": true
+            }
+        ]
+    },
+    {
+        "id": "deces-identite-non-modifiable",
+        "typeId": "personne",
+        "when": {
+            "field": "decede",
+            "equals": "true"
+        },
+        "then": [
+            {
+                "effect": "fieldReadOnly",
+                "field": "nom",
+                "value": true
+            },
+            {
+                "effect": "fieldReadOnly",
+                "field": "prenom",
+                "value": true
+            }
+        ]
+    },
+    {
+        "id": "deces-envoi-email-desactive",
+        "typeId": "personne",
+        "when": {
+            "field": "decede",
+            "equals": "true"
+        },
+        "then": [
+            {
+                "effect": "actionEnabled",
+                "action": "envoyerEmail",
+                "value": false
+            }
+        ]
+    },
+    {
+        "id": "hors-paroisse-masque-envoi-email",
+        "typeId": "foyer",
+        "when": {
+            "field": "horsParoisse",
+            "equals": "true"
+        },
+        "then": [
+            {
+                "effect": "actionVisible",
+                "action": "envoyerEmail",
+                "value": false
+            }
+        ]
+    },
+    {
+        "id": "enfant-masque-situation-maritale-profession",
+        "typeId": "personne",
+        "when": {
+            "field": "roleFoyer",
+            "equals": "Enfant"
+        },
+        "then": [
+            {
+                "effect": "fieldVisible",
+                "field": "situationMaritale",
+                "value": false
+            },
+            {
+                "effect": "fieldVisible",
+                "field": "profession",
+                "value": false
+            },
+            {
+                "effect": "blockVisible",
+                "category": "dons",
+                "value": false
+            }
+        ]
+    },
+    {
+        "id": "civilite-restreint-situation-maritale-masculine",
+        "typeId": "personne",
+        "when": {
+            "field": "civilite",
+            "equals": "M."
+        },
+        "then": [
+            {
+                "effect": "fieldOptions",
+                "field": "situationMaritale",
+                "options": [
+                    "Célibataire",
+                    "Marié",
+                    "Veuf",
+                    "Divorcé"
+                ]
+            }
+        ]
+    },
+    {
+        "id": "civilite-restreint-situation-maritale-feminine",
+        "typeId": "personne",
+        "when": {
+            "field": "civilite",
+            "equals": "Mme"
+        },
+        "then": [
+            {
+                "effect": "fieldOptions",
+                "field": "situationMaritale",
+                "options": [
+                    "Célibataire",
+                    "Mariée",
+                    "Veuve",
+                    "Divorcée"
+                ]
+            }
+        ]
+    },
+    {
+        "id": "civilite-foyer-restreint-formule-politesse-monsieur",
+        "typeId": "foyer",
+        "when": {
+            "field": "civilite",
+            "equals": "M."
+        },
+        "then": [
+            {
+                "effect": "fieldOptions",
+                "field": "formulePolitesse",
+                "options": [
+                    "Cher Monsieur,"
+                ]
+            }
+        ]
+    },
+    {
+        "id": "civilite-foyer-restreint-formule-politesse-madame",
+        "typeId": "foyer",
+        "when": {
+            "field": "civilite",
+            "equals": "Mme"
+        },
+        "then": [
+            {
+                "effect": "fieldOptions",
+                "field": "formulePolitesse",
+                "options": [
+                    "Chère Madame,"
+                ]
+            }
+        ]
+    },
+    {
+        "id": "civilite-foyer-restreint-formule-politesse-mademoiselle",
+        "typeId": "foyer",
+        "when": {
+            "field": "civilite",
+            "equals": "Mlle"
+        },
+        "then": [
+            {
+                "effect": "fieldOptions",
+                "field": "formulePolitesse",
+                "options": [
+                    "Chère Madame,"
+                ]
+            }
+        ]
+    },
+    {
+        "id": "civilite-foyer-restreint-formule-politesse-couple",
+        "typeId": "foyer",
+        "when": {
+            "field": "civilite",
+            "equals": "M. et Mme"
+        },
+        "then": [
+            {
+                "effect": "fieldOptions",
+                "field": "formulePolitesse",
+                "options": [
+                    "Cher Monsieur, chère Madame,"
+                ]
+            }
+        ]
+    },
+    {
+        "id": "don-type-restreint-affectation-denier",
+        "typeId": "don",
+        "when": {
+            "field": "type",
+            "equals": "Denier de l'Église"
+        },
+        "then": [
+            {
+                "effect": "fieldOptions",
+                "field": "typeAffectation",
+                "options": [
+                    "Denier"
+                ]
+            }
+        ]
+    },
+    {
+        "id": "don-type-restreint-affectation-quete",
+        "typeId": "don",
+        "when": {
+            "field": "type",
+            "equals": "Quête"
+        },
+        "then": [
+            {
+                "effect": "fieldOptions",
+                "field": "typeAffectation",
+                "options": [
+                    "Quête"
+                ]
+            }
+        ]
+    },
+    {
+        "id": "don-type-restreint-affectation-ponctuel",
+        "typeId": "don",
+        "when": {
+            "field": "type",
+            "equals": "Don ponctuel"
+        },
+        "then": [
+            {
+                "effect": "fieldOptions",
+                "field": "typeAffectation",
+                "options": [
+                    "Don ponctuel"
+                ]
+            }
+        ]
+    },
+    {
+        "id": "don-type-restreint-affectation-prelevement",
+        "typeId": "don",
+        "when": {
+            "field": "type",
+            "equals": "Prélèvement automatique"
+        },
+        "then": [
+            {
+                "effect": "fieldOptions",
+                "field": "typeAffectation",
+                "options": [
+                    "Denier",
+                    "Don ponctuel"
+                ]
+            }
+        ]
+    },
+    {
+        "id": "don-annule-colore-en-rouge",
+        "typeId": "don",
+        "when": {
+            "field": "statut",
+            "equals": "Annulé"
+        },
+        "then": [
+            {
+                "effect": "rowColor",
+                "textColor": "#c0392b",
+                "bgColor": "#fdecea"
+            }
+        ]
+    },
+    {
+        "id": "don-en-attente-colore-en-ambre",
+        "typeId": "don",
+        "when": {
+            "field": "statut",
+            "equals": "En attente"
+        },
+        "then": [
+            {
+                "effect": "rowColor",
+                "textColor": "#92620a",
+                "bgColor": "#fff6e0"
+            }
+        ]
+    },
+    {
+        "id": "bordereau-anomalie-colore-en-rouge",
+        "typeId": "bordereau",
+        "when": {
+            "field": "controle",
+            "equals": "Anomalie"
+        },
+        "then": [
+            {
+                "effect": "rowColor",
+                "textColor": "#c0392b",
+                "bgColor": "#fdecea"
+            }
+        ]
+    },
+    {
+        "id": "foyer-solo-vide-second-membre",
+        "typeId": "foyer",
+        "when": {
+            "field": "civilite",
+            "in": [
+                "M.",
+                "Mme",
+                "Mlle"
+            ]
+        },
+        "then": [
+            {
+                "effect": "clearField",
+                "field": "nom2"
+            },
+            {
+                "effect": "clearField",
+                "field": "prenom2"
+            }
+        ]
+    },
+    {
+        "id": "personne-decede-vide-contact",
+        "typeId": "personne",
+        "when": {
+            "field": "decede",
+            "equals": "true"
+        },
+        "then": [
+            {
+                "effect": "clearField",
+                "field": "email"
+            },
+            {
+                "effect": "clearField",
+                "field": "emailPro"
+            },
+            {
+                "effect": "clearField",
+                "field": "mobile"
+            }
+        ]
+    },
+    {
+        "id": "personne-creation-cree-foyer",
+        "typeId": "personne",
+        "when": {
+            "field": "foyerId",
+            "equals": ""
+        },
+        "then": [
+            {
+                "effect": "createRecord",
+                "targetType": "foyer",
+                "as": "nouveauFoyer"
+            },
+            {
+                "effect": "copyField",
+                "sourceField": "nom",
+                "targetRef": "$nouveauFoyer",
+                "targetField": "nom"
+            },
+            {
+                "effect": "setField",
+                "field": "foyerId",
+                "value": "$nouveauFoyer"
+            },
+            {
+                "effect": "createRecord",
+                "targetType": "liaison",
+                "as": "nouvelleLiaison"
+            },
+            {
+                "effect": "copyField",
+                "value": "$nouveauFoyer",
+                "targetRef": "$nouvelleLiaison",
+                "targetField": "foyerId"
+            },
+            {
+                "effect": "copyField",
+                "sourceField": "id",
+                "targetRef": "$nouvelleLiaison",
+                "targetField": "personneId"
+            },
+            {
+                "effect": "copyField",
+                "value": "Principal",
+                "targetRef": "$nouvelleLiaison",
+                "targetField": "statut"
+            },
+            {
+                "effect": "copyField",
+                "sourceField": "roleFoyer",
+                "targetRef": "$nouvelleLiaison",
+                "targetField": "role"
+            }
+        ]
+    },
+    {
+        "id": "personne-changement-recalcule-foyer",
+        "typeId": "personne",
+        "then": [
+            {
+                "effect": "dispatchEvent",
+                "field": "foyerId",
+                "targetType": "foyer",
+                "eventType": "foyer.recompute_counts"
+            }
+        ]
+    },
+    {
+        "id": "don-changement-recalcule-foyer",
+        "typeId": "don",
+        "then": [
+            {
+                "effect": "dispatchEvent",
+                "field": "foyerId",
+                "targetType": "foyer",
+                "eventType": "foyer.recompute_counts"
+            }
+        ]
+    },
+    {
+        "id": "foyer-recalcule-effectifs",
+        "typeId": "foyer",
+        "eventType": "foyer.recompute_counts",
+        "then": [
+            {
+                "effect": "countRelated",
+                "relationType": "personne",
+                "matchField": "foyerId",
+                "as": "totalCount"
+            },
+            {
+                "effect": "setField",
+                "field": "nbPersonnes",
+                "value": "$totalCount"
+            },
+            {
+                "effect": "countRelated",
+                "relationType": "personne",
+                "matchField": "foyerId",
+                "filter": { "field": "roleFoyer", "equals": "Enfant" },
+                "as": "enfantsCount"
+            },
+            {
+                "effect": "setField",
+                "field": "nbEnfants",
+                "value": "$enfantsCount"
+            },
+            {
+                "effect": "countRelated",
+                "relationType": "don",
+                "matchField": "foyerId",
+                "as": "donsCount"
+            },
+            {
+                "effect": "setField",
+                "field": "nbDons",
+                "value": "$donsCount"
+            },
+            {
+                "effect": "existsRelated",
+                "relationType": "personne",
+                "matchField": "foyerId",
+                "filter": { "field": "decede", "equals": "true" },
+                "as": "unDecede"
+            },
+            {
+                "effect": "setField",
+                "field": "alerteDeces",
+                "value": "$unDecede"
+            },
+            {
+                "effect": "sumRelated",
+                "relationType": "don",
+                "matchField": "foyerId",
+                "sourceField": "montant",
+                "as": "sommeDons"
+            },
+            {
+                "effect": "setField",
+                "field": "totalDons",
+                "value": "$sommeDons"
+            }
+        ]
+    },
+    {
+        "id": "foyer-envoi-recu-fiscal-defaut",
+        "typeId": "foyer",
+        "when": { "field": "envoiRecuFiscal", "empty": true },
+        "then": [
+            {
+                "effect": "setField",
+                "field": "envoiRecuFiscal",
+                "value": {
+                    "if": { "field": "email", "empty": false },
+                    "then": "Par email",
+                    "else": "Par courrier"
+                }
+            }
+        ]
+    },
+    {
+        "id": "foyer-formule-politesse-depuis-civilite",
+        "typeId": "foyer",
+        "when": { "field": "civilite", "changed": true },
+        "then": [
+            {
+                "effect": "setField",
+                "field": "formulePolitesse",
+                "value": {
+                    "lookup": "civilite",
+                    "table": {
+                        "M.": "Cher Monsieur,",
+                        "Mme": "Chère Madame,",
+                        "Mlle": "Chère Madame,",
+                        "M. et Mme": "Cher Monsieur, chère Madame,"
+                    },
+                    "default": ""
+                }
+            }
+        ]
+    },
+    {
+        "id": "foyer-nom2-recopie-nom1",
+        "typeId": "foyer",
+        "when": {
+            "and": [
+                { "field": "nom2", "empty": true },
+                { "field": "nom1", "empty": false }
+            ]
+        },
+        "then": [
+            { "effect": "setField", "field": "nom2", "value": "@nom1" }
+        ]
+    },
+    {
+        "id": "personne-date-deces-force-decede",
+        "typeId": "personne",
+        "when": {
+            "and": [
+                { "field": "dateDeces", "empty": false },
+                { "field": "decede", "equals": "false" }
+            ]
+        },
+        "then": [
+            { "effect": "setField", "field": "decede", "value": "true" }
+        ]
+    },
+    {
+        "id": "personne-preference-renseignee",
+        "typeId": "personne",
+        "when": { "field": "envoiRecuFiscal", "changed": true },
+        "then": [
+            {
+                "effect": "setField",
+                "field": "preferenceRenseignee",
+                "value": { "if": { "field": "envoiRecuFiscal", "empty": false }, "then": "true", "else": "false" }
+            }
+        ]
+    },
+    {
+        "id": "personne-envoi-recu-fiscal-defaut",
+        "typeId": "personne",
+        "when": { "field": "envoiRecuFiscal", "empty": true },
+        "then": [
+            {
+                "effect": "setField",
+                "field": "envoiRecuFiscal",
+                "value": { "if": { "field": "email", "empty": false }, "then": "Par email", "else": "Par courrier" }
+            }
+        ]
+    },
+    {
+        "id": "personne-formule-politesse-depuis-civilite",
+        "typeId": "personne",
+        "when": { "field": "civilite", "changed": true },
+        "then": [
+            {
+                "effect": "setField",
+                "field": "formulePolitesse",
+                "value": {
+                    "lookup": "civilite",
+                    "table": { "M.": "Cher Monsieur,", "Mme": "Chère Madame,", "Mlle": "Chère Madame," },
+                    "default": ""
+                }
+            }
+        ]
+    },
+    {
+        "id": "personne-sexe-depuis-civilite",
+        "typeId": "personne",
+        "when": { "field": "civilite", "in": ["M.", "Mme", "Mlle"] },
+        "then": [
+            {
+                "effect": "setField",
+                "field": "sexe",
+                "value": {
+                    "lookup": "civilite",
+                    "table": { "M.": "M", "Mme": "F", "Mlle": "F" },
+                    "default": ""
+                }
+            }
+        ]
+    },
+    {
+        "id": "personne-bapteme-force",
+        "typeId": "personne",
+        "when": {
+            "and": [
+                { "field": "dateBapteme", "empty": false },
+                { "field": "baptise", "equals": "false" }
+            ]
+        },
+        "then": [
+            { "effect": "setField", "field": "baptise", "value": "true" }
+        ]
+    },
+    {
+        "id": "personne-communion-force",
+        "typeId": "personne",
+        "when": {
+            "and": [
+                { "field": "dateCommunion", "empty": false },
+                { "field": "communion", "equals": "false" }
+            ]
+        },
+        "then": [
+            { "effect": "setField", "field": "communion", "value": "true" }
+        ]
+    },
+    {
+        "id": "personne-confirmation-force",
+        "typeId": "personne",
+        "when": {
+            "and": [
+                { "field": "dateConfirmation", "empty": false },
+                { "field": "confirmation", "equals": "false" }
+            ]
+        },
+        "then": [
+            { "effect": "setField", "field": "confirmation", "value": "true" }
+        ]
+    },
+    {
+        "id": "personne-mariage-force",
+        "typeId": "personne",
+        "when": {
+            "and": [
+                { "field": "dateMariage", "empty": false },
+                { "field": "marie", "equals": "false" }
+            ]
+        },
+        "then": [
+            { "effect": "setField", "field": "marie", "value": "true" }
+        ]
+    },
+    {
+        "id": "personne-diacre-force-statut-clerc",
+        "typeId": "personne",
+        "when": { "field": "diacre", "equals": "true" },
+        "then": [
+            { "effect": "setField", "field": "statut", "value": "Clerc" }
+        ]
+    },
+    {
+        "id": "personne-stopcom-vide-reset-communication",
+        "typeId": "personne",
+        "when": { "field": "stopcom", "empty": true },
+        "then": [
+            { "effect": "setField", "field": "emailOptOut", "value": "false" },
+            { "effect": "setField", "field": "aucunCourrier", "value": "false" },
+            { "effect": "setField", "field": "donotcall", "value": "false" }
+        ]
+    },
+    {
+        "id": "personne-id-donateur-genere",
+        "typeId": "personne",
+        "when": { "field": "idDonateur", "empty": true },
+        "then": [
+            { "effect": "setField", "field": "idDonateur", "value": "@id" }
+        ]
+    },
+    {
+        "id": "liaison-unicite-principal",
+        "typeId": "liaison",
+        "when": { "field": "statut", "equals": "Principal" },
+        "then": [
+            {
+                "effect": "forEachRelated",
+                "relationType": "liaison",
+                "matchFields": ["personneId"],
+                "filter": { "field": "statut", "equals": "Principal" },
+                "excludeSelf": true,
+                "then": [
+                    { "effect": "setField", "field": "statut", "value": "Secondaire" }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "liaison-dedoublonnage",
+        "typeId": "liaison",
+        "then": [
+            {
+                "effect": "forEachRelated",
+                "relationType": "liaison",
+                "matchFields": ["foyerId", "personneId"],
+                "excludeSelf": true,
+                "then": [
+                    { "effect": "delete" }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "foyer-email-modifie-reinvalide",
+        "typeId": "foyer",
+        "when": { "field": "email", "changed": true },
+        "then": [
+            { "effect": "setField", "field": "emailInvalide", "value": "false" }
+        ]
+    },
+    {
+        "id": "personne-stopcom-email-general",
+        "typeId": "personne",
+        "when": { "field": "stopcom", "contains": "Stop Email général" },
+        "then": [
+            { "effect": "setField", "field": "emailOptOut", "value": "true" }
+        ]
+    },
+    {
+        "id": "personne-stopcom-sans-email-general",
+        "typeId": "personne",
+        "when": { "not": { "field": "stopcom", "contains": "Stop Email général" } },
+        "then": [
+            { "effect": "setField", "field": "emailOptOut", "value": "false" }
+        ]
+    },
+    {
+        "id": "foyer-preference-renseignee",
+        "typeId": "foyer",
+        "when": { "field": "envoiRecuFiscal", "changed": true },
+        "then": [
+            {
+                "effect": "setField",
+                "field": "preferenceRenseignee",
+                "value": { "if": { "field": "envoiRecuFiscal", "empty": false }, "then": "true", "else": "false" }
+            }
+        ]
+    },
+    {
+        "id": "foyer-adresse-modifiee-reinvalide",
+        "typeId": "foyer",
+        "when": { "field": "adresse", "changed": true },
+        "then": [
+            { "effect": "clearField", "field": "adresseInvalide" }
+        ]
+    },
+    {
+        "id": "foyer-synthese-dons-invalide",
+        "typeId": "foyer",
+        "then": [
+            { "effect": "setField", "field": "synthDonsFaite", "value": "false" }
+        ]
+    },
+    {
+        "id": "foyer-recopie-preference-fiscale-contacts",
+        "typeId": "foyer",
+        "then": [
+            {
+                "effect": "forEachRelated",
+                "relationType": "personne",
+                "matchFields": ["foyerId"],
+                "filter": { "field": "majAutoPrefFiscale", "equals": "true" },
+                "then": [
+                    { "effect": "setField", "field": "envoiRecuFiscal", "value": "%envoiRecuFiscal" }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "foyer-recopie-date-depart-paroisse-pere",
+        "typeId": "foyer",
+        "then": [
+            {
+                "effect": "forEachRelated",
+                "relationType": "personne",
+                "matchFields": ["foyerId"],
+                "filter": { "field": "roleFoyer", "equals": "Père" },
+                "then": [
+                    { "effect": "setField", "field": "dateDepartParoisse", "value": "%dateDepartParoisse" }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "foyer-recopie-date-depart-paroisse-mere",
+        "typeId": "foyer",
+        "then": [
+            {
+                "effect": "forEachRelated",
+                "relationType": "personne",
+                "matchFields": ["foyerId"],
+                "filter": { "field": "roleFoyer", "equals": "Mère" },
+                "then": [
+                    { "effect": "setField", "field": "dateDepartParoisse", "value": "%dateDepartParoisse" }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "foyer-recopie-npai-contacts",
+        "typeId": "foyer",
+        "then": [
+            {
+                "effect": "forEachRelated",
+                "relationType": "personne",
+                "matchFields": ["foyerId"],
+                "then": [
+                    { "effect": "setField", "field": "npai", "value": "%adresseInvalide" }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "foyer-stopcom-email-general",
+        "typeId": "foyer",
+        "when": { "field": "stopcom", "contains": "Stop Email général" },
+        "then": [
+            { "effect": "setField", "field": "emailOptOut", "value": "true" }
+        ]
+    },
+    {
+        "id": "foyer-stopcom-sans-email-general",
+        "typeId": "foyer",
+        "when": { "not": { "field": "stopcom", "contains": "Stop Email général" } },
+        "then": [
+            { "effect": "setField", "field": "emailOptOut", "value": "false" }
+        ]
+    },
+    {
+        "id": "foyer-stopcom-telephone-general",
+        "typeId": "foyer",
+        "when": { "field": "stopcom", "contains": "Stop Téléphone général" },
+        "then": [
+            { "effect": "setField", "field": "nepasappeler", "value": "true" }
+        ]
+    },
+    {
+        "id": "foyer-stopcom-sans-telephone-general",
+        "typeId": "foyer",
+        "when": { "not": { "field": "stopcom", "contains": "Stop Téléphone général" } },
+        "then": [
+            { "effect": "setField", "field": "nepasappeler", "value": "false" }
+        ]
+    },
+    {
+        "id": "foyer-stopcom-sans-courrier-general",
+        "typeId": "foyer",
+        "when": { "not": { "field": "stopcom", "contains": "Stop Courrier général" } },
+        "then": [
+            { "effect": "setField", "field": "aucunCourrier", "value": "false" }
+        ]
+    },
+    {
+        "id": "personne-stopcom-telephone-general",
+        "typeId": "personne",
+        "when": { "field": "stopcom", "contains": "Stop Téléphone général" },
+        "then": [
+            { "effect": "setField", "field": "donotcall", "value": "true" }
+        ]
+    },
+    {
+        "id": "personne-stopcom-courrier-general",
+        "typeId": "personne",
+        "when": { "field": "stopcom", "contains": "Stop Courrier général" },
+        "then": [
+            { "effect": "setField", "field": "aucunCourrier", "value": "true" }
+        ]
+    },
+    {
+        "id": "foyer-nom1-recopie-nom2",
+        "typeId": "foyer",
+        "when": {
+            "and": [
+                { "field": "nom1", "empty": true },
+                { "field": "nom2", "empty": false }
+            ]
+        },
+        "then": [
+            { "effect": "setField", "field": "nom1", "value": "@nom2" }
+        ]
+    },
+    {
+        "id": "foyer-id-donateur-genere",
+        "typeId": "foyer",
+        "when": { "field": "idDonateur", "empty": true },
+        "then": [
+            { "effect": "setField", "field": "idDonateur", "value": "@id" }
+        ]
+    },
+    {
+        "id": "foyer-garde-fou-monsieur-madame",
+        "typeId": "foyer",
+        "when": {
+            "and": [
+                { "field": "utiliserMonsieur", "equals": "false" },
+                { "field": "utiliserMadame", "equals": "false" }
+            ]
+        },
+        "then": [
+            { "effect": "setField", "field": "utiliserMonsieur", "value": "true" },
+            { "effect": "setField", "field": "utiliserMadame", "value": "true" }
+        ]
+    },
+    {
+        "id": "personne-a-naitre-si-naissance",
+        "typeId": "personne",
+        "when": { "field": "dateNaissance", "empty": false },
+        "then": [
+            { "effect": "setField", "field": "aNaitre", "value": "false" }
+        ]
+    },
+    {
+        "id": "foyer-recopie-type-recu-fiscal-dons",
+        "typeId": "foyer",
+        "when": { "field": "typeRecuFiscal", "empty": false },
+        "then": [
+            {
+                "effect": "forEachRelated",
+                "relationType": "don",
+                "matchFields": ["foyerId"],
+                "filter": { "field": "importe", "equals": "false" },
+                "then": [
+                    { "effect": "setField", "field": "typeRecuFiscal", "value": "%typeRecuFiscal" }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "personne-recopie-type-recu-fiscal-dons",
+        "typeId": "personne",
+        "when": { "field": "typeRecuFiscal", "empty": false },
+        "then": [
+            {
+                "effect": "forEachRelated",
+                "relationType": "don",
+                "matchFields": ["personneId"],
+                "filter": { "field": "importe", "equals": "false" },
+                "then": [
+                    { "effect": "setField", "field": "typeRecuFiscal", "value": "%typeRecuFiscal" }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "personne-stopcom-sans-telephone-general",
+        "typeId": "personne",
+        "when": { "not": { "field": "stopcom", "contains": "Stop Téléphone général" } },
+        "then": [
+            { "effect": "setField", "field": "donotcall", "value": "false" }
+        ]
+    },
+    {
+        "id": "personne-stopcom-sans-courrier-general",
+        "typeId": "personne",
+        "when": { "not": { "field": "stopcom", "contains": "Stop Courrier général" } },
+        "then": [
+            { "effect": "setField", "field": "aucunCourrier", "value": "false" }
+        ]
+    },
+    {
+        "id": "foyer-nom-format",
+        "typeId": "foyer",
+        "when": { "or": [
+            { "field": "nom1", "changed": true },
+            { "field": "prenom1", "changed": true }
+        ] },
+        "then": [
+            { "effect": "setField", "field": "nomFormate", "value": { "concat": ["@nom1", " ", "@prenom1"] } }
+        ]
+    },
+    {
+        "id": "personne-nom-format",
+        "typeId": "personne",
+        "when": { "or": [
+            { "field": "nom", "changed": true },
+            { "field": "prenom", "changed": true }
+        ] },
+        "then": [
+            { "effect": "setField", "field": "nomFormate", "value": { "concat": ["@nom", " ", "@prenom"] } }
+        ]
+    },
+    {
+        "id": "foyer-archive-date",
+        "typeId": "foyer",
+        "when": { "and": [
+            { "field": "archive", "equals": "true" },
+            { "field": "dateArchive", "empty": true }
+        ] },
+        "then": [
+            { "effect": "setField", "field": "dateArchive", "value": { "today": true } }
+        ]
+    },
+    {
+        "id": "foyer-desarchive-vide-date",
+        "typeId": "foyer",
+        "when": { "and": [
+            { "field": "archive", "equals": "false" },
+            { "field": "dateArchive", "empty": false }
+        ] },
+        "then": [
+            { "effect": "clearField", "field": "dateArchive" }
+        ]
+    },
+    {
+        "id": "foyer-recopie-adresse-contacts",
+        "typeId": "foyer",
+        "then": [
+            {
+                "effect": "forEachRelated",
+                "relationType": "personne",
+                "matchFields": ["foyerId"],
+                "then": [
+                    { "effect": "setField", "field": "adresse", "value": "%adresse" }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "foyer-cloisonnement-faible-partage",
+        "typeId": "foyer",
+        "when": { "env": "CLOISONNEMENT", "equals": "Faible" },
+        "then": [
+            { "effect": "setField", "field": "estPartage", "value": "true" }
+        ]
+    },
+    {
+        "id": "personne-cloisonnement-faible-partage",
+        "typeId": "personne",
+        "when": { "env": "CLOISONNEMENT", "equals": "Faible" },
+        "then": [
+            { "effect": "setField", "field": "estPartage", "value": "true" }
+        ]
+    },
+    {
+        "id": "personne-recopie-preference-fiscale-foyer",
+        "typeId": "personne",
+        "when": { "field": "majAutoPrefFiscale", "equals": "true" },
+        "then": [
+            { "effect": "viaFk", "field": "foyerId", "targetType": "foyer", "read": "envoiRecuFiscal", "as": "prefFoyer" },
+            { "effect": "setField", "field": "envoiRecuFiscal", "value": "$prefFoyer" }
+        ]
+    },
+    {
+        "id": "liaison-intitule",
+        "typeId": "liaison",
+        "then": [
+            { "effect": "viaFk", "field": "foyerId", "targetType": "foyer", "read": "nom", "as": "nomFoyer" },
+            { "effect": "viaFk", "field": "personneId", "targetType": "personne", "read": "nom", "as": "nomPersonne" },
+            { "effect": "viaFk", "field": "personneId", "targetType": "personne", "read": "prenom", "as": "prenomPersonne" },
+            { "effect": "setField", "field": "intitule", "value": { "concat": ["$nomFoyer", " -- ", "$nomPersonne", " ", "$prenomPersonne"] } }
+        ]
+    },
+    {
+        "id": "foyer-assigne-parents-enfants",
+        "typeId": "foyer",
+        "eventType": "foyer.recompute_counts",
+        "then": [
+            { "effect": "findRelated", "relationType": "personne", "matchFields": ["foyerId"], "filter": { "field": "roleFoyer", "equals": "Mère" }, "read": "id", "as": "mereId" },
+            { "effect": "findRelated", "relationType": "personne", "matchFields": ["foyerId"], "filter": { "field": "roleFoyer", "equals": "Père" }, "read": "id", "as": "pereId" },
+            {
+                "effect": "forEachRelated", "relationType": "personne", "matchFields": ["foyerId"], "filter": { "field": "roleFoyer", "equals": "Enfant" },
+                "then": [
+                    { "effect": "setField", "field": "parent1Id", "value": "$mereId" },
+                    { "effect": "setField", "field": "parent2Id", "value": "$pereId" }
+                ]
+            }
+        ]
+    }
+]
