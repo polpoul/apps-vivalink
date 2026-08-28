@@ -1,17 +1,7 @@
 [
-  {
-    "id": "accueil",
-    "label": "Accueil paroissial",
-    "typeIds": ["foyer", "personne", "paroisse"]
-  },
-  {
-    "id": "tresorerie",
-    "label": "Trésorerie / Dons",
-    "typeIds": ["don", "mandat", "recu", "remise", "bordereau", "arrete"]
-  },
-  {
-    "id": "catechese",
-    "label": "Catéchèse / Activités",
-    "typeIds": ["activite", "groupe", "inscription", "participant"]
-  }
+    {
+        "id": "prestataire",
+        "label": "Prestataire",
+        "typeIds": ["client", "tarif", "contrat", "intervention", "facture", "message"]
+    }
 ]
