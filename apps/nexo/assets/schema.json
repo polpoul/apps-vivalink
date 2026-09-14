@@ -139,7 +139,8 @@
             "icon": "event_repeat",
             "color": "var(--color-orange, #C77B3D)",
             "titleFields": [
-                "clientId.nom"
+                "clientId.nom",
+                "intitule"
             ],
             "fields": [
                 {
@@ -149,10 +150,17 @@
                     "order": 0
                 },
                 {
+                    "key": "intitule",
+                    "label": "intitule",
+                    "category": "identite",
+                    "order": 1,
+                    "displayMode": "tous"
+                },
+                {
                     "key": "tarifId",
                     "label": "Tarif",
                     "category": "identite",
-                    "order": 1
+                    "order": 2
                 },
                 {
                     "key": "jour",
@@ -203,7 +211,7 @@
                     "key": "statut",
                     "label": "Statut",
                     "category": "identite",
-                    "order": 2,
+                    "order": 3,
                     "displayMode": "tous",
                     "type": "picklist",
                     "options": [
@@ -216,7 +224,7 @@
                     "key": "dateDebut",
                     "label": "Date de début",
                     "category": "identite",
-                    "order": 3,
+                    "order": 4,
                     "displayMode": "complet",
                     "type": "date"
                 },
@@ -224,7 +232,7 @@
                     "key": "dateFin",
                     "label": "Date de fin",
                     "category": "identite",
-                    "order": 4,
+                    "order": 5,
                     "displayMode": "complet",
                     "type": "date"
                 }
