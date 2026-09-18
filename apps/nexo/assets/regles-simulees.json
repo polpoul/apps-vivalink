@@ -48,6 +48,32 @@
         ]
     },
     {
+        "id": "intervention-duree-vers-fin",
+        "typeId": "intervention",
+        "when": {
+            "and": [
+                { "field": "dureePrevue", "changed": true },
+                { "field": "debutPrevu", "empty": false }
+            ]
+        },
+        "then": [
+            { "effect": "setField", "field": "finPrevue", "value": { "addHours": ["@debutPrevu", "@dureePrevue"] } }
+        ]
+    },
+    {
+        "id": "intervention-fin-vers-duree",
+        "typeId": "intervention",
+        "when": {
+            "and": [
+                { "field": "finPrevue", "changed": true },
+                { "field": "debutPrevu", "empty": false }
+            ]
+        },
+        "then": [
+            { "effect": "setField", "field": "dureePrevue", "value": { "diffHours": ["@finPrevue", "@debutPrevu"] } }
+        ]
+    },
+    {
         "id": "intervention-facture-changee",
         "typeId": "intervention",
         "when": { "field": "factureId", "empty": false },

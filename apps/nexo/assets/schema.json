@@ -262,8 +262,9 @@
             "color": "var(--color-violet, #7A5FA0)",
             "titleFields": [
                 "clientId.nom",
-                "datePrevue"
+                "debutPrevu"
             ],
+            "agenda": { "startField": "debutPrevu", "endField": "finPrevue" },
             "fields": [
                 {
                     "key": "clientId",
@@ -290,18 +291,26 @@
                     "order": 0
                 },
                 {
-                    "key": "datePrevue",
-                    "label": "Date prévue",
+                    "key": "debutPrevu",
+                    "label": "Début prévu",
                     "category": "planification",
                     "order": 0,
                     "displayMode": "tous",
-                    "type": "date"
+                    "type": "datetime"
+                },
+                {
+                    "key": "finPrevue",
+                    "label": "Fin prévue",
+                    "category": "planification",
+                    "order": 1,
+                    "displayMode": "tous",
+                    "type": "datetime"
                 },
                 {
                     "key": "dureePrevue",
                     "label": "Durée prévue (heures)",
                     "category": "planification",
-                    "order": 1,
+                    "order": 2,
                     "displayMode": "tous",
                     "type": "number"
                 },
@@ -374,7 +383,7 @@
                 }
             ],
             "listColumns": [
-                "datePrevue",
+                "debutPrevu",
                 "statut",
                 "montant"
             ]
