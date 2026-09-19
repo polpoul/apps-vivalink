@@ -95,5 +95,36 @@
             },
             { "effect": "setField", "field": "montantTotal", "value": "$sommeFacture" }
         ]
+    },
+    {
+        "id": "contrat-genere-passages",
+        "typeId": "contrat",
+        "eventType": "contrat.action:genererPassages",
+        "then": [
+            {
+                "effect": "generateRecords",
+                "targetType": "passage",
+                "sourceRelation": { "relationType": "contratCreneau", "matchFields": ["contratId"] },
+                "repeat": "$weeks",
+                "fields": {
+                    "clientId": "%clientId",
+                    "contratId": "%id",
+                    "tarifId": "%tarifId",
+                    "statut": "Planifiée",
+                    "debutPrevu": { "concat": [
+                        { "weekdayOccurrence": { "anchor": "%dateDebut", "weekday": "@jour", "week": "$week" } },
+                        "T", "@heureDebut"
+                    ] },
+                    "finPrevue": { "addHours": [
+                        { "concat": [
+                            { "weekdayOccurrence": { "anchor": "%dateDebut", "weekday": "@jour", "week": "$week" } },
+                            "T", "@heureDebut"
+                        ] },
+                        "@duree"
+                    ] },
+                    "dureePrevue": "@duree"
+                }
+            }
+        ]
     }
 ]

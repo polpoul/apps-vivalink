@@ -163,51 +163,6 @@
                     "order": 2
                 },
                 {
-                    "key": "jour",
-                    "label": "Jour",
-                    "category": "recurrence",
-                    "order": 0,
-                    "displayMode": "tous",
-                    "type": "picklist",
-                    "options": [
-                        "Lundi",
-                        "Mardi",
-                        "Mercredi",
-                        "Jeudi",
-                        "Vendredi",
-                        "Samedi",
-                        "Dimanche"
-                    ]
-                },
-                {
-                    "key": "heureDebut",
-                    "label": "Heure de début",
-                    "category": "recurrence",
-                    "order": 1,
-                    "displayMode": "tous"
-                },
-                {
-                    "key": "duree",
-                    "label": "Durée (heures)",
-                    "category": "recurrence",
-                    "order": 2,
-                    "displayMode": "tous",
-                    "type": "number"
-                },
-                {
-                    "key": "frequence",
-                    "label": "Fréquence",
-                    "category": "recurrence",
-                    "order": 3,
-                    "displayMode": "tous",
-                    "type": "picklist",
-                    "options": [
-                        "Hebdomadaire",
-                        "Bimensuelle",
-                        "Mensuelle"
-                    ]
-                },
-                {
                     "key": "statut",
                     "label": "Statut",
                     "category": "identite",
@@ -242,17 +197,88 @@
                     "id": "identite",
                     "label": "Identité",
                     "order": 0
-                },
-                {
-                    "id": "recurrence",
-                    "label": "Récurrence",
-                    "order": 1
                 }
             ],
             "listColumns": [
                 "clientId.nom",
-                "jour",
                 "statut"
+            ],
+            "actions": [
+                {
+                    "id": "genererPassages",
+                    "label": "Générer les passages",
+                    "icon": "event_repeat",
+                    "params": [
+                        {
+                            "key": "weeks",
+                            "label": "Nombre de semaines",
+                            "type": "number",
+                            "default": "4"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "contratCreneau",
+            "label": "Créneau",
+            "icon": "schedule",
+            "color": "var(--color-orange, #C77B3D)",
+            "titleFields": [
+                "jour",
+                "heureDebut"
+            ],
+            "fields": [
+                {
+                    "key": "contratId",
+                    "label": "Contrat",
+                    "category": "identite",
+                    "order": 0
+                },
+                {
+                    "key": "jour",
+                    "label": "Jour",
+                    "category": "identite",
+                    "order": 1,
+                    "displayMode": "tous",
+                    "type": "picklist",
+                    "options": [
+                        "Lundi",
+                        "Mardi",
+                        "Mercredi",
+                        "Jeudi",
+                        "Vendredi",
+                        "Samedi",
+                        "Dimanche"
+                    ]
+                },
+                {
+                    "key": "heureDebut",
+                    "label": "Heure de début",
+                    "category": "identite",
+                    "order": 2,
+                    "displayMode": "tous"
+                },
+                {
+                    "key": "duree",
+                    "label": "Durée (heures)",
+                    "category": "identite",
+                    "order": 3,
+                    "displayMode": "tous",
+                    "type": "number"
+                }
+            ],
+            "categories": [
+                {
+                    "id": "identite",
+                    "label": "Identité",
+                    "order": 0
+                }
+            ],
+            "listColumns": [
+                "jour",
+                "heureDebut",
+                "duree"
             ]
         },
         {
@@ -598,6 +624,12 @@
             "to": "passage",
             "via": "contratId",
             "label": "Passages"
+        },
+        {
+            "from": "contrat",
+            "to": "contratCreneau",
+            "via": "contratId",
+            "label": "Créneaux"
         },
         {
             "from": "facture",
