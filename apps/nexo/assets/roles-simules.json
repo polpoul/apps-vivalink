@@ -2,6 +2,6 @@
     {
         "id": "prestataire",
         "label": "Prestataire",
-        "typeIds": ["client", "tarif", "contrat", "intervention", "facture", "message"]
+        "typeIds": ["client", "tarif", "contrat", "passage", "facture", "message"]
     }
 ]

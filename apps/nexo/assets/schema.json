@@ -59,7 +59,7 @@
                 },
                 {
                     "key": "nbInterventionsRealisees",
-                    "label": "Interventions réalisées",
+                    "label": "Passages réalisés",
                     "category": "activite",
                     "order": 0,
                     "displayMode": "complet",
@@ -256,8 +256,8 @@
             ]
         },
         {
-            "id": "intervention",
-            "label": "Intervention",
+            "id": "passage",
+            "label": "Passage",
             "icon": "cleaning_services",
             "color": "var(--color-violet, #7A5FA0)",
             "titleFields": [
@@ -483,8 +483,8 @@
                     "order": 0
                 },
                 {
-                    "key": "interventionId",
-                    "label": "Intervention",
+                    "key": "passageId",
+                    "label": "Passage",
                     "category": "identite",
                     "order": 1
                 },
@@ -565,9 +565,9 @@
         },
         {
             "from": "client",
-            "to": "intervention",
+            "to": "passage",
             "via": "clientId",
-            "label": "Interventions"
+            "label": "Passages"
         },
         {
             "from": "client",
@@ -589,26 +589,26 @@
         },
         {
             "from": "tarif",
-            "to": "intervention",
+            "to": "passage",
             "via": "tarifId",
-            "label": "Interventions"
+            "label": "Passages"
         },
         {
             "from": "contrat",
-            "to": "intervention",
+            "to": "passage",
             "via": "contratId",
-            "label": "Interventions"
+            "label": "Passages"
         },
         {
             "from": "facture",
-            "to": "intervention",
+            "to": "passage",
             "via": "factureId",
-            "label": "Interventions facturées"
+            "label": "Passages facturés"
         },
         {
-            "from": "intervention",
+            "from": "passage",
             "to": "message",
-            "via": "interventionId",
+            "via": "passageId",
             "label": "Messages"
         }
     ]

@@ -1,7 +1,7 @@
 [
     {
-        "id": "intervention-changement-recalcule-client",
-        "typeId": "intervention",
+        "id": "passage-changement-recalcule-client",
+        "typeId": "passage",
         "then": [
             { "effect": "dispatchEvent", "field": "clientId", "targetType": "client", "eventType": "client.recompute_counts" }
         ]
@@ -13,7 +13,7 @@
         "then": [
             {
                 "effect": "countRelated",
-                "relationType": "intervention",
+                "relationType": "passage",
                 "matchField": "clientId",
                 "filter": { "field": "statut", "equals": "Réalisée" },
                 "as": "nbRealisees"
@@ -21,7 +21,7 @@
             { "effect": "setField", "field": "nbInterventionsRealisees", "value": "$nbRealisees" },
             {
                 "effect": "sumRelated",
-                "relationType": "intervention",
+                "relationType": "passage",
                 "matchField": "clientId",
                 "filter": { "field": "statut", "equals": "Réalisée" },
                 "sourceField": "montant",
@@ -31,8 +31,8 @@
         ]
     },
     {
-        "id": "intervention-calcule-montant",
-        "typeId": "intervention",
+        "id": "passage-calcule-montant",
+        "typeId": "passage",
         "when": {
             "and": [
                 { "field": "dureeReelle", "empty": false },
@@ -48,8 +48,8 @@
         ]
     },
     {
-        "id": "intervention-duree-vers-fin",
-        "typeId": "intervention",
+        "id": "passage-duree-vers-fin",
+        "typeId": "passage",
         "when": {
             "and": [
                 { "field": "dureePrevue", "changed": true },
@@ -61,8 +61,8 @@
         ]
     },
     {
-        "id": "intervention-fin-vers-duree",
-        "typeId": "intervention",
+        "id": "passage-fin-vers-duree",
+        "typeId": "passage",
         "when": {
             "and": [
                 { "field": "finPrevue", "changed": true },
@@ -74,8 +74,8 @@
         ]
     },
     {
-        "id": "intervention-facture-changee",
-        "typeId": "intervention",
+        "id": "passage-facture-changee",
+        "typeId": "passage",
         "when": { "field": "factureId", "empty": false },
         "then": [
             { "effect": "dispatchEvent", "field": "factureId", "targetType": "facture", "eventType": "facture.recompute" }
@@ -88,7 +88,7 @@
         "then": [
             {
                 "effect": "sumRelated",
-                "relationType": "intervention",
+                "relationType": "passage",
                 "matchField": "factureId",
                 "sourceField": "montant",
                 "as": "sommeFacture"
