@@ -257,7 +257,8 @@
                     "label": "Heure de début",
                     "category": "identite",
                     "order": 2,
-                    "displayMode": "tous"
+                    "displayMode": "tous",
+                    "type": "time"
                 },
                 {
                     "key": "duree",
