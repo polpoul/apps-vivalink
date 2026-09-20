@@ -385,6 +385,20 @@
                     "category": "identite",
                     "order": 4,
                     "displayMode": "complet"
+                },
+                {
+                    "key": "clientId.telephone",
+                    "label": "Téléphone client",
+                    "category": "identite",
+                    "order": 5,
+                    "displayMode": "tous"
+                },
+                {
+                    "key": "clientId.adresse",
+                    "label": "Adresse client",
+                    "category": "identite",
+                    "order": 6,
+                    "displayMode": "complet"
                 }
             ],
             "categories": [
