@@ -1,0 +1,15 @@
+[
+  {
+    "id": "utilisateur",
+    "label": "Utilisateur",
+    "typeIds": [
+      "personne",
+      "lienFamilial",
+      "evenement",
+      "invitation",
+      "participation",
+      "hebergement",
+      "affectationHebergement"
+    ]
+  }
+]

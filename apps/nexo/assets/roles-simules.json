@@ -1,15 +1,7 @@
 [
-  {
-    "id": "utilisateur",
-    "label": "Utilisateur",
-    "typeIds": [
-      "personne",
-      "lienFamilial",
-      "evenement",
-      "invitation",
-      "participation",
-      "hebergement",
-      "affectationHebergement"
-    ]
-  }
+    {
+        "id": "prestataire",
+        "label": "Prestataire",
+        "typeIds": ["client", "tarif", "contrat", "contratCreneau", "passage", "facture", "message"]
+    }
 ]
