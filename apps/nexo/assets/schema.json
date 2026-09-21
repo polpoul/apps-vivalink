@@ -1,662 +1,168 @@
 {
-    "types": [
-        {
-            "id": "client",
-            "label": "Client",
-            "icon": "home",
-            "color": "var(--color-bleu-strong, #395A7E)",
-            "titleFields": [
-                "nom"
-            ],
-            "fields": [
-                {
-                    "key": "nom",
-                    "label": "Nom",
-                    "category": "identite",
-                    "order": 0,
-                    "displayMode": "tous"
-                },
-                {
-                    "key": "adresse",
-                    "label": "Adresse",
-                    "category": "coordonnees",
-                    "order": 0,
-                    "displayMode": "tous"
-                },
-                {
-                    "key": "telephone",
-                    "label": "Téléphone",
-                    "category": "coordonnees",
-                    "order": 1,
-                    "displayMode": "tous"
-                },
-                {
-                    "key": "email",
-                    "label": "Email",
-                    "category": "coordonnees",
-                    "order": 2,
-                    "displayMode": "complet"
-                },
-                {
-                    "key": "instructionsAcces",
-                    "label": "Instructions d'accès",
-                    "category": "identite",
-                    "order": 1,
-                    "displayMode": "complet"
-                },
-                {
-                    "key": "statut",
-                    "label": "Statut",
-                    "category": "identite",
-                    "order": 2,
-                    "displayMode": "tous",
-                    "type": "picklist",
-                    "options": [
-                        "Actif",
-                        "Prospect",
-                        "Inactif"
-                    ]
-                },
-                {
-                    "key": "nbInterventionsRealisees",
-                    "label": "Passages réalisés",
-                    "category": "activite",
-                    "order": 0,
-                    "displayMode": "complet",
-                    "type": "number"
-                },
-                {
-                    "key": "totalRealise",
-                    "label": "Total réalisé",
-                    "category": "activite",
-                    "order": 1,
-                    "displayMode": "complet",
-                    "type": "number"
-                }
-            ],
-            "categories": [
-                {
-                    "id": "identite",
-                    "label": "Identité",
-                    "order": 0
-                },
-                {
-                    "id": "coordonnees",
-                    "label": "Coordonnées",
-                    "order": 1
-                },
-                {
-                    "id": "activite",
-                    "label": "Activité",
-                    "order": 2
-                }
-            ],
-            "listColumns": [
-                "statut",
-                "telephone",
-                "nbInterventionsRealisees"
-            ]
-        },
-        {
-            "id": "tarif",
-            "label": "Tarif",
-            "icon": "payments",
-            "color": "var(--color-vert, #4F8A5B)",
-            "titleFields": [
-                "nom"
-            ],
-            "fields": [
-                {
-                    "key": "nom",
-                    "label": "Nom",
-                    "category": "identite",
-                    "order": 0,
-                    "displayMode": "tous"
-                },
-                {
-                    "key": "montantHoraire",
-                    "label": "Montant horaire",
-                    "category": "identite",
-                    "order": 1,
-                    "displayMode": "tous",
-                    "type": "number"
-                }
-            ],
-            "categories": [
-                {
-                    "id": "identite",
-                    "label": "Identité",
-                    "order": 0
-                }
-            ],
-            "listColumns": [
-                "montantHoraire"
-            ]
-        },
-        {
-            "id": "contrat",
-            "label": "Contrat",
-            "icon": "event_repeat",
-            "color": "var(--color-orange, #C77B3D)",
-            "titleFields": [
-                "clientId.nom",
-                "intitule"
-            ],
-            "fields": [
-                {
-                    "key": "clientId",
-                    "label": "Client",
-                    "category": "identite",
-                    "order": 0
-                },
-                {
-                    "key": "intitule",
-                    "label": "intitule",
-                    "category": "identite",
-                    "order": 1,
-                    "displayMode": "tous"
-                },
-                {
-                    "key": "tarifId",
-                    "label": "Tarif",
-                    "category": "identite",
-                    "order": 2
-                },
-                {
-                    "key": "statut",
-                    "label": "Statut",
-                    "category": "identite",
-                    "order": 3,
-                    "displayMode": "tous",
-                    "type": "picklist",
-                    "options": [
-                        "Actif",
-                        "Suspendu",
-                        "Résilié"
-                    ]
-                },
-                {
-                    "key": "dateDebut",
-                    "label": "Date de début",
-                    "category": "identite",
-                    "order": 4,
-                    "displayMode": "complet",
-                    "type": "date"
-                },
-                {
-                    "key": "dateFin",
-                    "label": "Date de fin",
-                    "category": "identite",
-                    "order": 5,
-                    "displayMode": "complet",
-                    "type": "date"
-                }
-            ],
-            "categories": [
-                {
-                    "id": "identite",
-                    "label": "Identité",
-                    "order": 0
-                }
-            ],
-            "listColumns": [
-                "clientId.nom",
-                "statut"
-            ],
-            "actions": [
-                {
-                    "id": "genererPassages",
-                    "label": "Générer les passages",
-                    "icon": "event_repeat",
-                    "params": [
-                        {
-                            "key": "weeks",
-                            "label": "Nombre de semaines",
-                            "type": "number",
-                            "default": "4"
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            "id": "contratCreneau",
-            "label": "Créneau",
-            "icon": "schedule",
-            "color": "var(--color-orange, #C77B3D)",
-            "titleFields": [
-                "jour",
-                "heureDebut"
-            ],
-            "fields": [
-                {
-                    "key": "contratId",
-                    "label": "Contrat",
-                    "category": "identite",
-                    "order": 0
-                },
-                {
-                    "key": "jour",
-                    "label": "Jour",
-                    "category": "identite",
-                    "order": 1,
-                    "displayMode": "tous",
-                    "type": "picklist",
-                    "options": [
-                        "Lundi",
-                        "Mardi",
-                        "Mercredi",
-                        "Jeudi",
-                        "Vendredi",
-                        "Samedi",
-                        "Dimanche"
-                    ]
-                },
-                {
-                    "key": "heureDebut",
-                    "label": "Heure de début",
-                    "category": "identite",
-                    "order": 2,
-                    "displayMode": "tous",
-                    "type": "time"
-                },
-                {
-                    "key": "duree",
-                    "label": "Durée (heures)",
-                    "category": "identite",
-                    "order": 3,
-                    "displayMode": "tous",
-                    "type": "number"
-                }
-            ],
-            "categories": [
-                {
-                    "id": "identite",
-                    "label": "Identité",
-                    "order": 0
-                }
-            ],
-            "listColumns": [
-                "jour",
-                "heureDebut",
-                "duree"
-            ]
-        },
-        {
-            "id": "passage",
-            "label": "Passage",
-            "icon": "cleaning_services",
-            "color": "var(--color-violet, #7A5FA0)",
-            "titleFields": [
-                "clientId.nom",
-                "debutPrevu"
-            ],
-            "agenda": { "startField": "debutPrevu", "endField": "finPrevue" },
-            "fields": [
-                {
-                    "key": "clientId",
-                    "label": "Client",
-                    "category": "identite",
-                    "order": 0
-                },
-                {
-                    "key": "contratId",
-                    "label": "Contrat",
-                    "category": "identite",
-                    "order": 1
-                },
-                {
-                    "key": "tarifId",
-                    "label": "Tarif",
-                    "category": "identite",
-                    "order": 2
-                },
-                {
-                    "key": "factureId",
-                    "label": "Facture",
-                    "category": "facturation",
-                    "order": 0
-                },
-                {
-                    "key": "debutPrevu",
-                    "label": "Début prévu",
-                    "category": "planification",
-                    "order": 0,
-                    "displayMode": "tous",
-                    "type": "datetime"
-                },
-                {
-                    "key": "finPrevue",
-                    "label": "Fin prévue",
-                    "category": "planification",
-                    "order": 1,
-                    "displayMode": "tous",
-                    "type": "datetime"
-                },
-                {
-                    "key": "dureePrevue",
-                    "label": "Durée prévue (heures)",
-                    "category": "planification",
-                    "order": 2,
-                    "displayMode": "tous",
-                    "type": "number"
-                },
-                {
-                    "key": "dateReelle",
-                    "label": "Date réelle",
-                    "category": "realisation",
-                    "order": 0,
-                    "displayMode": "complet",
-                    "type": "date"
-                },
-                {
-                    "key": "dureeReelle",
-                    "label": "Durée réelle (heures)",
-                    "category": "realisation",
-                    "order": 1,
-                    "displayMode": "complet",
-                    "type": "number"
-                },
-                {
-                    "key": "statut",
-                    "label": "Statut",
-                    "category": "identite",
-                    "order": 3,
-                    "displayMode": "tous",
-                    "type": "picklist",
-                    "options": [
-                        "Planifiée",
-                        "Réalisée",
-                        "Annulée",
-                        "Décalée"
-                    ]
-                },
-                {
-                    "key": "montant",
-                    "label": "Montant",
-                    "category": "realisation",
-                    "order": 2,
-                    "displayMode": "tous",
-                    "type": "number"
-                },
-                {
-                    "key": "notes",
-                    "label": "Notes",
-                    "category": "identite",
-                    "order": 4,
-                    "displayMode": "complet"
-                },
-                {
-                    "key": "clientId.telephone",
-                    "label": "Téléphone client",
-                    "category": "identite",
-                    "order": 5,
-                    "displayMode": "tous"
-                },
-                {
-                    "key": "clientId.adresse",
-                    "label": "Adresse client",
-                    "category": "identite",
-                    "order": 6,
-                    "displayMode": "complet"
-                }
-            ],
-            "categories": [
-                {
-                    "id": "identite",
-                    "label": "Identité",
-                    "order": 0
-                },
-                {
-                    "id": "planification",
-                    "label": "Planification",
-                    "order": 1
-                },
-                {
-                    "id": "realisation",
-                    "label": "Réalisation",
-                    "order": 2
-                },
-                {
-                    "id": "facturation",
-                    "label": "Facturation",
-                    "order": 3
-                }
-            ],
-            "listColumns": [
-                "debutPrevu",
-                "statut",
-                "montant"
-            ]
-        },
-        {
-            "id": "facture",
-            "label": "Facture",
-            "icon": "receipt_long",
-            "color": "var(--color-rouge, #B5495B)",
-            "titleFields": [
-                "clientId.nom",
-                "periodeDebut"
-            ],
-            "fields": [
-                {
-                    "key": "clientId",
-                    "label": "Client",
-                    "category": "identite",
-                    "order": 0
-                },
-                {
-                    "key": "periodeDebut",
-                    "label": "Période - début",
-                    "category": "identite",
-                    "order": 1,
-                    "displayMode": "tous",
-                    "type": "date"
-                },
-                {
-                    "key": "periodeFin",
-                    "label": "Période - fin",
-                    "category": "identite",
-                    "order": 2,
-                    "displayMode": "tous",
-                    "type": "date"
-                },
-                {
-                    "key": "montantTotal",
-                    "label": "Montant total",
-                    "category": "identite",
-                    "order": 3,
-                    "displayMode": "tous",
-                    "type": "number"
-                },
-                {
-                    "key": "statut",
-                    "label": "Statut",
-                    "category": "identite",
-                    "order": 4,
-                    "displayMode": "tous",
-                    "type": "picklist",
-                    "options": [
-                        "Brouillon",
-                        "Envoyée",
-                        "Payée"
-                    ]
-                },
-                {
-                    "key": "dateEmission",
-                    "label": "Date d'émission",
-                    "category": "identite",
-                    "order": 5,
-                    "displayMode": "complet",
-                    "type": "date"
-                }
-            ],
-            "categories": [
-                {
-                    "id": "identite",
-                    "label": "Identité",
-                    "order": 0
-                }
-            ],
-            "listColumns": [
-                "clientId.nom",
-                "montantTotal",
-                "statut"
-            ],
-            "actions": [
-                { "id": "exporter", "label": "Exporter en PDF", "icon": "picture_as_pdf" }
-            ]
-        },
-        {
-            "id": "message",
-            "label": "Message",
-            "icon": "chat",
-            "color": "var(--color-gris, #6b7280)",
-            "titleFields": [
-                "clientId.nom",
-                "type"
-            ],
-            "fields": [
-                {
-                    "key": "clientId",
-                    "label": "Client",
-                    "category": "identite",
-                    "order": 0
-                },
-                {
-                    "key": "passageId",
-                    "label": "Passage",
-                    "category": "identite",
-                    "order": 1
-                },
-                {
-                    "key": "expediteur",
-                    "label": "Expéditeur",
-                    "category": "identite",
-                    "order": 2,
-                    "displayMode": "tous",
-                    "type": "picklist",
-                    "options": [
-                        "Client",
-                        "Prestataire"
-                    ]
-                },
-                {
-                    "key": "type",
-                    "label": "Type",
-                    "category": "identite",
-                    "order": 3,
-                    "displayMode": "tous",
-                    "type": "picklist",
-                    "options": [
-                        "Consigne",
-                        "Décalage",
-                        "Annulation",
-                        "Info"
-                    ]
-                },
-                {
-                    "key": "contenu",
-                    "label": "Contenu",
-                    "category": "identite",
-                    "order": 4,
-                    "displayMode": "tous"
-                },
-                {
-                    "key": "date",
-                    "label": "Date",
-                    "category": "identite",
-                    "order": 5,
-                    "displayMode": "tous",
-                    "type": "date"
-                },
-                {
-                    "key": "statut",
-                    "label": "Statut",
-                    "category": "identite",
-                    "order": 6,
-                    "displayMode": "tous",
-                    "type": "picklist",
-                    "options": [
-                        "Nouveau",
-                        "Traité"
-                    ]
-                }
-            ],
-            "categories": [
-                {
-                    "id": "identite",
-                    "label": "Identité",
-                    "order": 0
-                }
-            ],
-            "listColumns": [
-                "type",
-                "date",
-                "statut"
-            ]
-        }
-    ],
-    "relations": [
-        {
-            "from": "client",
-            "to": "contrat",
-            "via": "clientId",
-            "label": "Contrats"
-        },
-        {
-            "from": "client",
-            "to": "passage",
-            "via": "clientId",
-            "label": "Passages"
-        },
-        {
-            "from": "client",
-            "to": "facture",
-            "via": "clientId",
-            "label": "Factures"
-        },
-        {
-            "from": "client",
-            "to": "message",
-            "via": "clientId",
-            "label": "Messages"
-        },
-        {
-            "from": "tarif",
-            "to": "contrat",
-            "via": "tarifId",
-            "label": "Contrats"
-        },
-        {
-            "from": "tarif",
-            "to": "passage",
-            "via": "tarifId",
-            "label": "Passages"
-        },
-        {
-            "from": "contrat",
-            "to": "passage",
-            "via": "contratId",
-            "label": "Passages"
-        },
-        {
-            "from": "contrat",
-            "to": "contratCreneau",
-            "via": "contratId",
-            "label": "Créneaux"
-        },
-        {
-            "from": "facture",
-            "to": "passage",
-            "via": "factureId",
-            "label": "Passages facturés"
-        },
-        {
-            "from": "passage",
-            "to": "message",
-            "via": "passageId",
-            "label": "Messages"
-        }
-    ]
+  "types": [
+    {
+      "id": "personne",
+      "label": "Personne",
+      "icon": "person",
+      "color": "var(--color-bleu-strong, #395A7E)",
+      "titleFields": ["prenom", "nom"],
+      "listColumns": ["dateNaissance", "telephone", "email"],
+      "fields": [
+        {"key": "prenom", "label": "Prénom", "category": "identite", "order": 0, "displayMode": "tous"},
+        {"key": "nom", "label": "Nom", "category": "identite", "order": 1, "displayMode": "tous"},
+        {"key": "nomNaissance", "label": "Nom de naissance", "category": "identite", "order": 2, "displayMode": "complet"},
+        {"key": "dateNaissance", "label": "Date de naissance", "type": "date", "category": "identite", "order": 3, "displayMode": "tous"},
+        {"key": "telephone", "label": "Téléphone", "category": "coordonnees", "order": 0, "displayMode": "tous"},
+        {"key": "email", "label": "Email", "category": "coordonnees", "order": 1, "displayMode": "tous"},
+        {"key": "adresse", "label": "Adresse", "category": "coordonnees", "order": 2, "displayMode": "complet"},
+        {"key": "codePostal", "label": "Code postal", "category": "coordonnees", "order": 3, "displayMode": "complet"},
+        {"key": "ville", "label": "Ville", "category": "coordonnees", "order": 4, "displayMode": "tous"},
+        {"key": "commentaire", "label": "Commentaire", "category": "informations", "order": 0, "displayMode": "complet"}
+      ],
+      "categories": [
+        {"id": "identite", "label": "Identité", "order": 0},
+        {"id": "coordonnees", "label": "Coordonnées", "order": 1},
+        {"id": "informations", "label": "Informations", "order": 2}
+      ]
+    },
+    {
+      "id": "lienFamilial",
+      "label": "Lien familial",
+      "icon": "family_restroom",
+      "color": "var(--color-marron-strong, #8A6D3B)",
+      "titleFields": ["personneId.prenom", "personneId.nom", "typeLien", "personneLieeId.prenom", "personneLieeId.nom"],
+      "listColumns": ["typeLien"],
+      "fields": [
+        {"key": "personneId.prenom", "label": "Prénom", "category": "lien", "order": 0, "displayMode": "tous"},
+        {"key": "personneId.nom", "label": "Nom", "category": "lien", "order": 1, "displayMode": "tous"},
+        {"key": "personneLieeId.prenom", "label": "Prénom de la personne liée", "category": "lien", "order": 2, "displayMode": "tous"},
+        {"key": "personneLieeId.nom", "label": "Nom de la personne liée", "category": "lien", "order": 3, "displayMode": "tous"},
+        {"key": "typeLien", "label": "Type de lien", "type": "picklist", "options": ["Parent","Enfant","Conjoint","Frère","Sœur","Autre"], "category": "lien", "order": 4, "displayMode": "tous"},
+        {"key": "commentaire", "label": "Commentaire", "category": "lien", "order": 5, "displayMode": "complet"}
+      ],
+      "categories": [{"id": "lien", "label": "Lien familial", "order": 0}]
+    },
+    {
+      "id": "evenement",
+      "label": "Événement",
+      "icon": "event",
+      "color": "var(--color-vert-strong, #397E5A)",
+      "titleFields": ["nom"],
+      "listColumns": ["typeEvenement", "debut", "lieu"],
+      "agenda": {"startField": "debut", "endField": "fin"},
+      "fields": [
+        {"key": "nom", "label": "Nom", "category": "identite", "order": 0, "displayMode": "tous"},
+        {"key": "typeEvenement", "label": "Type", "type": "picklist", "options": ["Cousinade","Réunion familiale","Anniversaire","Autre"], "category": "identite", "order": 1, "displayMode": "tous"},
+        {"key": "debut", "label": "Début", "type": "datetime", "category": "planification", "order": 0, "displayMode": "tous"},
+        {"key": "fin", "label": "Fin", "type": "datetime", "category": "planification", "order": 1, "displayMode": "tous"},
+        {"key": "lieu", "label": "Lieu", "category": "planification", "order": 2, "displayMode": "tous"},
+        {"key": "adresse", "label": "Adresse", "category": "planification", "order": 3, "displayMode": "complet"},
+        {"key": "description", "label": "Description", "category": "informations", "order": 0, "displayMode": "complet"}
+      ],
+      "categories": [
+        {"id": "identite", "label": "Événement", "order": 0},
+        {"id": "planification", "label": "Planification", "order": 1},
+        {"id": "informations", "label": "Informations", "order": 2}
+      ]
+    },
+    {
+      "id": "invitation",
+      "label": "Invitation",
+      "icon": "mail",
+      "color": "var(--color-orange-strong, #B56A2A)",
+      "titleFields": ["personneId.prenom", "personneId.nom", "evenementId.nom"],
+      "listColumns": ["statutEnvoi", "statutReponse", "dateReponse"],
+      "fields": [
+        {"key": "personneId.prenom", "label": "Prénom", "category": "destinataire", "order": 0, "displayMode": "tous"},
+        {"key": "personneId.nom", "label": "Nom", "category": "destinataire", "order": 1, "displayMode": "tous"},
+        {"key": "evenementId.nom", "label": "Événement", "category": "destinataire", "order": 2, "displayMode": "tous"},
+        {"key": "statutEnvoi", "label": "Statut de l'envoi", "type": "picklist", "options": ["À envoyer","Envoyée","Livrée","Échec"], "category": "suivi", "order": 0, "displayMode": "tous"},
+        {"key": "dateEnvoi", "label": "Date d'envoi", "type": "datetime", "category": "suivi", "order": 1, "displayMode": "complet"},
+        {"key": "statutReponse", "label": "Réponse", "type": "picklist", "options": ["Sans réponse","Présent","Absent"], "category": "reponse", "order": 0, "displayMode": "tous"},
+        {"key": "dateReponse", "label": "Date de réponse", "type": "datetime", "category": "reponse", "order": 1, "displayMode": "tous"},
+        {"key": "emailUtilise", "label": "Email utilisé", "category": "reponse", "order": 2, "displayMode": "complet"},
+        {"key": "telephoneUtilise", "label": "Téléphone utilisé", "category": "reponse", "order": 3, "displayMode": "complet"},
+        {"key": "commentaire", "label": "Commentaire", "category": "reponse", "order": 4, "displayMode": "complet"}
+      ],
+      "categories": [
+        {"id": "destinataire", "label": "Destinataire", "order": 0},
+        {"id": "suivi", "label": "Suivi de l'invitation", "order": 1},
+        {"id": "reponse", "label": "Réponse", "order": 2}
+      ]
+    },
+    {
+      "id": "participation",
+      "label": "Participation",
+      "icon": "how_to_reg",
+      "color": "var(--color-violet-strong, #6A4C93)",
+      "titleFields": ["personneId.prenom", "personneId.nom", "evenementId.nom"],
+      "listColumns": ["statut", "nombreAccompagnants"],
+      "fields": [
+        {"key": "personneId.prenom", "label": "Prénom", "category": "participant", "order": 0, "displayMode": "tous"},
+        {"key": "personneId.nom", "label": "Nom", "category": "participant", "order": 1, "displayMode": "tous"},
+        {"key": "evenementId.nom", "label": "Événement", "category": "participant", "order": 2, "displayMode": "tous"},
+        {"key": "statut", "label": "Participation", "type": "picklist", "options": ["Non défini","Présent","Absent"], "category": "participation", "order": 0, "displayMode": "tous"},
+        {"key": "nombreAccompagnants", "label": "Nombre d'accompagnants", "type": "number", "category": "participation", "order": 1, "displayMode": "tous"},
+        {"key": "nombreEnfants", "label": "Nombre d'enfants accompagnants", "type": "number", "category": "participation", "order": 2, "displayMode": "complet"},
+        {"key": "commentaire", "label": "Commentaire", "category": "participation", "order": 3, "displayMode": "complet"}
+      ],
+      "categories": [
+        {"id": "participant", "label": "Participant", "order": 0},
+        {"id": "participation", "label": "Participation", "order": 1}
+      ]
+    },
+    {
+      "id": "hebergement",
+      "label": "Hébergement",
+      "icon": "hotel",
+      "color": "var(--color-bleu-light-strong, #527A9E)",
+      "titleFields": ["nom"],
+      "listColumns": ["typeHebergement", "capacite"],
+      "fields": [
+        {"key": "nom", "label": "Nom", "category": "identite", "order": 0, "displayMode": "tous"},
+        {"key": "typeHebergement", "label": "Type", "type": "picklist", "options": ["Chambre","Gîte","Maison","Hôtel","Autre"], "category": "identite", "order": 1, "displayMode": "tous"},
+        {"key": "capacite", "label": "Capacité", "type": "number", "category": "capacite", "order": 0, "displayMode": "tous"},
+        {"key": "adresse", "label": "Adresse", "category": "localisation", "order": 0, "displayMode": "complet"},
+        {"key": "ville", "label": "Ville", "category": "localisation", "order": 1, "displayMode": "tous"},
+        {"key": "commentaire", "label": "Commentaire", "category": "informations", "order": 0, "displayMode": "complet"}
+      ],
+      "categories": [
+        {"id": "identite", "label": "Hébergement", "order": 0},
+        {"id": "capacite", "label": "Capacité", "order": 1},
+        {"id": "localisation", "label": "Localisation", "order": 2},
+        {"id": "informations", "label": "Informations", "order": 3}
+      ]
+    },
+    {
+      "id": "affectationHebergement",
+      "label": "Affectation hébergement",
+      "icon": "bed",
+      "color": "var(--color-turquoise-strong, #397E7E)",
+      "titleFields": ["personneId.prenom", "personneId.nom", "hebergementId.nom"],
+      "listColumns": ["dateArrivee", "dateDepart"],
+      "fields": [
+        {"key": "personneId.prenom", "label": "Prénom", "category": "affectation", "order": 0, "displayMode": "tous"},
+        {"key": "personneId.nom", "label": "Nom", "category": "affectation", "order": 1, "displayMode": "tous"},
+        {"key": "hebergementId.nom", "label": "Hébergement", "category": "affectation", "order": 2, "displayMode": "tous"},
+        {"key": "dateArrivee", "label": "Date d'arrivée", "type": "date", "category": "sejour", "order": 0, "displayMode": "tous"},
+        {"key": "dateDepart", "label": "Date de départ", "type": "date", "category": "sejour", "order": 1, "displayMode": "tous"},
+        {"key": "numeroChambre", "label": "Numéro de chambre", "category": "sejour", "order": 2, "displayMode": "complet"},
+        {"key": "commentaire", "label": "Commentaire", "category": "sejour", "order": 3, "displayMode": "complet"}
+      ],
+      "categories": [
+        {"id": "affectation", "label": "Affectation", "order": 0},
+        {"id": "sejour", "label": "Séjour", "order": 1}
+      ]
+    }
+  ],
+  "relations": [
+    { "from": "personne", "to": "lienFamilial", "via": "personneId", "label": "Personne de référence" },
+    { "from": "personne", "to": "lienFamilial", "via": "personneLieeId", "label": "Personne liée" },
+    {"from": "personne", "to": "invitation", "via": "personneId", "label": "Invitations"},
+    {"from": "evenement", "to": "invitation", "via": "evenementId", "label": "Invitations"},
+    {"from": "personne", "to": "participation", "via": "personneId", "label": "Participations"},
+    {"from": "evenement", "to": "participation", "via": "evenementId", "label": "Participations"},
+    {"from": "personne", "to": "affectationHebergement", "via": "personneId", "label": "Hébergements"},
+    {"from": "hebergement", "to": "affectationHebergement", "via": "hebergementId", "label": "Occupants"}
+  ]
 }
