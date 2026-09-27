@@ -1,0 +1,14 @@
+[
+  {
+    "id": "moi",
+    "label": "Moi",
+    "typeIds": [
+      "projet",
+      "tache",
+      "tacheDependance",
+      "contact",
+      "note",
+      "interaction"
+    ]
+  }
+]

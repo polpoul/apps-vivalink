@@ -1,0 +1,233 @@
+{
+  "client": [
+    {
+      "id": "c1",
+      "nom": "Dupont",
+      "adresse": "12 rue des Lilas, Chambéry",
+      "telephone": "06 12 34 56 78",
+      "email": "marie.dupont@example.fr",
+      "instructionsAcces": "Code portail 4521B, clés sous le pot de fleurs à droite de la porte",
+      "statut": "Actif",
+      "nbInterventionsRealisees": "3",
+      "totalRealise": "122,00 €"
+    },
+    {
+      "id": "c2",
+      "nom": "Bernard",
+      "adresse": "5 avenue des Tilleuls, Chambéry",
+      "telephone": "06 98 76 54 32",
+      "email": "sophie.bernard@example.fr",
+      "instructionsAcces": "Sonner à l'interphone, appartement 3B",
+      "statut": "Actif",
+      "nbInterventionsRealisees": "1",
+      "totalRealise": "60,00 €"
+    },
+    {
+      "id": "c3",
+      "nom": "Moreau",
+      "adresse": "8 chemin du Verger, Chambéry",
+      "telephone": "07 11 22 33 44",
+      "email": "j.moreau@example.fr",
+      "instructionsAcces": "",
+      "statut": "Prospect",
+      "nbInterventionsRealisees": "0",
+      "totalRealise": "0.00"
+    },
+    {
+      "id": "client-1789770698191"
+    }
+  ],
+  "tarif": [
+    {
+      "id": "t1",
+      "nom": "Ménage standard",
+      "montantHoraire": "25.00"
+    },
+    {
+      "id": "t2",
+      "nom": "Vitres",
+      "montantHoraire": "30.00"
+    },
+    {
+      "id": "t3",
+      "nom": "Repassage",
+      "montantHoraire": "22.00"
+    },
+    {
+      "id": "tarif-1787785001383"
+    }
+  ],
+  "contrat": [
+    {
+      "id": "ct1",
+      "clientId": "c1",
+      "tarifId": "t1",
+      "statut": "Actif",
+      "dateDebut": "2026-01-06",
+      "dateFin": ""
+    },
+    {
+      "id": "ct2",
+      "clientId": "c1",
+      "tarifId": "t3",
+      "statut": "Actif",
+      "dateDebut": "2026-01-09",
+      "dateFin": ""
+    },
+    {
+      "id": "ct3",
+      "clientId": "c2",
+      "tarifId": "t2",
+      "statut": "Actif",
+      "dateDebut": "2026-02-04",
+      "dateFin": ""
+    }
+  ],
+  "passage": [
+    {
+      "id": "i1",
+      "clientId": "c1",
+      "contratId": "ct1",
+      "tarifId": "t1",
+      "dureePrevue": "2",
+      "dateReelle": "2026-08-24",
+      "dureeReelle": "2",
+      "statut": "Réalisée",
+      "montant": "50.00",
+      "factureId": "",
+      "notes": "",
+      "debutPrevu": "2026-08-24T09:00",
+      "finPrevue": "2026-08-24T11:00"
+    },
+    {
+      "id": "i2",
+      "clientId": "c1",
+      "contratId": "ct2",
+      "tarifId": "t3",
+      "dureePrevue": "1",
+      "dateReelle": "2026-08-20",
+      "dureeReelle": "1",
+      "statut": "Réalisée",
+      "montant": "22.00",
+      "factureId": "",
+      "notes": "",
+      "debutPrevu": "2026-08-20T09:00",
+      "finPrevue": "2026-08-20T10:00"
+    },
+    {
+      "id": "i3",
+      "clientId": "c2",
+      "contratId": "",
+      "tarifId": "t2",
+      "dureePrevue": "2",
+      "dateReelle": "2026-08-18",
+      "dureeReelle": "2",
+      "statut": "Réalisée",
+      "montant": "60.00",
+      "factureId": "f1",
+      "notes": "Vitres extérieures incluses, ponctuel",
+      "debutPrevu": "2026-08-18T09:00",
+      "finPrevue": "2026-08-18T11:00"
+    },
+    {
+      "id": "i4",
+      "clientId": "c1",
+      "contratId": "ct1",
+      "tarifId": "t1",
+      "dureePrevue": "2",
+      "dateReelle": "2026-08-31",
+      "dureeReelle": "2",
+      "statut": "Réalisée",
+      "montant": "50.00",
+      "factureId": "",
+      "notes": "",
+      "debutPrevu": "2026-08-31T09:00",
+      "finPrevue": "2026-08-31T11:00"
+    },
+    {
+      "clientId": "c2",
+      "id": "intervention-1787784993866",
+      "tarifId": "t1",
+      "contratId": "",
+      "factureId": "",
+      "debutPrevu": "NaN-NaN-NaNTNaN:NaN",
+      "finPrevue": "NaN-NaN-NaNTNaN:NaN"
+    },
+    {
+      "id": "intervention-1789770649426",
+      "debutPrevu": "2026-09-19T10:31",
+      "finPrevue": "2026-09-19T12:36",
+      "clientId": "c1",
+      "tarifId": "t2",
+      "contratId": "ct1"
+    }
+  ],
+  "facture": [
+    {
+      "id": "f1",
+      "clientId": "",
+      "periodeDebut": "2026-08-01",
+      "periodeFin": "2026-08-31",
+      "montantTotal": "60,00 €",
+      "statut": "Brouillon",
+      "dateEmission": ""
+    },
+    {
+      "id": "facture-1787857584296"
+    },
+    {
+      "clientId": "c2",
+      "id": "facture-1787857639584"
+    },
+    {
+      "clientId": "c1",
+      "id": "facture-1787858301304",
+      "montantTotal": "60,00 €"
+    }
+  ],
+  "message": [
+    {
+      "id": "m1",
+      "clientId": "c1",
+      "passageId": "",
+      "expediteur": "Client",
+      "type": "Consigne",
+      "contenu": "Ne pas utiliser de produit parfumé, le chat est sensible aux odeurs fortes",
+      "date": "2026-07-15",
+      "statut": "Traité"
+    },
+    {
+      "id": "m2",
+      "clientId": "c2",
+      "passageId": "i3",
+      "expediteur": "Client",
+      "type": "Décalage",
+      "contenu": "Possible de décaler l'intervention du 18 à l'après-midi ?",
+      "date": "2026-08-17",
+      "statut": "Traité"
+    }
+  ],
+  "contratCreneau": [
+    {
+      "id": "cc1",
+      "contratId": "ct1",
+      "jour": "Lundi",
+      "heureDebut": "09:00",
+      "duree": "2"
+    },
+    {
+      "id": "cc2",
+      "contratId": "ct2",
+      "jour": "Jeudi",
+      "heureDebut": "14:00",
+      "duree": "1"
+    },
+    {
+      "id": "cc3",
+      "contratId": "ct3",
+      "jour": "Mercredi",
+      "heureDebut": "10:00",
+      "duree": "1.5"
+    }
+  ]
+}

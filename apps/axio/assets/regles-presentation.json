@@ -1,0 +1,18 @@
+[
+  {
+    "id": "tache-urgente-couleur",
+    "typeId": "tache",
+    "when": { "field": "priorite", "equals": "Urgente" },
+    "then": [
+      { "effect": "rowColor", "textColor": "#7a1f1f", "bgColor": "#fbe4e4" }
+    ]
+  },
+  {
+    "id": "tache-realise-masque-tant-que-pas-terminee",
+    "typeId": "tache",
+    "when": { "field": "statut", "equals": "À faire" },
+    "then": [
+      { "effect": "blockVisible", "category": "realise", "value": false }
+    ]
+  }
+]

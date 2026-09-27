@@ -1,0 +1,525 @@
+{
+  "types": [
+    {
+      "id": "projet",
+      "label": "Projet",
+      "icon": "folder_open",
+      "color": "var(--color-bleu-strong, #395A7E)",
+      "titleFields": ["nom"],
+      "listColumns": ["statut", "priorite", "dateEcheance"],
+      "agenda": { "startField": "dateDebut", "endField": "dateEcheance" },
+      "fields": [
+        {
+          "key": "nom",
+          "label": "Nom",
+          "category": "identite",
+          "order": 0,
+          "displayMode": "tous"
+        },
+        {
+          "key": "description",
+          "label": "Description",
+          "category": "identite",
+          "order": 1,
+          "displayMode": "complet"
+        },
+        {
+          "key": "objectif",
+          "label": "Objectif",
+          "category": "identite",
+          "order": 2,
+          "displayMode": "complet"
+        },
+        {
+          "key": "statut",
+          "label": "Statut",
+          "type": "picklist",
+          "options": ["Actif", "En pause", "Terminé", "Archivé"],
+          "optionColors": {
+            "Actif": "#2e7d32",
+            "En pause": "#f9a825",
+            "Terminé": "#1565c0",
+            "Archivé": "#6b7280"
+          },
+          "category": "identite",
+          "order": 3,
+          "displayMode": "tous"
+        },
+        {
+          "key": "priorite",
+          "label": "Priorité",
+          "type": "picklist",
+          "options": ["Basse", "Normale", "Haute", "Urgente"],
+          "optionColors": {
+            "Basse": "#6b7280",
+            "Normale": "#1565c0",
+            "Haute": "#f9a825",
+            "Urgente": "#c0392b"
+          },
+          "category": "identite",
+          "order": 4,
+          "displayMode": "tous"
+        },
+        {
+          "key": "contactPrincipalId",
+          "label": "Contact principal",
+          "category": "identite",
+          "order": 5,
+          "displayMode": "complet"
+        },
+        {
+          "key": "dateDebut",
+          "label": "Début",
+          "type": "datetime",
+          "category": "planification",
+          "order": 0,
+          "displayMode": "tous"
+        },
+        {
+          "key": "dateEcheance",
+          "label": "Échéance",
+          "type": "datetime",
+          "category": "planification",
+          "order": 1,
+          "displayMode": "tous"
+        },
+        {
+          "key": "tachesTerminees",
+          "label": "Tâches terminées",
+          "type": "number",
+          "category": "suivi",
+          "order": 0,
+          "displayMode": "tous"
+        },
+        {
+          "key": "tachesTotal",
+          "label": "Tâches au total",
+          "type": "number",
+          "category": "suivi",
+          "order": 1,
+          "displayMode": "tous"
+        },
+        {
+          "key": "avancement",
+          "label": "Avancement",
+          "type": "picklist",
+          "options": ["0%", "25%", "50%", "75%", "100%"],
+          "category": "suivi",
+          "order": 2,
+          "displayMode": "tous"
+        }
+      ],
+      "categories": [
+        { "id": "identite", "label": "Identité", "order": 0 },
+        { "id": "planification", "label": "Planification", "order": 1 },
+        { "id": "suivi", "label": "Suivi", "order": 2 }
+      ]
+    },
+    {
+      "id": "tache",
+      "label": "Tâche",
+      "icon": "task_alt",
+      "color": "var(--color-vert-strong, #43793B)",
+      "titleFields": ["titre"],
+      "listColumns": ["statut", "priorite", "dateEcheance", "projetId.nom"],
+      "agenda": { "startField": "dateDebut", "endField": "dateEcheance" },
+      "fields": [
+        {
+          "key": "titre",
+          "label": "Titre",
+          "category": "identite",
+          "order": 0,
+          "displayMode": "tous"
+        },
+        {
+          "key": "statut",
+          "label": "Statut",
+          "type": "picklist",
+          "options": ["À faire", "En cours", "Bloquée", "Terminée", "Annulée"],
+          "optionColors": {
+            "À faire": "#6b7280",
+            "En cours": "#1565c0",
+            "Bloquée": "#c0392b",
+            "Terminée": "#2e7d32",
+            "Annulée": "#9ca3af"
+          },
+          "category": "identite",
+          "order": 1,
+          "displayMode": "tous"
+        },
+        {
+          "key": "priorite",
+          "label": "Priorité",
+          "type": "picklist",
+          "options": ["Basse", "Normale", "Haute", "Urgente"],
+          "optionColors": {
+            "Basse": "#6b7280",
+            "Normale": "#1565c0",
+            "Haute": "#f9a825",
+            "Urgente": "#c0392b"
+          },
+          "category": "identite",
+          "order": 2,
+          "displayMode": "tous"
+        },
+        {
+          "key": "projetId",
+          "label": "Projet",
+          "category": "identite",
+          "order": 3,
+          "displayMode": "tous"
+        },
+        {
+          "key": "parentTacheId",
+          "label": "Tâche parente",
+          "category": "identite",
+          "order": 4,
+          "displayMode": "complet"
+        },
+        {
+          "key": "assigneId",
+          "label": "Assigné à",
+          "category": "identite",
+          "order": 5,
+          "displayMode": "complet"
+        },
+        {
+          "key": "description",
+          "label": "Description",
+          "category": "suivi",
+          "order": 0,
+          "displayMode": "complet"
+        },
+        {
+          "key": "dateDebut",
+          "label": "Début",
+          "type": "datetime",
+          "category": "planification",
+          "order": 0,
+          "displayMode": "tous"
+        },
+        {
+          "key": "dateEcheance",
+          "label": "Échéance",
+          "type": "datetime",
+          "category": "planification",
+          "order": 1,
+          "displayMode": "tous"
+        },
+        {
+          "key": "dureeEstimeeMin",
+          "label": "Durée estimée (min)",
+          "type": "number",
+          "category": "planification",
+          "order": 2,
+          "displayMode": "complet"
+        },
+        {
+          "key": "dureeReelleMin",
+          "label": "Durée réelle (min)",
+          "type": "number",
+          "category": "realise",
+          "order": 0,
+          "displayMode": "complet"
+        }
+      ],
+      "categories": [
+        { "id": "identite", "label": "Identité", "order": 0 },
+        { "id": "planification", "label": "Planification", "order": 1 },
+        { "id": "realise", "label": "Réalisé", "order": 2 },
+        { "id": "suivi", "label": "Suivi", "order": 3 }
+      ]
+    },
+    {
+      "id": "tacheDependance",
+      "label": "Dépendance de tâche",
+      "icon": "link",
+      "color": "var(--color-mauve-strong, #845C79)",
+      "titleFields": ["tacheId.titre", "dependTacheId.titre"],
+      "listColumns": ["type"],
+      "fields": [
+        {
+          "key": "tacheId.titre",
+          "label": "Tâche",
+          "category": "lien",
+          "order": 0,
+          "displayMode": "tous"
+        },
+        {
+          "key": "dependTacheId.titre",
+          "label": "Dépend de",
+          "category": "lien",
+          "order": 1,
+          "displayMode": "tous"
+        },
+        {
+          "key": "type",
+          "label": "Type de dépendance",
+          "type": "picklist",
+          "options": ["Fin → Début", "Début → Début", "Fin → Fin", "Début → Fin"],
+          "category": "lien",
+          "order": 2,
+          "displayMode": "tous"
+        }
+      ],
+      "categories": [
+        { "id": "lien", "label": "Dépendance", "order": 0 }
+      ]
+    },
+    {
+      "id": "contact",
+      "label": "Contact",
+      "icon": "person",
+      "color": "var(--color-corail-strong, #A94143)",
+      "titleFields": ["prenom", "nom"],
+      "listColumns": ["organisation", "email", "telephone"],
+      "fields": [
+        {
+          "key": "prenom",
+          "label": "Prénom",
+          "category": "identite",
+          "order": 0,
+          "displayMode": "tous"
+        },
+        {
+          "key": "nom",
+          "label": "Nom",
+          "category": "identite",
+          "order": 1,
+          "displayMode": "tous"
+        },
+        {
+          "key": "organisation",
+          "label": "Organisation",
+          "category": "identite",
+          "order": 2,
+          "displayMode": "tous"
+        },
+        {
+          "key": "fonction",
+          "label": "Fonction",
+          "category": "identite",
+          "order": 3,
+          "displayMode": "complet"
+        },
+        {
+          "key": "email",
+          "label": "Email",
+          "category": "coordonnees",
+          "order": 0,
+          "displayMode": "tous"
+        },
+        {
+          "key": "telephone",
+          "label": "Téléphone",
+          "category": "coordonnees",
+          "order": 1,
+          "displayMode": "tous"
+        },
+        {
+          "key": "notes",
+          "label": "Notes",
+          "category": "informations",
+          "order": 0,
+          "displayMode": "complet"
+        }
+      ],
+      "categories": [
+        { "id": "identite", "label": "Identité", "order": 0 },
+        { "id": "coordonnees", "label": "Coordonnées", "order": 1 },
+        { "id": "informations", "label": "Informations", "order": 2 }
+      ]
+    },
+    {
+      "id": "note",
+      "label": "Note",
+      "icon": "sticky_note_2",
+      "color": "var(--color-jaune-strong, #B29736)",
+      "titleFields": ["titre"],
+      "listColumns": ["visibilite"],
+      "fields": [
+        {
+          "key": "titre",
+          "label": "Titre",
+          "category": "contenu",
+          "order": 0,
+          "displayMode": "tous"
+        },
+        {
+          "key": "contenu",
+          "label": "Contenu",
+          "category": "contenu",
+          "order": 1,
+          "displayMode": "complet"
+        },
+        {
+          "key": "visibilite",
+          "label": "Visibilité",
+          "type": "picklist",
+          "options": ["Privée", "Partagée"],
+          "category": "contenu",
+          "order": 2,
+          "displayMode": "tous"
+        },
+        {
+          "key": "projetId",
+          "label": "Projet",
+          "category": "rattachement",
+          "order": 0,
+          "displayMode": "complet"
+        },
+        {
+          "key": "tacheId",
+          "label": "Tâche",
+          "category": "rattachement",
+          "order": 1,
+          "displayMode": "complet"
+        },
+        {
+          "key": "contactId",
+          "label": "Contact",
+          "category": "rattachement",
+          "order": 2,
+          "displayMode": "complet"
+        }
+      ],
+      "categories": [
+        { "id": "contenu", "label": "Contenu", "order": 0 },
+        { "id": "rattachement", "label": "Rattachement", "order": 1 }
+      ]
+    },
+    {
+      "id": "interaction",
+      "label": "Interaction",
+      "icon": "forum",
+      "color": "var(--color-turquoise-strong, #598986)",
+      "titleFields": ["type", "sujet"],
+      "listColumns": ["date", "contactId.prenom", "contactId.nom"],
+      "fields": [
+        {
+          "key": "type",
+          "label": "Type",
+          "type": "picklist",
+          "options": ["Appel", "Email", "Réunion", "Autre"],
+          "optionColors": {
+            "Appel": "#1565c0",
+            "Email": "#845c79",
+            "Réunion": "#2e7d32",
+            "Autre": "#6b7280"
+          },
+          "category": "identite",
+          "order": 0,
+          "displayMode": "tous"
+        },
+        {
+          "key": "sens",
+          "label": "Sens",
+          "type": "picklist",
+          "options": ["Entrant", "Sortant"],
+          "category": "identite",
+          "order": 1,
+          "displayMode": "tous"
+        },
+        {
+          "key": "date",
+          "label": "Date",
+          "type": "datetime",
+          "category": "identite",
+          "order": 2,
+          "displayMode": "tous"
+        },
+        {
+          "key": "dureeMin",
+          "label": "Durée (min)",
+          "type": "number",
+          "category": "identite",
+          "order": 3,
+          "displayMode": "complet"
+        },
+        {
+          "key": "sujet",
+          "label": "Sujet",
+          "category": "contenu",
+          "order": 0,
+          "displayMode": "tous"
+        },
+        {
+          "key": "resume",
+          "label": "Résumé / compte rendu",
+          "category": "contenu",
+          "order": 1,
+          "displayMode": "complet"
+        },
+        {
+          "key": "expediteur",
+          "label": "Expéditeur",
+          "category": "email",
+          "order": 0,
+          "displayMode": "complet"
+        },
+        {
+          "key": "destinataires",
+          "label": "Destinataires",
+          "category": "email",
+          "order": 1,
+          "displayMode": "complet"
+        },
+        {
+          "key": "messageIdFournisseur",
+          "label": "Identifiant message (fournisseur)",
+          "category": "email",
+          "order": 2,
+          "displayMode": "complet"
+        },
+        {
+          "key": "filDiscussionId",
+          "label": "Identifiant fil de discussion",
+          "category": "email",
+          "order": 3,
+          "displayMode": "complet"
+        },
+        {
+          "key": "projetId",
+          "label": "Projet",
+          "category": "rattachement",
+          "order": 0,
+          "displayMode": "complet"
+        },
+        {
+          "key": "tacheId",
+          "label": "Tâche",
+          "category": "rattachement",
+          "order": 1,
+          "displayMode": "complet"
+        },
+        {
+          "key": "contactId",
+          "label": "Contact",
+          "category": "rattachement",
+          "order": 2,
+          "displayMode": "complet"
+        }
+      ],
+      "categories": [
+        { "id": "identite", "label": "Identité", "order": 0 },
+        { "id": "contenu", "label": "Contenu", "order": 1 },
+        { "id": "email", "label": "Données e-mail (structure réservée, pas de synchro)", "order": 2 },
+        { "id": "rattachement", "label": "Rattachement", "order": 3 }
+      ]
+    }
+  ],
+  "relations": [
+    { "from": "projet", "to": "tache", "via": "projetId", "label": "Tâches" },
+    { "from": "tache", "to": "tache", "via": "parentTacheId", "label": "Sous-tâches" },
+    { "from": "tache", "to": "tacheDependance", "via": "tacheId", "label": "Dépendances" },
+    { "from": "tache", "to": "tacheDependance", "via": "dependTacheId", "label": "Bloque" },
+    { "from": "contact", "to": "tache", "via": "assigneId", "label": "Tâches assignées" },
+    { "from": "contact", "to": "projet", "via": "contactPrincipalId", "label": "Projets" },
+    { "from": "projet", "to": "note", "via": "projetId", "label": "Notes" },
+    { "from": "tache", "to": "note", "via": "tacheId", "label": "Notes" },
+    { "from": "contact", "to": "note", "via": "contactId", "label": "Notes" },
+    { "from": "projet", "to": "interaction", "via": "projetId", "label": "Interactions" },
+    { "from": "tache", "to": "interaction", "via": "tacheId", "label": "Interactions" },
+    { "from": "contact", "to": "interaction", "via": "contactId", "label": "Interactions" }
+  ]
+}

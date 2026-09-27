@@ -1,0 +1,31 @@
+[
+  {
+    "id": "tache-changement-recalcule-projet",
+    "typeId": "tache",
+    "then": [
+      { "effect": "dispatchEvent", "field": "projetId", "targetType": "projet", "eventType": "projet.recompute_suivi" }
+    ]
+  },
+  {
+    "id": "projet-recalcule-suivi",
+    "typeId": "projet",
+    "eventType": "projet.recompute_suivi",
+    "then": [
+      {
+        "effect": "countRelated",
+        "relationType": "tache",
+        "matchField": "projetId",
+        "as": "nbTachesTotal"
+      },
+      { "effect": "setField", "field": "tachesTotal", "value": "$nbTachesTotal" },
+      {
+        "effect": "countRelated",
+        "relationType": "tache",
+        "matchField": "projetId",
+        "filter": { "field": "statut", "equals": "Terminée" },
+        "as": "nbTachesTerminees"
+      },
+      { "effect": "setField", "field": "tachesTerminees", "value": "$nbTachesTerminees" }
+    ]
+  }
+]
