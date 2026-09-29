@@ -4,7 +4,7 @@
       "id": "projet",
       "label": "Projet",
       "icon": "folder_open",
-      "color": "var(--color-bleu-strong, #395A7E)",
+      "color": "var(--color-bleu-base, #4C78A8)",
       "titleFields": ["nom"],
       "listColumns": ["statut", "priorite", "dateEcheance"],
       "agenda": { "startField": "dateDebut", "endField": "dateEcheance" },
@@ -121,7 +121,7 @@
       "id": "tache",
       "label": "Tâche",
       "icon": "task_alt",
-      "color": "var(--color-vert-strong, #43793B)",
+      "color": "var(--color-vert-base, #59A14F)",
       "titleFields": ["titre"],
       "listColumns": ["statut", "priorite", "dateEcheance", "projetId.nom"],
       "agenda": { "startField": "dateDebut", "endField": "dateEcheance" },
@@ -237,7 +237,7 @@
       "id": "tacheDependance",
       "label": "Dépendance de tâche",
       "icon": "link",
-      "color": "var(--color-mauve-strong, #845C79)",
+      "color": "var(--color-mauve-base, #B07AA1)",
       "titleFields": ["tacheId.titre", "dependTacheId.titre"],
       "listColumns": ["type"],
       "fields": [
@@ -273,7 +273,7 @@
       "id": "contact",
       "label": "Contact",
       "icon": "person",
-      "color": "var(--color-corail-strong, #A94143)",
+      "color": "var(--color-corail-base, #E15759)",
       "titleFields": ["prenom", "nom"],
       "listColumns": ["organisation", "email", "telephone"],
       "fields": [
@@ -338,7 +338,7 @@
       "id": "note",
       "label": "Note",
       "icon": "sticky_note_2",
-      "color": "var(--color-jaune-strong, #B29736)",
+      "color": "var(--color-jaune-base, #EDC948)",
       "titleFields": ["titre"],
       "listColumns": ["visibilite"],
       "fields": [
@@ -397,7 +397,7 @@
       "id": "interaction",
       "label": "Interaction",
       "icon": "forum",
-      "color": "var(--color-turquoise-strong, #598986)",
+      "color": "var(--color-turquoise-base, #76B7B2)",
       "titleFields": ["type", "sujet"],
       "listColumns": ["date", "contactId.prenom", "contactId.nom"],
       "fields": [
