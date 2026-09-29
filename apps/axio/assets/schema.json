@@ -19,6 +19,7 @@
         {
           "key": "description",
           "label": "Description",
+          "type": "textarea",
           "category": "identite",
           "order": 1,
           "displayMode": "complet"
@@ -26,6 +27,7 @@
         {
           "key": "objectif",
           "label": "Objectif",
+          "type": "textarea",
           "category": "identite",
           "order": 2,
           "displayMode": "complet"
@@ -186,6 +188,7 @@
         {
           "key": "description",
           "label": "Description",
+          "type": "textarea",
           "category": "suivi",
           "order": 0,
           "displayMode": "complet"
@@ -319,6 +322,7 @@
         {
           "key": "notes",
           "label": "Notes",
+          "type": "textarea",
           "category": "informations",
           "order": 0,
           "displayMode": "complet"
@@ -348,6 +352,7 @@
         {
           "key": "contenu",
           "label": "Contenu",
+          "type": "textarea",
           "category": "contenu",
           "order": 1,
           "displayMode": "complet"
@@ -446,6 +451,7 @@
         {
           "key": "resume",
           "label": "Résumé / compte rendu",
+          "type": "textarea",
           "category": "contenu",
           "order": 1,
           "displayMode": "complet"
