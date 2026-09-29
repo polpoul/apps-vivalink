@@ -25,7 +25,28 @@
         "filter": { "field": "statut", "equals": "Terminée" },
         "as": "nbTachesTerminees"
       },
-      { "effect": "setField", "field": "tachesTerminees", "value": "$nbTachesTerminees" }
+      { "effect": "setField", "field": "tachesTerminees", "value": "$nbTachesTerminees" },
+      {
+        "effect": "setField",
+        "field": "avancement",
+        "value": {
+          "if": { "field": "tachesTotal", "equals": "0" },
+          "then": "0%",
+          "else": {
+            "concat": [
+              {
+                "round": {
+                  "multiply": [
+                    { "round": { "divide": [{ "multiply": ["$nbTachesTerminees", "4"] }, "$nbTachesTotal"] } },
+                    "25"
+                  ]
+                }
+              },
+              "%"
+            ]
+          }
+        }
+      }
     ]
   }
 ]
