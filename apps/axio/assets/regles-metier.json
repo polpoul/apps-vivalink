@@ -48,5 +48,12 @@
         }
       }
     ]
+  },
+  {
+    "id": "tache-titre-majuscule",
+    "typeId": "tache",
+    "then": [
+      { "effect": "setField", "field": "titre", "value": { "uppercase": "@titre" } }
+    ]
   }
 ]
