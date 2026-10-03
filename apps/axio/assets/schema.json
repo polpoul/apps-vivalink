@@ -367,6 +367,14 @@
           "displayMode": "tous"
         },
         {
+          "key": "document",
+          "label": "Document",
+          "type": "file",
+          "category": "contenu",
+          "order": 3,
+          "displayMode": "complet"
+        },
+        {
           "key": "projetId",
           "label": "Projet",
           "category": "rattachement",
