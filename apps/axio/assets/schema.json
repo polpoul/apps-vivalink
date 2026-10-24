@@ -106,6 +106,7 @@
           "label": "Avancement",
           "type": "picklist",
           "options": ["0%", "25%", "50%", "75%", "100%"],
+          "renderAs": "ring",
           "category": "suivi",
           "order": 2,
           "displayMode": "tous"
