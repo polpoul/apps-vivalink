@@ -1,6 +1,20 @@
 {
   "types": [
     {
+      "id": "modelePdf",
+      "label": "Modèle PDF",
+      "icon": "picture_as_pdf",
+      "color": "#8B5E3C",
+      "titleFields": ["nom"],
+      "listColumns": ["cibleTypeId"],
+      "categories": [{ "id": "general", "label": "Général", "order": 0 }],
+      "fields": [
+        { "key": "nom", "label": "Nom", "category": "general", "order": 0, "displayMode": "tous" },
+        { "key": "cibleTypeId", "label": "Type cible", "category": "general", "order": 1, "displayMode": "tous" },
+        { "key": "definition", "label": "Définition (JSON)", "category": "general", "order": 2, "displayMode": "complet", "type": "textarea" }
+      ]
+    },
+    {
       "id": "projet",
       "label": "Projet",
       "icon": "folder_open",
