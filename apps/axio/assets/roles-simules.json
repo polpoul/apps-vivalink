@@ -9,9 +9,10 @@
       "contact",
       "note",
       "interaction",
-      "test",
       "modeleEmail",
-      "modelePdf"
+      "modelePdf",
+      "rappel",
+      "notification"
     ]
   }
 ]

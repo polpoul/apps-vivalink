@@ -3,7 +3,12 @@
     "id": "tache-changement-recalcule-projet",
     "typeId": "tache",
     "then": [
-      { "effect": "dispatchEvent", "field": "projetId", "targetType": "projet", "eventType": "projet.recompute_suivi" }
+      {
+        "effect": "dispatchEvent",
+        "field": "projetId",
+        "targetType": "projet",
+        "eventType": "projet.recompute_suivi"
+      }
     ]
   },
   {
@@ -17,27 +22,53 @@
         "matchField": "projetId",
         "as": "nbTachesTotal"
       },
-      { "effect": "setField", "field": "tachesTotal", "value": "$nbTachesTotal" },
+      {
+        "effect": "setField",
+        "field": "tachesTotal",
+        "value": "$nbTachesTotal"
+      },
       {
         "effect": "countRelated",
         "relationType": "tache",
         "matchField": "projetId",
-        "filter": { "field": "statut", "equals": "Terminée" },
+        "filter": {
+          "field": "statut",
+          "equals": "Terminée"
+        },
         "as": "nbTachesTerminees"
       },
-      { "effect": "setField", "field": "tachesTerminees", "value": "$nbTachesTerminees" },
+      {
+        "effect": "setField",
+        "field": "tachesTerminees",
+        "value": "$nbTachesTerminees"
+      },
       {
         "effect": "setField",
         "field": "avancement",
         "value": {
-          "if": { "field": "tachesTotal", "equals": "0" },
+          "if": {
+            "field": "tachesTotal",
+            "equals": "0"
+          },
           "then": "0%",
           "else": {
             "concat": [
               {
                 "round": {
                   "multiply": [
-                    { "round": { "divide": [{ "multiply": ["$nbTachesTerminees", "4"] }, "$nbTachesTotal"] } },
+                    {
+                      "round": {
+                        "divide": [
+                          {
+                            "multiply": [
+                              "$nbTachesTerminees",
+                              "4"
+                            ]
+                          },
+                          "$nbTachesTotal"
+                        ]
+                      }
+                    },
                     "25"
                   ]
                 }
@@ -45,6 +76,195 @@
               "%"
             ]
           }
+        }
+      }
+    ]
+  },
+  {
+    "id": "tache-titre-majuscule",
+    "typeId": "tache",
+    "then": [
+      {
+        "effect": "setField",
+        "field": "titre",
+        "value": {
+          "uppercase": "@titre"
+        }
+      }
+    ]
+  },
+  {
+    "id": "tache-priorite-defaut-basse",
+    "typeId": "tache",
+    "when": {
+      "field": "priorite",
+      "empty": true
+    },
+    "then": [
+      {
+        "effect": "setField",
+        "field": "priorite",
+        "value": "Basse"
+      }
+    ]
+  },
+  {
+    "id": "contact-envoyer-email",
+    "typeId": "contact",
+    "eventType": "contact.action:envoyerEmail",
+    "then": [
+      {
+        "effect": "sendEmail",
+        "destinataireField": "email",
+        "modeleId": "$modeleEmailId",
+        "objetSimple": "$objet",
+        "corpsSimple": "$corps",
+        "expediteur": "$expediteur"
+      }
+    ]
+  },
+  {
+    "id": "rappel-echeance-email",
+    "typeId": "rappel",
+    "eventType": "rappel.echeance",
+    "then": [
+      {
+        "effect": "sendEmail",
+        "destinataireField": "destinataire",
+        "objetSimple": {
+          "concat": [
+            "Rappel : ",
+            "%message"
+          ]
+        },
+        "corpsSimple": {
+          "concat": [
+            "Rappel prévu le ",
+            {
+              "substring": "%dateRappel",
+              "start": 8,
+              "length": 2
+            },
+            "/",
+            {
+              "substring": "%dateRappel",
+              "start": 5,
+              "length": 2
+            },
+            "/",
+            {
+              "substring": "%dateRappel",
+              "start": 0,
+              "length": 4
+            },
+            " à ",
+            {
+              "substring": "%dateRappel",
+              "start": 11,
+              "length": 5
+            },
+            " :\n\n",
+            "%message",
+            "\n\nFiche concernée : ",
+            "%cibleTitre",
+            "\nhttps://axio.vivalink.top/\n"
+          ]
+        },
+        "expediteur": "noreply@vivalink.top"
+      }
+    ]
+  },
+  {
+    "id": "tache-poser-rappel",
+    "typeId": "tache",
+    "eventType": "tache.action:poserRappel",
+    "then": [
+      {
+        "effect": "createRecord",
+        "targetType": "rappel",
+        "fields": {
+          "dateRappel": "$dateRappel",
+          "message": {
+            "coalesce": [
+              "$message",
+              {
+                "concat": [
+                  "Rappel : ",
+                  "%titre"
+                ]
+              }
+            ]
+          },
+          "destinataire": {
+            "coalesce": [
+              "$destinataire",
+              "$_userEmail"
+            ]
+          },
+          "statut": "attente",
+          "cibleTypeId": "tache",
+          "cibleId": "%id",
+          "cibleTitre": "%titre"
+        }
+      }
+    ]
+  },
+  {
+    "id": "rappel-notification",
+    "typeId": "rappel",
+    "eventType": "rappel.echeance",
+    "then": [
+      {
+        "effect": "createRecord",
+        "targetType": "notification",
+        "fields": {
+          "titre": "%message",
+          "message": {
+            "concat": [
+              "Rappel prévu le ",
+              {
+                "substring": "%dateRappel",
+                "start": 8,
+                "length": 2
+              },
+              "/",
+              {
+                "substring": "%dateRappel",
+                "start": 5,
+                "length": 2
+              },
+              "/",
+              {
+                "substring": "%dateRappel",
+                "start": 0,
+                "length": 4
+              },
+              " à ",
+              {
+                "substring": "%dateRappel",
+                "start": 11,
+                "length": 5
+              },
+              "\n",
+              {
+                "if": {
+                  "field": "cibleTitre",
+                  "empty": false
+                },
+                "then": {
+                  "concat": [
+                    "Fiche : ",
+                    "%cibleTitre"
+                  ]
+                },
+                "else": ""
+              }
+            ]
+          },
+          "dateNotif": "%dateRappel",
+          "lu": "",
+          "cibleTypeId": "%cibleTypeId",
+          "cibleId": "%cibleId"
         }
       }
     ]
