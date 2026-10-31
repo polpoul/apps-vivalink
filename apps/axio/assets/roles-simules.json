@@ -9,7 +9,9 @@
       "contact",
       "note",
       "interaction",
-      "test"
+      "test",
+      "modeleEmail",
+      "modelePdf"
     ]
   }
 ]
