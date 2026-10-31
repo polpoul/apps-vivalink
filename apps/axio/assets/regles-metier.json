@@ -172,7 +172,11 @@
         },
         "expediteur": "noreply@vivalink.top"
       }
-    ]
+    ],
+    "when": {
+      "field": "envoyerEmail",
+      "equals": "true"
+    }
   },
   {
     "id": "tache-poser-rappel",
@@ -204,7 +208,12 @@
           "statut": "attente",
           "cibleTypeId": "tache",
           "cibleId": "%id",
-          "cibleTitre": "%titre"
+          "cibleTitre": "%titre",
+          "envoyerEmail": {
+            "coalesce": [
+              "$envoyerEmail"
+            ]
+          }
         }
       }
     ]

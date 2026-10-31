@@ -319,6 +319,11 @@
               "type": "text"
             },
             {
+              "key": "envoyerEmail",
+              "label": "Envoyer aussi par email",
+              "type": "checkbox"
+            },
+            {
               "key": "destinataire",
               "label": "Email (sinon mon adresse)",
               "type": "text",
@@ -953,6 +958,14 @@
           "category": "cible",
           "order": 2,
           "displayMode": "complet"
+        },
+        {
+          "key": "envoyerEmail",
+          "label": "Envoyer par email",
+          "type": "checkbox",
+          "category": "general",
+          "order": 4,
+          "displayMode": "complet"
         }
       ],
       "categories": [
@@ -1046,6 +1059,414 @@
         "dateNotif",
         "lu"
       ]
+    },
+    {
+      "id": "formation",
+      "label": "Formation",
+      "icon": "school",
+      "color": "#4C78A8",
+      "titleFields": [
+        "intitule"
+      ],
+      "fields": [
+        {
+          "key": "intitule",
+          "label": "Intitulé",
+          "category": "identite",
+          "order": 0,
+          "displayMode": "tous"
+        },
+        {
+          "key": "description",
+          "label": "Description",
+          "type": "textarea",
+          "category": "identite",
+          "order": 1,
+          "displayMode": "complet"
+        },
+        {
+          "key": "objectifs",
+          "label": "Objectifs",
+          "type": "textarea",
+          "category": "identite",
+          "order": 2,
+          "displayMode": "complet"
+        },
+        {
+          "key": "organisation",
+          "label": "Organisation",
+          "type": "textarea",
+          "category": "identite",
+          "order": 3,
+          "displayMode": "complet"
+        }
+      ],
+      "categories": [
+        {
+          "id": "identite",
+          "label": "Formation",
+          "order": 0
+        }
+      ],
+      "listColumns": [
+        "intitule"
+      ]
+    },
+    {
+      "id": "promo",
+      "label": "Promo",
+      "icon": "groups",
+      "color": "#F58518",
+      "titleFields": [
+        "intitule"
+      ],
+      "fields": [
+        {
+          "key": "intitule",
+          "label": "Intitulé",
+          "category": "identite",
+          "order": 0,
+          "displayMode": "tous"
+        },
+        {
+          "key": "formationId",
+          "label": "Formation",
+          "category": "identite",
+          "order": 1,
+          "displayMode": "tous"
+        },
+        {
+          "key": "statut",
+          "label": "État",
+          "type": "picklist",
+          "options": [
+            "En préparation",
+            "Active",
+            "Terminée"
+          ],
+          "optionColors": {
+            "En préparation": "#6b7280",
+            "Active": "#2e7d32",
+            "Terminée": "#9ca3af"
+          },
+          "category": "identite",
+          "order": 2,
+          "displayMode": "tous"
+        },
+        {
+          "key": "dateDebut",
+          "label": "Début",
+          "type": "date",
+          "category": "planification",
+          "order": 0,
+          "displayMode": "tous"
+        },
+        {
+          "key": "dateFin",
+          "label": "Fin",
+          "type": "date",
+          "category": "planification",
+          "order": 1,
+          "displayMode": "tous"
+        },
+        {
+          "key": "notes",
+          "label": "Notes",
+          "type": "textarea",
+          "category": "identite",
+          "order": 3,
+          "displayMode": "complet"
+        }
+      ],
+      "categories": [
+        {
+          "id": "identite",
+          "label": "Promo",
+          "order": 0
+        },
+        {
+          "id": "planification",
+          "label": "Période",
+          "order": 1
+        }
+      ],
+      "listColumns": [
+        "statut",
+        "formationId.intitule",
+        "dateDebut",
+        "dateFin"
+      ],
+      "agenda": {
+        "startField": "dateDebut",
+        "endField": "dateFin"
+      }
+    },
+    {
+      "id": "personne",
+      "label": "Stagiaire",
+      "icon": "person",
+      "color": "#54A24B",
+      "titleFields": [
+        "prenom",
+        "nom"
+      ],
+      "fields": [
+        {
+          "key": "prenom",
+          "label": "Prénom",
+          "category": "identite",
+          "order": 0,
+          "displayMode": "tous"
+        },
+        {
+          "key": "nom",
+          "label": "Nom",
+          "category": "identite",
+          "order": 1,
+          "displayMode": "tous"
+        },
+        {
+          "key": "email",
+          "label": "Email",
+          "category": "identite",
+          "order": 2,
+          "displayMode": "tous"
+        },
+        {
+          "key": "notes",
+          "label": "Notes",
+          "type": "textarea",
+          "category": "identite",
+          "order": 3,
+          "displayMode": "complet"
+        }
+      ],
+      "categories": [
+        {
+          "id": "identite",
+          "label": "Stagiaire",
+          "order": 0
+        }
+      ],
+      "listColumns": [
+        "email"
+      ],
+      "emailField": "email"
+    },
+    {
+      "id": "inscription",
+      "label": "Inscription",
+      "icon": "how_to_reg",
+      "color": "#B279A2",
+      "titleFields": [
+        "libelle"
+      ],
+      "fields": [
+        {
+          "key": "libelle",
+          "label": "Libellé",
+          "category": "identite",
+          "order": 0,
+          "displayMode": "tous"
+        },
+        {
+          "key": "personneId",
+          "label": "Stagiaire",
+          "category": "identite",
+          "order": 1,
+          "displayMode": "tous"
+        },
+        {
+          "key": "promoId",
+          "label": "Promo",
+          "category": "identite",
+          "order": 2,
+          "displayMode": "tous"
+        },
+        {
+          "key": "statut",
+          "label": "Statut",
+          "type": "picklist",
+          "options": [
+            "Active",
+            "Terminée",
+            "Abandonnée"
+          ],
+          "optionColors": {
+            "Active": "#2e7d32",
+            "Terminée": "#1565c0",
+            "Abandonnée": "#9ca3af"
+          },
+          "category": "identite",
+          "order": 3,
+          "displayMode": "tous"
+        }
+      ],
+      "categories": [
+        {
+          "id": "identite",
+          "label": "Inscription",
+          "order": 0
+        }
+      ],
+      "listColumns": [
+        "personneId.email",
+        "promoId.intitule",
+        "statut"
+      ]
+    },
+    {
+      "id": "seance",
+      "label": "Séance",
+      "icon": "event",
+      "color": "#E45756",
+      "titleFields": [
+        "intitule"
+      ],
+      "fields": [
+        {
+          "key": "intitule",
+          "label": "Intitulé",
+          "category": "identite",
+          "order": 0,
+          "displayMode": "tous"
+        },
+        {
+          "key": "promoId",
+          "label": "Promo",
+          "category": "identite",
+          "order": 1,
+          "displayMode": "tous"
+        },
+        {
+          "key": "description",
+          "label": "Description",
+          "type": "textarea",
+          "category": "identite",
+          "order": 2,
+          "displayMode": "complet"
+        },
+        {
+          "key": "dateDebut",
+          "label": "Début",
+          "type": "datetime",
+          "category": "planification",
+          "order": 0,
+          "displayMode": "tous"
+        },
+        {
+          "key": "dateFin",
+          "label": "Fin",
+          "type": "datetime",
+          "category": "planification",
+          "order": 1,
+          "displayMode": "tous"
+        }
+      ],
+      "categories": [
+        {
+          "id": "identite",
+          "label": "Séance",
+          "order": 0
+        },
+        {
+          "id": "planification",
+          "label": "Date",
+          "order": 1
+        }
+      ],
+      "listColumns": [
+        "promoId.intitule",
+        "dateDebut",
+        "dateFin"
+      ],
+      "agenda": {
+        "startField": "dateDebut",
+        "endField": "dateFin"
+      }
+    },
+    {
+      "id": "ressource",
+      "label": "Ressource",
+      "icon": "link",
+      "color": "#72B7B2",
+      "titleFields": [
+        "titre"
+      ],
+      "fields": [
+        {
+          "key": "titre",
+          "label": "Titre",
+          "category": "identite",
+          "order": 0,
+          "displayMode": "tous"
+        },
+        {
+          "key": "url",
+          "label": "URL",
+          "category": "identite",
+          "order": 1,
+          "displayMode": "tous"
+        },
+        {
+          "key": "categorie",
+          "label": "Catégorie",
+          "type": "picklist",
+          "options": [
+            "Article",
+            "Vidéo",
+            "Documentation",
+            "Outil",
+            "Livre",
+            "Autre"
+          ],
+          "category": "identite",
+          "order": 2,
+          "displayMode": "tous"
+        },
+        {
+          "key": "description",
+          "label": "Description",
+          "type": "textarea",
+          "category": "identite",
+          "order": 3,
+          "displayMode": "complet"
+        },
+        {
+          "key": "reference",
+          "label": "Référence bibliographique",
+          "type": "textarea",
+          "category": "identite",
+          "order": 4,
+          "displayMode": "complet"
+        },
+        {
+          "key": "promoId",
+          "label": "Promo",
+          "category": "identite",
+          "order": 5,
+          "displayMode": "complet"
+        },
+        {
+          "key": "seanceId",
+          "label": "Séance",
+          "category": "identite",
+          "order": 6,
+          "displayMode": "complet"
+        }
+      ],
+      "categories": [
+        {
+          "id": "identite",
+          "label": "Ressource",
+          "order": 0
+        }
+      ],
+      "listColumns": [
+        "categorie",
+        "url",
+        "seanceId.intitule"
+      ]
     }
   ],
   "relations": [
@@ -1126,6 +1547,42 @@
       "to": "test",
       "via": "zzlien",
       "label": "Test jetable"
+    },
+    {
+      "from": "formation",
+      "to": "promo",
+      "via": "formationId",
+      "label": "Promos"
+    },
+    {
+      "from": "promo",
+      "to": "seance",
+      "via": "promoId",
+      "label": "Séances"
+    },
+    {
+      "from": "promo",
+      "to": "inscription",
+      "via": "promoId",
+      "label": "Inscriptions"
+    },
+    {
+      "from": "personne",
+      "to": "inscription",
+      "via": "personneId",
+      "label": "Inscriptions"
+    },
+    {
+      "from": "promo",
+      "to": "ressource",
+      "via": "promoId",
+      "label": "Ressources"
+    },
+    {
+      "from": "seance",
+      "to": "ressource",
+      "via": "seanceId",
+      "label": "Ressources"
     }
   ]
 }

@@ -12,7 +12,13 @@
       "modeleEmail",
       "modelePdf",
       "rappel",
-      "notification"
+      "notification",
+      "formation",
+      "promo",
+      "personne",
+      "inscription",
+      "seance",
+      "ressource"
     ]
   }
 ]
