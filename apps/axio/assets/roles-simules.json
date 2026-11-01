@@ -20,7 +20,12 @@
       "seance",
       "ressource",
       "diapositive",
-      "seanceLive"
+      "seanceLive",
+      "qcm",
+      "question",
+      "resultatQcm",
+      "coffre",
+      "ouvertureCoffre"
     ]
   }
 ]

@@ -1609,6 +1609,470 @@
         "seanceId.intitule",
         "diapositiveId.titre"
       ]
+    },
+    {
+      "id": "qcm",
+      "label": "QCM",
+      "icon": "quiz",
+      "color": "#4C78A8",
+      "titleFields": [
+        "titre"
+      ],
+      "fields": [
+        {
+          "key": "titre",
+          "label": "Titre",
+          "category": "config",
+          "order": 0,
+          "displayMode": "tous"
+        },
+        {
+          "key": "seanceId",
+          "label": "Séance",
+          "category": "config",
+          "order": 1,
+          "displayMode": "tous"
+        },
+        {
+          "key": "statut",
+          "label": "Statut",
+          "type": "picklist",
+          "options": [
+            "Brouillon",
+            "Ouvert",
+            "Fermé"
+          ],
+          "optionColors": {
+            "Brouillon": "#9ca3af",
+            "Ouvert": "#2e7d32",
+            "Fermé": "#c0392b"
+          },
+          "category": "config",
+          "order": 2,
+          "displayMode": "tous"
+        },
+        {
+          "key": "consigne",
+          "label": "Consigne",
+          "type": "textarea",
+          "category": "config",
+          "order": 3,
+          "displayMode": "complet"
+        },
+        {
+          "key": "seuil",
+          "label": "Seuil de réussite (%)",
+          "type": "number",
+          "category": "config",
+          "order": 4,
+          "displayMode": "complet"
+        },
+        {
+          "key": "tentatives",
+          "label": "Tentatives autorisées",
+          "type": "number",
+          "category": "config",
+          "order": 5,
+          "displayMode": "complet"
+        },
+        {
+          "key": "correction",
+          "label": "Affichage de la correction",
+          "type": "picklist",
+          "options": [
+            "Après la dernière tentative",
+            "Jamais"
+          ],
+          "category": "config",
+          "order": 6,
+          "displayMode": "complet"
+        }
+      ],
+      "categories": [
+        {
+          "id": "config",
+          "label": "Configuration",
+          "order": 0
+        }
+      ],
+      "listColumns": [
+        "statut",
+        "seanceId.intitule",
+        "seuil",
+        "tentatives"
+      ]
+    },
+    {
+      "id": "question",
+      "label": "Question",
+      "icon": "help",
+      "color": "#72B7B2",
+      "titleFields": [
+        "enonce"
+      ],
+      "fields": [
+        {
+          "key": "enonce",
+          "label": "Énoncé",
+          "type": "textarea",
+          "category": "contenu",
+          "order": 0,
+          "displayMode": "tous"
+        },
+        {
+          "key": "qcmId",
+          "label": "QCM",
+          "category": "contenu",
+          "order": 1,
+          "displayMode": "tous"
+        },
+        {
+          "key": "ordre",
+          "label": "Ordre",
+          "type": "number",
+          "category": "contenu",
+          "order": 2,
+          "displayMode": "tous"
+        },
+        {
+          "key": "propositions",
+          "label": "Propositions (une par ligne)",
+          "type": "textarea",
+          "category": "contenu",
+          "order": 3,
+          "displayMode": "complet"
+        },
+        {
+          "key": "points",
+          "label": "Points",
+          "type": "number",
+          "category": "contenu",
+          "order": 4,
+          "displayMode": "complet"
+        },
+        {
+          "key": "bonnesReponses",
+          "label": "Numéros des bonnes propositions (ex. 1,3)",
+          "category": "reponse",
+          "order": 0,
+          "displayMode": "complet"
+        },
+        {
+          "key": "explication",
+          "label": "Explication après la réponse",
+          "type": "textarea",
+          "category": "reponse",
+          "order": 1,
+          "displayMode": "complet"
+        }
+      ],
+      "categories": [
+        {
+          "id": "contenu",
+          "label": "Question",
+          "order": 0
+        },
+        {
+          "id": "reponse",
+          "label": "Réponses attendues (jamais montrées avant la correction)",
+          "order": 1
+        }
+      ],
+      "listColumns": [
+        "ordre",
+        "qcmId.titre",
+        "points"
+      ]
+    },
+    {
+      "id": "resultatQcm",
+      "label": "Résultat QCM",
+      "icon": "fact_check",
+      "color": "#54A24B",
+      "titleFields": [
+        "libelle"
+      ],
+      "fields": [
+        {
+          "key": "libelle",
+          "label": "Libellé",
+          "category": "resultat",
+          "order": 0,
+          "displayMode": "tous"
+        },
+        {
+          "key": "qcmId",
+          "label": "QCM",
+          "category": "resultat",
+          "order": 1,
+          "displayMode": "tous"
+        },
+        {
+          "key": "personneId",
+          "label": "Stagiaire",
+          "category": "resultat",
+          "order": 2,
+          "displayMode": "tous"
+        },
+        {
+          "key": "tentative",
+          "label": "Tentative",
+          "type": "number",
+          "category": "resultat",
+          "order": 3,
+          "displayMode": "tous"
+        },
+        {
+          "key": "score",
+          "label": "Points obtenus",
+          "type": "number",
+          "category": "resultat",
+          "order": 4,
+          "displayMode": "tous"
+        },
+        {
+          "key": "total",
+          "label": "Points possibles",
+          "type": "number",
+          "category": "resultat",
+          "order": 5,
+          "displayMode": "complet"
+        },
+        {
+          "key": "pourcent",
+          "label": "Score (%)",
+          "type": "number",
+          "category": "resultat",
+          "order": 6,
+          "displayMode": "tous"
+        },
+        {
+          "key": "reussi",
+          "label": "Réussi",
+          "type": "checkbox",
+          "category": "resultat",
+          "order": 7,
+          "displayMode": "tous"
+        },
+        {
+          "key": "date",
+          "label": "Date",
+          "type": "datetime",
+          "category": "resultat",
+          "order": 8,
+          "displayMode": "complet"
+        },
+        {
+          "key": "reponses",
+          "label": "Réponses données (JSON)",
+          "type": "textarea",
+          "category": "resultat",
+          "order": 9,
+          "displayMode": "complet"
+        }
+      ],
+      "categories": [
+        {
+          "id": "resultat",
+          "label": "Résultat",
+          "order": 0
+        }
+      ],
+      "listColumns": [
+        "personneId.nom",
+        "qcmId.titre",
+        "tentative",
+        "pourcent",
+        "reussi"
+      ]
+    },
+    {
+      "id": "coffre",
+      "label": "Coffre",
+      "icon": "lock",
+      "color": "#B279A2",
+      "titleFields": [
+        "titre"
+      ],
+      "fields": [
+        {
+          "key": "titre",
+          "label": "Titre",
+          "category": "config",
+          "order": 0,
+          "displayMode": "tous"
+        },
+        {
+          "key": "seanceId",
+          "label": "Séance",
+          "category": "config",
+          "order": 1,
+          "displayMode": "tous"
+        },
+        {
+          "key": "statut",
+          "label": "Statut",
+          "type": "picklist",
+          "options": [
+            "Brouillon",
+            "Ouvert",
+            "Fermé"
+          ],
+          "optionColors": {
+            "Brouillon": "#9ca3af",
+            "Ouvert": "#2e7d32",
+            "Fermé": "#c0392b"
+          },
+          "category": "config",
+          "order": 2,
+          "displayMode": "tous"
+        },
+        {
+          "key": "qcmId",
+          "label": "QCM à réussir pour recevoir le code",
+          "category": "config",
+          "order": 3,
+          "displayMode": "tous"
+        },
+        {
+          "key": "precedentId",
+          "label": "Coffre à ouvrir avant celui-ci (facultatif)",
+          "category": "config",
+          "order": 4,
+          "displayMode": "complet"
+        },
+        {
+          "key": "etape",
+          "label": "Étape",
+          "type": "number",
+          "category": "config",
+          "order": 5,
+          "displayMode": "tous"
+        },
+        {
+          "key": "code",
+          "label": "Code (chiffres)",
+          "category": "secret",
+          "order": 0,
+          "displayMode": "complet"
+        },
+        {
+          "key": "typeContenu",
+          "label": "Type de contenu",
+          "type": "picklist",
+          "options": [
+            "Message",
+            "Conseil",
+            "Ressource",
+            "Lien"
+          ],
+          "category": "secret",
+          "order": 1,
+          "displayMode": "complet"
+        },
+        {
+          "key": "contenu",
+          "label": "Contenu du coffre",
+          "type": "textarea",
+          "category": "secret",
+          "order": 2,
+          "displayMode": "complet"
+        },
+        {
+          "key": "url",
+          "label": "Adresse du lien (facultatif)",
+          "category": "secret",
+          "order": 3,
+          "displayMode": "complet"
+        }
+      ],
+      "categories": [
+        {
+          "id": "config",
+          "label": "Configuration",
+          "order": 0
+        },
+        {
+          "id": "secret",
+          "label": "Secret (jamais montré avant l'ouverture)",
+          "order": 1
+        }
+      ],
+      "listColumns": [
+        "etape",
+        "statut",
+        "seanceId.intitule",
+        "qcmId.titre"
+      ]
+    },
+    {
+      "id": "ouvertureCoffre",
+      "label": "Ouverture de coffre",
+      "icon": "lock_open",
+      "color": "#F58518",
+      "titleFields": [
+        "libelle"
+      ],
+      "fields": [
+        {
+          "key": "libelle",
+          "label": "Libellé",
+          "category": "etat",
+          "order": 0,
+          "displayMode": "tous"
+        },
+        {
+          "key": "coffreId",
+          "label": "Coffre",
+          "category": "etat",
+          "order": 1,
+          "displayMode": "tous"
+        },
+        {
+          "key": "personneId",
+          "label": "Stagiaire",
+          "category": "etat",
+          "order": 2,
+          "displayMode": "tous"
+        },
+        {
+          "key": "essais",
+          "label": "Essais de code",
+          "type": "number",
+          "category": "etat",
+          "order": 3,
+          "displayMode": "tous"
+        },
+        {
+          "key": "ouvert",
+          "label": "Ouvert",
+          "type": "checkbox",
+          "category": "etat",
+          "order": 4,
+          "displayMode": "tous"
+        },
+        {
+          "key": "date",
+          "label": "Date d'ouverture",
+          "type": "datetime",
+          "category": "etat",
+          "order": 5,
+          "displayMode": "complet"
+        }
+      ],
+      "categories": [
+        {
+          "id": "etat",
+          "label": "État",
+          "order": 0
+        }
+      ],
+      "listColumns": [
+        "personneId.nom",
+        "coffreId.titre",
+        "essais",
+        "ouvert"
+      ]
     }
   ],
   "relations": [
@@ -1743,6 +2207,60 @@
       "to": "seanceLive",
       "via": "diapositiveId",
       "label": "Affichée en direct"
+    },
+    {
+      "from": "seance",
+      "to": "qcm",
+      "via": "seanceId",
+      "label": "QCM"
+    },
+    {
+      "from": "qcm",
+      "to": "question",
+      "via": "qcmId",
+      "label": "Questions"
+    },
+    {
+      "from": "qcm",
+      "to": "resultatQcm",
+      "via": "qcmId",
+      "label": "Résultats"
+    },
+    {
+      "from": "personne",
+      "to": "resultatQcm",
+      "via": "personneId",
+      "label": "Résultats QCM"
+    },
+    {
+      "from": "seance",
+      "to": "coffre",
+      "via": "seanceId",
+      "label": "Coffres"
+    },
+    {
+      "from": "qcm",
+      "to": "coffre",
+      "via": "qcmId",
+      "label": "Coffres liés"
+    },
+    {
+      "from": "coffre",
+      "to": "coffre",
+      "via": "precedentId",
+      "label": "Coffres suivants"
+    },
+    {
+      "from": "coffre",
+      "to": "ouvertureCoffre",
+      "via": "coffreId",
+      "label": "Ouvertures"
+    },
+    {
+      "from": "personne",
+      "to": "ouvertureCoffre",
+      "via": "personneId",
+      "label": "Coffres ouverts"
     }
   ]
 }
