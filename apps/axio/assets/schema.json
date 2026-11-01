@@ -1587,6 +1587,14 @@
           "category": "etat",
           "order": 4,
           "displayMode": "complet"
+        },
+        {
+          "key": "publication",
+          "label": "Résultats publiés aux stagiaires (JSON)",
+          "type": "textarea",
+          "category": "etat",
+          "order": 5,
+          "displayMode": "complet"
         }
       ],
       "categories": [
