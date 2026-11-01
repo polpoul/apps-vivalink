@@ -18,7 +18,9 @@
       "personne",
       "inscription",
       "seance",
-      "ressource"
+      "ressource",
+      "diapositive",
+      "seanceLive"
     ]
   }
 ]

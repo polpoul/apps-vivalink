@@ -1467,6 +1467,140 @@
         "url",
         "seanceId.intitule"
       ]
+    },
+    {
+      "id": "diapositive",
+      "label": "Diapositive",
+      "icon": "slideshow",
+      "color": "#9D755D",
+      "titleFields": [
+        "titre"
+      ],
+      "fields": [
+        {
+          "key": "titre",
+          "label": "Titre",
+          "category": "contenu",
+          "order": 0,
+          "displayMode": "tous"
+        },
+        {
+          "key": "ordre",
+          "label": "Ordre",
+          "type": "number",
+          "category": "contenu",
+          "order": 1,
+          "displayMode": "tous"
+        },
+        {
+          "key": "seanceId",
+          "label": "Séance",
+          "category": "contenu",
+          "order": 2,
+          "displayMode": "tous"
+        },
+        {
+          "key": "contenu",
+          "label": "Contenu (Markdown)",
+          "type": "textarea",
+          "category": "contenu",
+          "order": 3,
+          "displayMode": "complet"
+        },
+        {
+          "key": "notes",
+          "label": "Notes du formateur",
+          "type": "textarea",
+          "category": "prive",
+          "order": 0,
+          "displayMode": "complet"
+        }
+      ],
+      "categories": [
+        {
+          "id": "contenu",
+          "label": "Contenu",
+          "order": 0
+        },
+        {
+          "id": "prive",
+          "label": "Pour moi (jamais montré aux stagiaires)",
+          "order": 1
+        }
+      ],
+      "listColumns": [
+        "ordre",
+        "titre",
+        "seanceId.intitule"
+      ]
+    },
+    {
+      "id": "seanceLive",
+      "label": "Séance en direct",
+      "icon": "cast_for_education",
+      "color": "#E45756",
+      "titleFields": [
+        "libelle"
+      ],
+      "fields": [
+        {
+          "key": "libelle",
+          "label": "Libellé",
+          "category": "etat",
+          "order": 0,
+          "displayMode": "tous"
+        },
+        {
+          "key": "seanceId",
+          "label": "Séance",
+          "category": "etat",
+          "order": 1,
+          "displayMode": "tous"
+        },
+        {
+          "key": "statut",
+          "label": "Statut",
+          "type": "picklist",
+          "options": [
+            "Fermée",
+            "Ouverte"
+          ],
+          "optionColors": {
+            "Fermée": "#9ca3af",
+            "Ouverte": "#2e7d32"
+          },
+          "category": "etat",
+          "order": 2,
+          "displayMode": "tous"
+        },
+        {
+          "key": "diapositiveId",
+          "label": "Diapositive affichée",
+          "category": "etat",
+          "order": 3,
+          "displayMode": "tous"
+        },
+        {
+          "key": "ordreMax",
+          "label": "Plus loin atteint (ordre)",
+          "type": "number",
+          "category": "etat",
+          "order": 4,
+          "displayMode": "complet"
+        }
+      ],
+      "categories": [
+        {
+          "id": "etat",
+          "label": "État",
+          "order": 0
+        }
+      ],
+      "listColumns": [
+        "statut",
+        "seanceId.intitule",
+        "diapositiveId.titre"
+      ]
     }
   ],
   "relations": [
@@ -1583,6 +1717,24 @@
       "to": "ressource",
       "via": "seanceId",
       "label": "Ressources"
+    },
+    {
+      "from": "seance",
+      "to": "diapositive",
+      "via": "seanceId",
+      "label": "Diapositives"
+    },
+    {
+      "from": "seance",
+      "to": "seanceLive",
+      "via": "seanceId",
+      "label": "Séance en direct"
+    },
+    {
+      "from": "diapositive",
+      "to": "seanceLive",
+      "via": "diapositiveId",
+      "label": "Affichée en direct"
     }
   ]
 }
