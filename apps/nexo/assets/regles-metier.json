@@ -126,5 +126,173 @@
                 }
             }
         ]
+    },
+    {
+        "id": "client-envoyer-email",
+        "typeId": "client",
+        "eventType": "client.action:envoyerEmail",
+        "then": [
+            {
+                "effect": "sendEmail",
+                "destinataireField": "email",
+                "modeleId": "$modeleEmailId",
+                "objetSimple": "$objet",
+                "corpsSimple": "$corps",
+                "expediteur": "$expediteur"
+            }
+        ]
+    },
+    {
+        "id": "client-poser-rappel",
+        "typeId": "client",
+        "eventType": "client.action:poserRappel",
+        "then": [
+            {
+                "effect": "createRecord",
+                "targetType": "rappel",
+                "fields": {
+                    "dateRappel": "$dateRappel",
+                    "message": "$message",
+                    "destinataire": "$destinataire",
+                    "statut": "attente",
+                    "cibleTypeId": "client",
+                    "cibleId": "%id",
+                    "cibleTitre": "%nom"
+                }
+            }
+        ]
+    },
+    {
+        "id": "passage-poser-rappel",
+        "typeId": "passage",
+        "eventType": "passage.action:poserRappel",
+        "then": [
+            {
+                "effect": "createRecord",
+                "targetType": "rappel",
+                "fields": {
+                    "dateRappel": "$dateRappel",
+                    "message": "$message",
+                    "destinataire": "$destinataire",
+                    "statut": "attente",
+                    "cibleTypeId": "passage",
+                    "cibleId": "%id",
+                    "cibleTitre": {
+                        "concat": [
+                            "Passage du ",
+                            {
+                                "substring": "%debutPrevu",
+                                "start": 8,
+                                "length": 2
+                            },
+                            "/",
+                            {
+                                "substring": "%debutPrevu",
+                                "start": 5,
+                                "length": 2
+                            },
+                            "/",
+                            {
+                                "substring": "%debutPrevu",
+                                "start": 0,
+                                "length": 4
+                            }
+                        ]
+                    }
+                }
+            }
+        ]
+    },
+    {
+        "id": "facture-poser-rappel",
+        "typeId": "facture",
+        "eventType": "facture.action:poserRappel",
+        "then": [
+            {
+                "effect": "createRecord",
+                "targetType": "rappel",
+                "fields": {
+                    "dateRappel": "$dateRappel",
+                    "message": "$message",
+                    "destinataire": "$destinataire",
+                    "statut": "attente",
+                    "cibleTypeId": "facture",
+                    "cibleId": "%id",
+                    "cibleTitre": {
+                        "concat": [
+                            "Facture du ",
+                            {
+                                "substring": "%periodeDebut",
+                                "start": 8,
+                                "length": 2
+                            },
+                            "/",
+                            {
+                                "substring": "%periodeDebut",
+                                "start": 5,
+                                "length": 2
+                            },
+                            "/",
+                            {
+                                "substring": "%periodeDebut",
+                                "start": 0,
+                                "length": 4
+                            }
+                        ]
+                    }
+                }
+            }
+        ]
+    },
+    {
+        "id": "rappel-echeance-email",
+        "typeId": "rappel",
+        "eventType": "rappel.echeance",
+        "then": [
+            {
+                "effect": "sendEmail",
+                "destinataireField": "destinataire",
+                "objetSimple": {
+                    "concat": [
+                        "Rappel : ",
+                        "%message"
+                    ]
+                },
+                "corpsSimple": {
+                    "concat": [
+                        "Rappel prévu le ",
+                        {
+                            "substring": "%dateRappel",
+                            "start": 8,
+                            "length": 2
+                        },
+                        "/",
+                        {
+                            "substring": "%dateRappel",
+                            "start": 5,
+                            "length": 2
+                        },
+                        "/",
+                        {
+                            "substring": "%dateRappel",
+                            "start": 0,
+                            "length": 4
+                        },
+                        " à ",
+                        {
+                            "substring": "%dateRappel",
+                            "start": 11,
+                            "length": 5
+                        },
+                        " :\n\n",
+                        "%message",
+                        "\n\nFiche concernée : ",
+                        "%cibleTitre",
+                        "\nhttps://nexo.vivalink.top/\n"
+                    ]
+                },
+                "expediteur": "noreply@vivalink.top"
+            }
+        ]
     }
 ]

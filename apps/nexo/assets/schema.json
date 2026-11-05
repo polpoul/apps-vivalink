@@ -2,6 +2,64 @@
     "types": [
         {
             "id": "client",
+            "emailField": "email",
+            "actions": [
+                {
+                    "id": "envoyerEmail",
+                    "label": "Envoyer par email",
+                    "icon": "mail",
+                    "params": [
+                        {
+                            "key": "modeleEmailId",
+                            "label": "Modèle (optionnel)",
+                            "type": "relation",
+                            "targetType": "modeleEmail"
+                        },
+                        {
+                            "key": "objet",
+                            "label": "Objet (si pas de modèle)",
+                            "type": "text"
+                        },
+                        {
+                            "key": "corps",
+                            "label": "Corps (si pas de modèle)",
+                            "type": "text"
+                        },
+                        {
+                            "key": "expediteur",
+                            "label": "Depuis",
+                            "type": "text",
+                            "defaultFromSetting": "emailExpediteurDefaut"
+                        }
+                    ]
+                },
+                {
+                    "id": "poserRappel",
+                    "label": "Poser un rappel",
+                    "icon": "alarm_add",
+                    "params": [
+                        {
+                            "key": "dateRappel",
+                            "label": "Date et heure du rappel",
+                            "type": "datetime",
+                            "required": true
+                        },
+                        {
+                            "key": "message",
+                            "label": "Message",
+                            "type": "text",
+                            "required": true
+                        },
+                        {
+                            "key": "destinataire",
+                            "label": "Email qui reçoit le rappel",
+                            "type": "text",
+                            "required": true,
+                            "defaultFromSetting": "emailRappels"
+                        }
+                    ]
+                }
+            ],
             "label": "Client",
             "icon": "home",
             "color": "var(--color-bleu-strong, #395A7E)",
@@ -284,6 +342,34 @@
         },
         {
             "id": "passage",
+            "actions": [
+                {
+                    "id": "poserRappel",
+                    "label": "Poser un rappel",
+                    "icon": "alarm_add",
+                    "params": [
+                        {
+                            "key": "dateRappel",
+                            "label": "Date et heure du rappel",
+                            "type": "datetime",
+                            "required": true
+                        },
+                        {
+                            "key": "message",
+                            "label": "Message",
+                            "type": "text",
+                            "required": true
+                        },
+                        {
+                            "key": "destinataire",
+                            "label": "Email qui reçoit le rappel",
+                            "type": "text",
+                            "required": true,
+                            "defaultFromSetting": "emailRappels"
+                        }
+                    ]
+                }
+            ],
             "label": "Passage",
             "icon": "cleaning_services",
             "color": "var(--color-violet, #7A5FA0)",
@@ -504,7 +590,33 @@
                 "statut"
             ],
             "actions": [
-                { "id": "exporter", "label": "Exporter en PDF", "icon": "picture_as_pdf" }
+                { "id": "exporter", "label": "Exporter en PDF", "icon": "picture_as_pdf" },
+                {
+                    "id": "poserRappel",
+                    "label": "Poser un rappel",
+                    "icon": "alarm_add",
+                    "params": [
+                        {
+                            "key": "dateRappel",
+                            "label": "Date et heure du rappel",
+                            "type": "datetime",
+                            "required": true
+                        },
+                        {
+                            "key": "message",
+                            "label": "Message",
+                            "type": "text",
+                            "required": true
+                        },
+                        {
+                            "key": "destinataire",
+                            "label": "Email qui reçoit le rappel",
+                            "type": "text",
+                            "required": true,
+                            "defaultFromSetting": "emailRappels"
+                        }
+                    ]
+                }
             ]
         },
         {
@@ -594,6 +706,178 @@
                 "type",
                 "date",
                 "statut"
+            ]
+        },
+        {
+            "id": "modelePdf",
+            "label": "Modèle PDF",
+            "icon": "picture_as_pdf",
+            "color": "#8B5E3C",
+            "titleFields": [
+                "nom"
+            ],
+            "fields": [
+                {
+                    "key": "nom",
+                    "label": "Nom",
+                    "category": "general",
+                    "order": 0,
+                    "displayMode": "tous"
+                },
+                {
+                    "key": "cibleTypeId",
+                    "label": "Type cible",
+                    "category": "general",
+                    "order": 1,
+                    "displayMode": "tous"
+                },
+                {
+                    "key": "definition",
+                    "label": "Définition (JSON)",
+                    "type": "textarea",
+                    "category": "general",
+                    "order": 2,
+                    "displayMode": "complet"
+                }
+            ],
+            "categories": [
+                {
+                    "id": "general",
+                    "label": "Général",
+                    "order": 0
+                }
+            ],
+            "listColumns": [
+                "cibleTypeId"
+            ]
+        },
+        {
+            "id": "modeleEmail",
+            "label": "Modèle d'email",
+            "icon": "forward_to_inbox",
+            "color": "#4C78A8",
+            "titleFields": [
+                "nom"
+            ],
+            "fields": [
+                {
+                    "key": "nom",
+                    "label": "Nom",
+                    "category": "general",
+                    "order": 0,
+                    "displayMode": "tous"
+                },
+                {
+                    "key": "objet",
+                    "label": "Objet (JSON)",
+                    "type": "textarea",
+                    "category": "general",
+                    "order": 1,
+                    "displayMode": "complet"
+                },
+                {
+                    "key": "corps",
+                    "label": "Corps (JSON)",
+                    "type": "textarea",
+                    "category": "general",
+                    "order": 2,
+                    "displayMode": "complet"
+                }
+            ],
+            "categories": [
+                {
+                    "id": "general",
+                    "label": "Général",
+                    "order": 0
+                }
+            ]
+        },
+        {
+            "id": "rappel",
+            "label": "Rappel",
+            "icon": "notifications",
+            "color": "#E45756",
+            "titleFields": [
+                "message"
+            ],
+            "fields": [
+                {
+                    "key": "message",
+                    "label": "Message",
+                    "category": "general",
+                    "order": 0,
+                    "displayMode": "complet"
+                },
+                {
+                    "key": "dateRappel",
+                    "label": "Date du rappel",
+                    "type": "datetime",
+                    "category": "general",
+                    "order": 1,
+                    "displayMode": "complet"
+                },
+                {
+                    "key": "destinataire",
+                    "label": "Destinataire",
+                    "category": "general",
+                    "order": 2,
+                    "displayMode": "complet"
+                },
+                {
+                    "key": "statut",
+                    "label": "Statut",
+                    "type": "picklist",
+                    "options": [
+                        "attente",
+                        "declenche"
+                    ],
+                    "optionColors": {
+                        "attente": "#F2CF5B",
+                        "declenche": "#54A24B"
+                    },
+                    "category": "general",
+                    "order": 3,
+                    "displayMode": "complet"
+                },
+                {
+                    "key": "cibleTypeId",
+                    "label": "Type de la fiche",
+                    "category": "cible",
+                    "order": 0,
+                    "displayMode": "complet"
+                },
+                {
+                    "key": "cibleId",
+                    "label": "Id de la fiche",
+                    "category": "cible",
+                    "order": 1,
+                    "displayMode": "complet"
+                },
+                {
+                    "key": "cibleTitre",
+                    "label": "Fiche",
+                    "category": "cible",
+                    "order": 2,
+                    "displayMode": "complet"
+                }
+            ],
+            "categories": [
+                {
+                    "id": "general",
+                    "label": "Rappel",
+                    "order": 1
+                },
+                {
+                    "id": "cible",
+                    "label": "Fiche concernée",
+                    "order": 2
+                }
+            ],
+            "listColumns": [
+                "message",
+                "dateRappel",
+                "statut",
+                "cibleTitre"
             ]
         }
     ],
