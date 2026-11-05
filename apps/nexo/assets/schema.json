@@ -879,6 +879,79 @@
                 "statut",
                 "cibleTitre"
             ]
+        },
+        {
+            "id": "notification",
+            "label": "Notification",
+            "icon": "notifications_active",
+            "color": "#E45756",
+            "titleFields": [
+                "titre"
+            ],
+            "fields": [
+                {
+                    "key": "titre",
+                    "label": "Titre",
+                    "category": "general",
+                    "order": 0,
+                    "displayMode": "complet"
+                },
+                {
+                    "key": "message",
+                    "label": "Message",
+                    "type": "textarea",
+                    "category": "general",
+                    "order": 1,
+                    "displayMode": "complet"
+                },
+                {
+                    "key": "dateNotif",
+                    "label": "Date",
+                    "type": "datetime",
+                    "category": "general",
+                    "order": 2,
+                    "displayMode": "complet"
+                },
+                {
+                    "key": "lu",
+                    "label": "Lu",
+                    "type": "checkbox",
+                    "category": "general",
+                    "order": 3,
+                    "displayMode": "complet"
+                },
+                {
+                    "key": "cibleTypeId",
+                    "label": "Type de la fiche",
+                    "category": "cible",
+                    "order": 0,
+                    "displayMode": "complet"
+                },
+                {
+                    "key": "cibleId",
+                    "label": "Id de la fiche",
+                    "category": "cible",
+                    "order": 1,
+                    "displayMode": "complet"
+                }
+            ],
+            "categories": [
+                {
+                    "id": "general",
+                    "label": "Notification",
+                    "order": 1
+                },
+                {
+                    "id": "cible",
+                    "label": "Fiche concernée",
+                    "order": 2
+                }
+            ],
+            "listColumns": [
+                "titre",
+                "dateNotif",
+                "lu"
+            ]
         }
     ],
     "relations": [

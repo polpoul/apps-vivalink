@@ -294,5 +294,65 @@
                 "expediteur": "noreply@vivalink.top"
             }
         ]
+    },
+    {
+        "id": "rappel-notification",
+        "typeId": "rappel",
+        "eventType": "rappel.echeance",
+        "then": [
+            {
+                "effect": "createRecord",
+                "targetType": "notification",
+                "fields": {
+                    "titre": "%message",
+                    "message": {
+                        "concat": [
+                            "Rappel prévu le ",
+                            {
+                                "substring": "%dateRappel",
+                                "start": 8,
+                                "length": 2
+                            },
+                            "/",
+                            {
+                                "substring": "%dateRappel",
+                                "start": 5,
+                                "length": 2
+                            },
+                            "/",
+                            {
+                                "substring": "%dateRappel",
+                                "start": 0,
+                                "length": 4
+                            },
+                            " à ",
+                            {
+                                "substring": "%dateRappel",
+                                "start": 11,
+                                "length": 5
+                            },
+                            "\n",
+                            {
+                                "if": {
+                                    "field": "cibleTitre",
+                                    "empty": false
+                                },
+                                "then": {
+                                    "concat": [
+                                        "Fiche : ",
+                                        "%cibleTitre"
+                                    ]
+                                },
+                                "else": ""
+                            }
+                        ]
+                    },
+                    "dateNotif": "%dateRappel",
+                    "lu": "",
+                    "cibleTypeId": "%cibleTypeId",
+                    "cibleId": "%cibleId"
+                }
+            }
+        ]
     }
 ]
