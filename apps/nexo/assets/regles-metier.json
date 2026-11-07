@@ -3,7 +3,12 @@
         "id": "passage-changement-recalcule-client",
         "typeId": "passage",
         "then": [
-            { "effect": "dispatchEvent", "field": "clientId", "targetType": "client", "eventType": "client.recompute_counts" }
+            {
+                "effect": "dispatchEvent",
+                "field": "clientId",
+                "targetType": "client",
+                "eventType": "client.recompute_counts"
+            }
         ]
     },
     {
@@ -15,19 +20,33 @@
                 "effect": "countRelated",
                 "relationType": "passage",
                 "matchField": "clientId",
-                "filter": { "field": "statut", "equals": "Réalisée" },
+                "filter": {
+                    "field": "statut",
+                    "equals": "Réalisée"
+                },
                 "as": "nbRealisees"
             },
-            { "effect": "setField", "field": "nbInterventionsRealisees", "value": "$nbRealisees" },
+            {
+                "effect": "setField",
+                "field": "nbInterventionsRealisees",
+                "value": "$nbRealisees"
+            },
             {
                 "effect": "sumRelated",
                 "relationType": "passage",
                 "matchField": "clientId",
-                "filter": { "field": "statut", "equals": "Réalisée" },
+                "filter": {
+                    "field": "statut",
+                    "equals": "Réalisée"
+                },
                 "sourceField": "montant",
                 "as": "totalRealise"
             },
-            { "effect": "setField", "field": "totalRealise", "value": "$totalRealise" }
+            {
+                "effect": "setField",
+                "field": "totalRealise",
+                "value": "$totalRealise"
+            }
         ]
     },
     {
@@ -35,16 +54,42 @@
         "typeId": "passage",
         "when": {
             "and": [
-                { "field": "dureeReelle", "empty": false },
-                { "or": [
-                    { "field": "dureeReelle", "changed": true },
-                    { "field": "tarifId", "changed": true }
-                ] }
+                {
+                    "field": "dureeReelle",
+                    "empty": false
+                },
+                {
+                    "or": [
+                        {
+                            "field": "dureeReelle",
+                            "changed": true
+                        },
+                        {
+                            "field": "tarifId",
+                            "changed": true
+                        }
+                    ]
+                }
             ]
         },
         "then": [
-            { "effect": "viaFk", "field": "tarifId", "targetType": "tarif", "read": "montantHoraire", "as": "tauxHoraire" },
-            { "effect": "setField", "field": "montant", "value": { "multiply": ["@dureeReelle", "$tauxHoraire"] } }
+            {
+                "effect": "viaFk",
+                "field": "tarifId",
+                "targetType": "tarif",
+                "read": "montantHoraire",
+                "as": "tauxHoraire"
+            },
+            {
+                "effect": "setField",
+                "field": "montant",
+                "value": {
+                    "multiply": [
+                        "@dureeReelle",
+                        "$tauxHoraire"
+                    ]
+                }
+            }
         ]
     },
     {
@@ -52,12 +97,27 @@
         "typeId": "passage",
         "when": {
             "and": [
-                { "field": "dureePrevue", "changed": true },
-                { "field": "debutPrevu", "empty": false }
+                {
+                    "field": "dureePrevue",
+                    "changed": true
+                },
+                {
+                    "field": "debutPrevu",
+                    "empty": false
+                }
             ]
         },
         "then": [
-            { "effect": "setField", "field": "finPrevue", "value": { "addHours": ["@debutPrevu", "@dureePrevue"] } }
+            {
+                "effect": "setField",
+                "field": "finPrevue",
+                "value": {
+                    "addHours": [
+                        "@debutPrevu",
+                        "@dureePrevue"
+                    ]
+                }
+            }
         ]
     },
     {
@@ -65,20 +125,43 @@
         "typeId": "passage",
         "when": {
             "and": [
-                { "field": "finPrevue", "changed": true },
-                { "field": "debutPrevu", "empty": false }
+                {
+                    "field": "finPrevue",
+                    "changed": true
+                },
+                {
+                    "field": "debutPrevu",
+                    "empty": false
+                }
             ]
         },
         "then": [
-            { "effect": "setField", "field": "dureePrevue", "value": { "diffHours": ["@finPrevue", "@debutPrevu"] } }
+            {
+                "effect": "setField",
+                "field": "dureePrevue",
+                "value": {
+                    "diffHours": [
+                        "@finPrevue",
+                        "@debutPrevu"
+                    ]
+                }
+            }
         ]
     },
     {
         "id": "passage-facture-changee",
         "typeId": "passage",
-        "when": { "field": "factureId", "empty": false },
+        "when": {
+            "field": "factureId",
+            "empty": false
+        },
         "then": [
-            { "effect": "dispatchEvent", "field": "factureId", "targetType": "facture", "eventType": "facture.recompute" }
+            {
+                "effect": "dispatchEvent",
+                "field": "factureId",
+                "targetType": "facture",
+                "eventType": "facture.recompute"
+            }
         ]
     },
     {
@@ -93,7 +176,11 @@
                 "sourceField": "montant",
                 "as": "sommeFacture"
             },
-            { "effect": "setField", "field": "montantTotal", "value": "$sommeFacture" }
+            {
+                "effect": "setField",
+                "field": "montantTotal",
+                "value": "$sommeFacture"
+            }
         ]
     },
     {
@@ -104,24 +191,49 @@
             {
                 "effect": "generateRecords",
                 "targetType": "passage",
-                "sourceRelation": { "relationType": "contratCreneau", "matchFields": ["contratId"] },
+                "sourceRelation": {
+                    "relationType": "contratCreneau",
+                    "matchFields": [
+                        "contratId"
+                    ]
+                },
                 "repeat": "$weeks",
                 "fields": {
                     "clientId": "%clientId",
                     "contratId": "%id",
                     "tarifId": "%tarifId",
                     "statut": "Planifiée",
-                    "debutPrevu": { "concat": [
-                        { "weekdayOccurrence": { "anchor": "%dateDebut", "weekday": "@jour", "week": "$week" } },
-                        "T", "@heureDebut"
-                    ] },
-                    "finPrevue": { "addHours": [
-                        { "concat": [
-                            { "weekdayOccurrence": { "anchor": "%dateDebut", "weekday": "@jour", "week": "$week" } },
-                            "T", "@heureDebut"
-                        ] },
-                        "@duree"
-                    ] },
+                    "debutPrevu": {
+                        "concat": [
+                            {
+                                "weekdayOccurrence": {
+                                    "anchor": "%dateDebut",
+                                    "weekday": "@jour",
+                                    "week": "$week"
+                                }
+                            },
+                            "T",
+                            "@heureDebut"
+                        ]
+                    },
+                    "finPrevue": {
+                        "addHours": [
+                            {
+                                "concat": [
+                                    {
+                                        "weekdayOccurrence": {
+                                            "anchor": "%dateDebut",
+                                            "weekday": "@jour",
+                                            "week": "$week"
+                                        }
+                                    },
+                                    "T",
+                                    "@heureDebut"
+                                ]
+                            },
+                            "@duree"
+                        ]
+                    },
                     "dureePrevue": "@duree"
                 }
             }
@@ -143,6 +255,21 @@
         ]
     },
     {
+        "id": "facture-envoyer-email",
+        "typeId": "facture",
+        "eventType": "facture.action:envoyerEmail",
+        "then": [
+            {
+                "effect": "sendEmail",
+                "destinataireField": "clientId.email",
+                "modeleId": "$modeleEmailId",
+                "objetSimple": "$objet",
+                "corpsSimple": "$corps",
+                "expediteur": "$expediteur"
+            }
+        ]
+    },
+    {
         "id": "client-poser-rappel",
         "typeId": "client",
         "eventType": "client.action:poserRappel",
@@ -152,12 +279,32 @@
                 "targetType": "rappel",
                 "fields": {
                     "dateRappel": "$dateRappel",
-                    "message": "$message",
-                    "destinataire": "$destinataire",
+                    "message": {
+                        "coalesce": [
+                            "$message",
+                            {
+                                "concat": [
+                                    "Rappel : ",
+                                    "%nom"
+                                ]
+                            }
+                        ]
+                    },
+                    "destinataire": {
+                        "coalesce": [
+                            "$destinataire",
+                            "$_userEmail"
+                        ]
+                    },
                     "statut": "attente",
                     "cibleTypeId": "client",
                     "cibleId": "%id",
-                    "cibleTitre": "%nom"
+                    "cibleTitre": "%nom",
+                    "envoyerEmail": {
+                        "coalesce": [
+                            "$envoyerEmail"
+                        ]
+                    }
                 }
             }
         ]
@@ -172,8 +319,44 @@
                 "targetType": "rappel",
                 "fields": {
                     "dateRappel": "$dateRappel",
-                    "message": "$message",
-                    "destinataire": "$destinataire",
+                    "message": {
+                        "coalesce": [
+                            "$message",
+                            {
+                                "concat": [
+                                    "Rappel : ",
+                                    {
+                                        "concat": [
+                                            "Passage du ",
+                                            {
+                                                "substring": "%debutPrevu",
+                                                "start": 8,
+                                                "length": 2
+                                            },
+                                            "/",
+                                            {
+                                                "substring": "%debutPrevu",
+                                                "start": 5,
+                                                "length": 2
+                                            },
+                                            "/",
+                                            {
+                                                "substring": "%debutPrevu",
+                                                "start": 0,
+                                                "length": 4
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    "destinataire": {
+                        "coalesce": [
+                            "$destinataire",
+                            "$_userEmail"
+                        ]
+                    },
                     "statut": "attente",
                     "cibleTypeId": "passage",
                     "cibleId": "%id",
@@ -198,6 +381,11 @@
                                 "length": 4
                             }
                         ]
+                    },
+                    "envoyerEmail": {
+                        "coalesce": [
+                            "$envoyerEmail"
+                        ]
                     }
                 }
             }
@@ -213,8 +401,44 @@
                 "targetType": "rappel",
                 "fields": {
                     "dateRappel": "$dateRappel",
-                    "message": "$message",
-                    "destinataire": "$destinataire",
+                    "message": {
+                        "coalesce": [
+                            "$message",
+                            {
+                                "concat": [
+                                    "Rappel : ",
+                                    {
+                                        "concat": [
+                                            "Facture du ",
+                                            {
+                                                "substring": "%periodeDebut",
+                                                "start": 8,
+                                                "length": 2
+                                            },
+                                            "/",
+                                            {
+                                                "substring": "%periodeDebut",
+                                                "start": 5,
+                                                "length": 2
+                                            },
+                                            "/",
+                                            {
+                                                "substring": "%periodeDebut",
+                                                "start": 0,
+                                                "length": 4
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    "destinataire": {
+                        "coalesce": [
+                            "$destinataire",
+                            "$_userEmail"
+                        ]
+                    },
                     "statut": "attente",
                     "cibleTypeId": "facture",
                     "cibleId": "%id",
@@ -238,6 +462,11 @@
                                 "start": 0,
                                 "length": 4
                             }
+                        ]
+                    },
+                    "envoyerEmail": {
+                        "coalesce": [
+                            "$envoyerEmail"
                         ]
                     }
                 }
@@ -293,7 +522,11 @@
                 },
                 "expediteur": "noreply@vivalink.top"
             }
-        ]
+        ],
+        "when": {
+            "field": "envoyerEmail",
+            "equals": "true"
+        }
     },
     {
         "id": "rappel-notification",

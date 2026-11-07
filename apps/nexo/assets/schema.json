@@ -46,15 +46,18 @@
                         },
                         {
                             "key": "message",
-                            "label": "Message",
-                            "type": "text",
-                            "required": true
+                            "label": "Message (facultatif)",
+                            "type": "text"
+                        },
+                        {
+                            "key": "envoyerEmail",
+                            "label": "Envoyer aussi par email",
+                            "type": "checkbox"
                         },
                         {
                             "key": "destinataire",
-                            "label": "Email qui reçoit le rappel",
+                            "label": "Email (sinon mon adresse)",
                             "type": "text",
-                            "required": true,
                             "defaultFromSetting": "emailRappels"
                         }
                     ]
@@ -356,15 +359,18 @@
                         },
                         {
                             "key": "message",
-                            "label": "Message",
-                            "type": "text",
-                            "required": true
+                            "label": "Message (facultatif)",
+                            "type": "text"
+                        },
+                        {
+                            "key": "envoyerEmail",
+                            "label": "Envoyer aussi par email",
+                            "type": "checkbox"
                         },
                         {
                             "key": "destinataire",
-                            "label": "Email qui reçoit le rappel",
+                            "label": "Email (sinon mon adresse)",
                             "type": "text",
-                            "required": true,
                             "defaultFromSetting": "emailRappels"
                         }
                     ]
@@ -377,7 +383,10 @@
                 "clientId.nom",
                 "debutPrevu"
             ],
-            "agenda": { "startField": "debutPrevu", "endField": "finPrevue" },
+            "agenda": {
+                "startField": "debutPrevu",
+                "endField": "finPrevue"
+            },
             "fields": [
                 {
                     "key": "clientId",
@@ -590,7 +599,11 @@
                 "statut"
             ],
             "actions": [
-                { "id": "exporter", "label": "Exporter en PDF", "icon": "picture_as_pdf" },
+                {
+                    "id": "exporter",
+                    "label": "Exporter en PDF",
+                    "icon": "picture_as_pdf"
+                },
                 {
                     "id": "poserRappel",
                     "label": "Poser un rappel",
@@ -604,15 +617,18 @@
                         },
                         {
                             "key": "message",
-                            "label": "Message",
-                            "type": "text",
-                            "required": true
+                            "label": "Message (facultatif)",
+                            "type": "text"
+                        },
+                        {
+                            "key": "envoyerEmail",
+                            "label": "Envoyer aussi par email",
+                            "type": "checkbox"
                         },
                         {
                             "key": "destinataire",
-                            "label": "Email qui reçoit le rappel",
+                            "label": "Email (sinon mon adresse)",
                             "type": "text",
-                            "required": true,
                             "defaultFromSetting": "emailRappels"
                         }
                     ]
@@ -858,6 +874,14 @@
                     "label": "Fiche",
                     "category": "cible",
                     "order": 2,
+                    "displayMode": "complet"
+                },
+                {
+                    "key": "envoyerEmail",
+                    "label": "Envoyer par email",
+                    "type": "checkbox",
+                    "category": "general",
+                    "order": 4,
                     "displayMode": "complet"
                 }
             ],
