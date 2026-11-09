@@ -1,0 +1,768 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Calendrier en semaines</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Mise en page : en-tête fixe (mois courant + outils), jours de la semaine collés en haut, puis une pile de semaines qui défile. Les dessins vivent dans un calque SVG ancré aux dates. */
+:root {
+  --bg: #f3f5f8;
+  --surface: #ffffff;
+  --surface-alt: #eaeff6;
+  --fg: #16202e;
+  --muted: #667085;
+  --line: #d9e0ea;
+  --mline: #2f5bd8;
+  --accent: #2f5bd8;
+  --accent-fg: #ffffff;
+  --weekend: #f6f8fb;
+  --pen-ink: #16202e;
+  --pen-red: #d8362f;
+  --pen-blue: #2f5bd8;
+  --pen-green: #1f8a52;
+  --pen-amber: #d98a0b;
+  --mix: 15%; --mixwe: 25%;
+  --mh0: #5b8bd6; --mh1: #8a6fd1; --mh2: #7cb342; --mh3: #e0719e; --mh4: #3fa968; --mh5: #e0b020;
+  --mh6: #ee8a3a; --mh7: #2aa5b3; --mh8: #b5a02a; --mh9: #d2622a; --mh10: #b04a5a; --mh11: #3b8070;
+  --font-display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --font-body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --rowh: 83px;
+  --gutter: 58px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f141c; --surface: #161d28; --surface-alt: #1d2633; --fg: #e8edf5; --muted: #8e9bb0;
+    --line: #2a3546; --mline: #7ea0ff; --accent: #7ea0ff; --accent-fg: #0f141c; --weekend: #131a24;
+    --pen-ink: #e8edf5; --pen-red: #ff6b63; --pen-blue: #7ea0ff; --pen-green: #4cc98a; --pen-amber: #f2b13c;
+    --mix: 22%; --mixwe: 32%;
+    --mh0: #7ba6ee; --mh1: #a791e6; --mh2: #9bd35f; --mh3: #f08db7; --mh4: #5fcf8a; --mh5: #f2c94a;
+    --mh6: #f5a35a; --mh7: #4cc5d3; --mh8: #d3be4a; --mh9: #f08550; --mh10: #d96f7f; --mh11: #5fb09c;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0f141c; --surface: #161d28; --surface-alt: #1d2633; --fg: #e8edf5; --muted: #8e9bb0;
+  --line: #2a3546; --mline: #7ea0ff; --accent: #7ea0ff; --accent-fg: #0f141c; --weekend: #131a24;
+  --pen-ink: #e8edf5; --pen-red: #ff6b63; --pen-blue: #7ea0ff; --pen-green: #4cc98a; --pen-amber: #f2b13c;
+  --mix: 22%; --mixwe: 32%;
+  --mh0: #7ba6ee; --mh1: #a791e6; --mh2: #9bd35f; --mh3: #f08db7; --mh4: #5fcf8a; --mh5: #f2c94a;
+  --mh6: #f5a35a; --mh7: #4cc5d3; --mh8: #d3be4a; --mh9: #f08550; --mh10: #d96f7f; --mh11: #5fb09c;
+  color-scheme: dark;
+}
+.m0{--mc:var(--mh0)}.m1{--mc:var(--mh1)}.m2{--mc:var(--mh2)}.m3{--mc:var(--mh3)}.m4{--mc:var(--mh4)}.m5{--mc:var(--mh5)}
+.m6{--mc:var(--mh6)}.m7{--mc:var(--mh7)}.m8{--mc:var(--mh8)}.m9{--mc:var(--mh9)}.m10{--mc:var(--mh10)}.m11{--mc:var(--mh11)}
+@media (max-width: 640px) { :root { --rowh: 67px; --gutter: 42px; } .g b { font-size: 0.7rem; } }
+
+html, body { height: 100%; }
+body {
+  background: var(--bg); color: var(--fg); font-family: var(--font-body);
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 12px;
+  box-sizing: border-box; display: flex; flex-direction: column; gap: 10px;
+}
+button { font: inherit; color: inherit; }
+
+.top { display: flex; flex-wrap: nowrap; align-items: center; justify-content: flex-start; gap: 8px; overflow-x: auto; scrollbar-width: thin; }
+.top > * { flex: none; }
+.top > .nav:first-child { order: 1; }
+.top > .hist { order: 2; }
+.top > .tools { order: 3; margin-left: auto; }
+.month-title { font-family: var(--font-display); font-weight: 700; font-size: clamp(1.4rem, 4vw, 2rem); letter-spacing: -0.02em; margin: 0; text-transform: capitalize; min-width: 0; }
+.month-title small { font-family: var(--font-body); font-weight: 500; font-size: 0.5em; color: var(--muted); letter-spacing: 0; margin-left: 8px; }
+.nav, .tools { display: flex; flex-wrap: nowrap; align-items: center; gap: 6px; }
+.tools { gap: 8px; }
+.group { display: flex; align-items: center; gap: 4px; padding: 3px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; }
+.btn {
+  display: inline-flex; align-items: center; gap: 6px; padding: 6px 8px; border: 0; border-radius: 7px;
+  background: transparent; cursor: pointer; font-size: 0.85rem; font-weight: 500; line-height: 1;
+}
+.btn:hover { background: var(--surface-alt); }
+.btn[aria-pressed="true"], .btn.on { background: var(--accent); color: var(--accent-fg); }
+.btn:disabled { opacity: 0.4; cursor: default; background: transparent; }
+.btn svg { width: 17px; height: 17px; flex: none; }
+.btn:focus-visible, .sw:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+#colors { gap: 0; padding: 5px 3px; }
+.sw { display: grid; place-items: center; margin: 0 3px; width: 17px; height: 17px; border-radius: 50%; border: 2px solid transparent; background: var(--c); cursor: pointer; padding: 0; box-shadow: inset 0 0 0 2px var(--surface); }
+.sw::after { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--surface); transform: scale(0); transition: transform 0.12s; }
+.sw[aria-checked="true"] { border-color: transparent; box-shadow: 0 0 0 1.5px var(--surface), 0 0 0 3px var(--c); transform: scale(1.1); }
+.sw[aria-checked="true"]::after { transform: scale(1); }
+.wd { width: 22px; height: 22px; display: grid; place-items: center; }
+.wd i { display: block; width: 16px; background: var(--cur, currentColor); border-radius: 2px; opacity: 0.4; }
+#widths .btn[aria-pressed="true"] { background: var(--surface-alt); color: var(--fg); box-shadow: inset 0 0 0 2px var(--cur, var(--accent)); }
+#widths .btn[aria-pressed="true"] .wd i { opacity: 1; }
+.danger.armed { background: var(--pen-red); color: #fff; }
+.btn .lbl { display: none; }
+.btn.keep .lbl { display: inline; }
+
+.board { flex: 1; min-height: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; display: flex; }
+#scroll { flex: 1; overflow-y: auto; overflow-x: hidden; position: relative; scrollbar-gutter: stable; }
+.wdays {
+  position: sticky; top: 0; z-index: 3; display: grid; grid-template-columns: var(--gutter) repeat(7, 1fr);
+  background: var(--surface-alt); border-bottom: 1px solid var(--line);
+  font-size: 0.72rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted);
+}
+.wdays div { padding: 8px 8px; }
+.wdays div:first-child { text-align: center; padding-inline: 0; }
+#sheet { position: relative; }
+#rows { display: grid; grid-template-columns: var(--gutter) repeat(7, 1fr); grid-auto-rows: var(--rowh); }
+.g { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 3px; padding-top: 8px; font-size: 0.68rem; color: var(--muted); border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); background: color-mix(in srgb, var(--ca) var(--mixwe), var(--surface)); font-variant-numeric: tabular-nums; }
+.g b { font-family: var(--font-display); font-size: 0.82rem; letter-spacing: 0.02em; color: color-mix(in srgb, var(--ca) 65%, var(--fg)); text-transform: uppercase; }
+.g.split { position: relative; padding: 0; background: linear-gradient(to bottom right, color-mix(in srgb, var(--ca) var(--mixwe), var(--surface)) calc(50% - 1px), var(--muted) calc(50% - 1px), var(--muted) calc(50% + 1px), color-mix(in srgb, var(--cb) var(--mixwe), var(--surface)) calc(50% + 1px)); }
+.g.split b { position: absolute; }
+.g.split .a { top: 7px; left: 5px; }
+.g.split .z { bottom: 7px; right: 5px; color: color-mix(in srgb, var(--cb) 65%, var(--fg)); }
+.g.split .s { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: var(--surface); padding: 1px 4px; border-radius: 8px; font-size: 0.62rem; }
+.d {
+  position: relative; padding: 6px 8px; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line);
+  background: color-mix(in srgb, var(--mc, var(--surface)) var(--mix), var(--surface)); font-variant-numeric: tabular-nums; min-width: 0;
+  box-shadow: var(--sh-t, 0 0 #0000), var(--sh-l, 0 0 #0000);
+}
+.d.we { background: color-mix(in srgb, var(--mc, var(--surface)) var(--mixwe), var(--surface)); }
+.d.mt { --sh-t: inset 0 3px 0 0 var(--mc); }
+.d.ml { --sh-l: inset 3px 0 0 0 var(--mc); }
+.n { display: inline-flex; align-items: center; justify-content: center; min-width: 26px; height: 26px; padding: 0 4px; border-radius: 13px; font-size: 0.9rem; font-weight: 500; }
+.d.first .n { font-family: var(--font-display); font-weight: 700; color: color-mix(in srgb, var(--mc) 65%, var(--fg)); padding: 0 8px 0 4px; }
+.d.today::after { content: ""; position: absolute; inset: 3px; border: 2px solid var(--accent); border-radius: 10px; pointer-events: none; }
+.d.today .n { color: var(--accent); font-weight: 700; }
+.d.today.first .n { color: var(--accent); }
+.d.past .n { color: var(--muted); }
+
+.tin { position: absolute; z-index: 2; box-sizing: border-box; min-width: 100px; padding: 0 4px; border: 1px dashed var(--accent); border-radius: 4px; background: color-mix(in srgb, var(--surface) 88%, transparent); font-family: var(--font-body); font-weight: 500; outline: none; }
+#ink { position: absolute; left: 0; top: 0; z-index: 1; overflow: visible; }
+#ink.draw { cursor: crosshair; touch-action: none; }
+#ink.erase { cursor: cell; touch-action: none; }
+#ink:not(.draw):not(.erase) { pointer-events: none; }
+.dot { width: 10px; height: 10px; border-radius: 50%; background: var(--muted); margin: 0 6px 0 2px; flex: none; }
+.dot[data-s="ok"] { background: var(--pen-green); }
+.dot[data-s="busy"] { background: var(--pen-amber); }
+.dot[data-s="err"] { background: var(--pen-red); }
+.pop { position: fixed; inset: 0; z-index: 20; display: grid; place-items: center; padding: 16px; background: rgba(10, 15, 25, 0.5); }
+.card { background: var(--surface); color: var(--fg); border: 1px solid var(--line); border-radius: 14px; width: 100%; max-width: 560px; max-height: 85vh; overflow: auto; padding: 16px 20px 20px; }
+.ph { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.card h2 { font-family: var(--font-display); font-size: 1.3rem; margin: 0; letter-spacing: -0.01em; }
+.card h3 { font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin: 18px 0 6px; }
+.card p, .card li { font-size: 0.9rem; line-height: 1.5; margin: 0 0 6px; }
+.card ul { margin: 0; padding-left: 18px; }
+.keys { display: grid; grid-template-columns: max-content 1fr; gap: 6px 16px; margin: 0; align-items: center; font-size: 0.9rem; }
+.keys dt, .keys dd { margin: 0; }
+kbd { font-family: ui-monospace, Consolas, monospace; font-size: 0.78rem; padding: 2px 6px; border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 5px; background: var(--surface-alt); }
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+</style>
+<style>
+html { color-scheme: light; }
+body { margin: 0; font-size: 14px; font-family: system-ui, sans-serif; }
+[hidden] { display: none !important; }
+</style>
+
+</head>
+<body>
+
+<header class="top">
+  <div class="nav">
+    <div class="group">
+      <button class="btn" id="prevW" aria-label="Semaine précédente">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 15l-6-6-6 6"/></svg><span class="lbl">Semaine</span>
+      </button>
+      <button class="btn keep" id="todayBtn">Aujourd’hui</button>
+      <button class="btn" id="nextW" aria-label="Semaine suivante">
+        <span class="lbl">Semaine</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+      </button>
+    </div>
+  </div>
+  <div class="tools" role="toolbar" aria-label="Outils de dessin">
+    <div class="group" id="toolGroup">
+      <button class="btn" data-tool="scroll" aria-pressed="true" title="Défiler sans dessiner">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 13V5a2 2 0 014 0v6m0 0V4a2 2 0 014 0v8m0-3a2 2 0 014 0v6a7 7 0 01-7 7h-1a7 7 0 01-6-3.5L4 14a2 2 0 013-2l1 1"/></svg><span class="lbl">Défiler</span>
+      </button>
+      <button class="btn" data-tool="pen" aria-pressed="false" title="Tracé libre">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21c3-1 5-3 6-6M14 4l6 6-9 9-6-6z"/></svg><span class="lbl">Libre</span>
+      </button>
+      <button class="btn" data-tool="line" aria-pressed="false" title="Trait droit">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 19L19 5"/></svg><span class="lbl">Trait</span>
+      </button>
+      <button class="btn" data-tool="rect" aria-pressed="false" title="Rectangle">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="4" y="6" width="16" height="12" rx="1"/></svg><span class="lbl">Rectangle</span>
+      </button>
+      <button class="btn" data-tool="cross" aria-pressed="false" title="Croix">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg><span class="lbl">Croix</span>
+      </button>
+      <button class="btn" data-tool="text" aria-pressed="false" title="Texte : cliquez pour écrire, cliquez sur un texte pour le modifier">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 6V5h14v1M12 5v14M9 19h6"/></svg><span class="lbl">Texte</span>
+      </button>
+      <button class="btn" data-tool="move" aria-pressed="false" title="Déplacer un dessin">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M3 12h18M9 6l3-3 3 3M9 18l3 3 3-3M6 9l-3 3 3 3M18 9l3 3-3 3"/></svg><span class="lbl">Déplacer</span>
+      </button>
+      <button class="btn" data-tool="erase" aria-pressed="false" title="Gomme : touchez un dessin pour le supprimer">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 20H9l-5-5a2 2 0 010-3l8-8a2 2 0 013 0l5 5a2 2 0 010 3l-7 8M7 11l6 6"/></svg><span class="lbl">Gomme</span>
+      </button>
+    </div>
+    <div class="group" id="colors" role="radiogroup" aria-label="Couleur"></div>
+    <div class="group" id="widths" role="radiogroup" aria-label="Épaisseur"></div>
+  </div>
+  <div class="nav hist">
+    <div class="group">
+      <button class="btn" id="undo" aria-label="Annuler" title="Annuler (Ctrl+Z)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14L4 9l5-5"/><path d="M4 9h10a6 6 0 010 12h-3"/></svg>
+      </button>
+      <button class="btn" id="redo" aria-label="Rétablir" title="Rétablir (Ctrl+Y)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14l5-5-5-5"/><path d="M20 9H10a6 6 0 000 12h3"/></svg>
+      </button>
+      <button class="btn danger" id="clear" title="Effacer tous les dessins">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg><span class="lbl" id="clearLbl">Tout effacer</span>
+      </button>
+    </div>
+    <div class="group">
+      <button class="btn" id="exportBtn" aria-label="Exporter une sauvegarde" title="Exporter une sauvegarde (fichier .json)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5M4 19h16"/></svg>
+      </button>
+      <button class="btn" id="importBtn" aria-label="Importer une sauvegarde" title="Importer une sauvegarde (fichier .json)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3M7 8l5-5 5 5M4 19h16"/></svg>
+      </button>
+      <input type="file" id="importFile" accept="application/json,.json" hidden>
+    </div>
+    <div class="group">
+      <button class="btn" id="helpBtn" aria-label="Mode d’emploi" title="Mode d’emploi" aria-haspopup="dialog">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.6 2.6 0 015 .8c0 1.7-2.5 2.2-2.5 3.7M12 17.2v.1"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main class="board">
+  <div id="scroll">
+    <div class="wdays" id="wdays"></div>
+    <div id="sheet">
+      <div id="rows"></div>
+      <svg id="ink" aria-label="Calque de dessin"></svg>
+    </div>
+  </div>
+</main>
+<div class="pop" id="pop" hidden role="dialog" aria-modal="true" aria-labelledby="popT">
+  <div class="card">
+    <div class="ph">
+      <h2 id="popT">Mode d’emploi</h2>
+      <button class="btn" id="popX" aria-label="Fermer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    </div>
+    <h3>Dessiner</h3>
+    <p>Choisissez un outil, puis dessinez sur les semaines. Les tracés restent accrochés aux dates quand vous défilez. Avec « Défiler », la molette ou le doigt font glisser le calendrier.</p>
+    <ul>
+      <li><b>Libre</b> : tracé à main levée.</li>
+      <li><b>Trait</b> et <b>Rectangle</b> : tirez d’un point à l’autre.</li>
+      <li><b>Croix</b> : un clic pose une croix.</li>
+      <li><b>Texte</b> : cliquez pour écrire, Entrée valide, Échap annule. Cliquez sur un texte pour le modifier.</li>
+      <li><b>Déplacer</b> : glissez un dessin ou un texte pour le déplacer. Pour un rectangle ou une ellipse, vous pouvez le saisir aussi à l’intérieur.</li>
+      <li><b>Gomme</b> : touchez ou glissez sur un dessin pour le supprimer.</li>
+    </ul>
+    <h3>Redressage automatique</h3>
+    <p>En tracé libre, gardez le stylo immobile un instant en fin de geste : une ligne, un rectangle, une ellipse ou une croix en un geste (forme de alpha) approximatifs se redressent.</p>
+    <h3>Raccourcis clavier</h3>
+    <dl class="keys">
+      <dt><kbd>Q</kbd> <kbd>↑</kbd></dt><dd>Semaine précédente</dd>
+      <dt><kbd>E</kbd> <kbd>↓</kbd></dt><dd>Semaine suivante</dd>
+      <dt><kbd>A</kbd> <kbd>→</kbd></dt><dd>Outil suivant (<kbd>←</kbd> précédent)</dd>
+      <dt><kbd>D</kbd></dt><dd>Couleur suivante</dd>
+      <dt><kbd>W</kbd></dt><dd>Trait suivant (épaisseur)</dd>
+      <dt><kbd>Ctrl</kbd>+<kbd>Z</kbd> / <kbd>Y</kbd></dt><dd>Annuler / Rétablir</dd>
+    </dl>
+    <h3>Enregistrement</h3>
+    <p>Les dessins sont gardés dans ce navigateur, pour cette adresse. Pour les garder en lieu sûr, utilisez les deux flèches du bandeau : la flèche vers le bas enregistre un fichier .json sur votre ordinateur, la flèche vers le haut le recharge.</p>
+  </div>
+</div>
+
+<script>
+(function () {
+  var DAYS = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
+  var MONTHS = ['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
+  var MABBR = ['janv.','févr.','mars','avr.','mai','juin','juil.','août','sept.','oct.','nov.','déc.'];
+  var ANCHOR = Date.UTC(2024, 0, 1); // un lundi
+  var DAY = 864e5, BACK = 130, FWD = 182;
+  var KEY = 'calendrier-dessins-v1';
+
+  var $ = function (id) { return document.getElementById(id); };
+  var scroller = $('scroll'), rowsEl = $('rows'), ink = $('ink'), sheet = $('sheet');
+  var NS = 'http://www.w3.org/2000/svg';
+
+  // ----- dates -----
+  var now = new Date();
+  var todayUTC = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
+  var todayIdx = Math.floor((todayUTC - ANCHOR) / (7 * DAY));
+  var startIdx = todayIdx - BACK, total = BACK + FWD;
+  function dateOf(week, col) { return new Date(ANCHOR + (week * 7 + col) * DAY); }
+  function isoWeek(d) {
+    var t = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()));
+    var dn = t.getUTCDay() || 7; t.setUTCDate(t.getUTCDate() + 4 - dn);
+    var y0 = new Date(Date.UTC(t.getUTCFullYear(), 0, 1));
+    return Math.ceil(((t - y0) / DAY + 1) / 7);
+  }
+  function mk(d) { return d.getUTCFullYear() * 12 + d.getUTCMonth(); }
+
+  // ----- construction de la grille -----
+  var h = '';
+  DAYS.forEach(function (n) { /* en-tête construit plus bas */ });
+  $('wdays').innerHTML = '<div>Sem.</div>' + DAYS.map(function (n) { return '<div>' + n + '</div>'; }).join('');
+  for (var i = 0; i < total; i++) {
+    var w = startIdx + i, mon = dateOf(w, 0), gut = '', firstInRow = null;
+    for (var c = 0; c < 7; c++) {
+      var d = dateOf(w, c), up = dateOf(w - 1, c), lf = c > 0 ? dateOf(w, c - 1) : null;
+      var cls = 'd';
+      cls += ' m' + d.getUTCMonth();
+      if (c > 4) cls += ' we';
+      if (mk(up) !== mk(d)) cls += ' mt';
+      if (lf && mk(lf) !== mk(d)) cls += ' ml';
+      var t = d.getTime();
+      if (t === todayUTC) cls += ' today'; else if (t < todayUTC) cls += ' past';
+      var label = d.getUTCDate();
+      if (d.getUTCDate() === 1) {
+        cls += ' first';
+        label = d.getUTCDate() + ' ' + MABBR[d.getUTCMonth()] + (d.getUTCMonth() === 0 ? ' ' + d.getUTCFullYear() : '');
+        if (!firstInRow) firstInRow = d;
+      }
+      h += (c === 0 ? '@@GUT@@' : '') + '<div class="' + cls + '" data-t="' + t + '"><span class="n">' + label + '</span></div>';
+    }
+    // marqueur de mois dans la gouttière : le mois qui commence dans cette semaine
+    var ma = dateOf(w, 0).getUTCMonth(), mb = dateOf(w, 6).getUTCMonth(), wk = isoWeek(dateOf(w, 3));
+    var ab = function (m) { return MABBR[m].replace('.', ''); };
+    var g;
+    if (ma !== mb) g = '<div class="g split" style="--ca:var(--mh' + ma + ');--cb:var(--mh' + mb + ')"><b class="a">' + ab(ma) + '</b><b class="z">' + ab(mb) + '</b><span class="s">S' + wk + '</span></div>';
+    else g = '<div class="g" style="--ca:var(--mh' + ma + ')"><b>' + ab(ma) + '</b><span>S' + wk + '</span></div>';
+    h = h.replace('@@GUT@@', g);
+  }
+  rowsEl.innerHTML = h;
+
+  // ----- mesures -----
+  var W = 0, H = 104;
+  function measure() {
+    W = sheet.clientWidth;
+    H = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--rowh')) || 104;
+    ink.setAttribute('width', W);
+    ink.setAttribute('height', total * H);
+    ink.style.width = W + 'px'; ink.style.height = (total * H) + 'px';
+  }
+
+  // ----- titre du mois visible + défilement -----
+  function updateTitle() {
+    var row = Math.max(0, Math.min(total - 1, Math.floor((scroller.scrollTop + H * 0.5) / H)));
+    var d = dateOf(startIdx + row, 3);
+  }
+  scroller.addEventListener('scroll', updateTitle, { passive: true });
+  function scrollToWeek(idx, smooth) {
+    scroller.scrollTo({ top: (idx - startIdx) * H, behavior: smooth ? 'smooth' : 'auto' });
+  }
+  function currentRow() { return Math.round(scroller.scrollTop / H); }
+  $('todayBtn').onclick = function () { scrollToWeek(todayIdx, true); };
+  var tgtRow = null;
+  function stepWeek(dir) {
+    var base = (tgtRow !== null && Math.abs(scroller.scrollTop - tgtRow * H) < H * 2) ? tgtRow : currentRow();
+    tgtRow = Math.max(0, Math.min(total - 1, base + dir));
+    scroller.scrollTo({ top: tgtRow * H, behavior: 'smooth' });
+  }
+  $('prevW').onclick = function () { stepWeek(-1); };
+  $('nextW').onclick = function () { stepWeek(1); };
+
+  // ----- état du dessin -----
+  var shapes = [], undoStack = [], redoStack = [];
+  var tool = 'scroll', color = 'ink', width = 3;
+  try { var raw = localStorage.getItem(KEY); if (raw) shapes = JSON.parse(raw) || []; } catch (e) { shapes = []; }
+  function lsSave() { try { localStorage.setItem(KEY, JSON.stringify(shapes)); } catch (e) {} }
+  function save() { lsSave(); }
+  function commit(next) {
+    undoStack.push(JSON.stringify(shapes)); if (undoStack.length > 100) undoStack.shift();
+    redoStack = []; shapes = next; save(); render(); buttons();
+  }
+  function buttons() { $('undo').disabled = !undoStack.length; $('redo').disabled = !redoStack.length; $('clear').disabled = !shapes.length; }
+  $('undo').onclick = function () { if (!undoStack.length) return; redoStack.push(JSON.stringify(shapes)); shapes = JSON.parse(undoStack.pop()); save(); render(); buttons(); };
+  $('redo').onclick = function () { if (!redoStack.length) return; undoStack.push(JSON.stringify(shapes)); shapes = JSON.parse(redoStack.pop()); save(); render(); buttons(); };
+  var armTimer = null;
+  $('clear').onclick = function () {
+    var b = $('clear');
+    if (!b.classList.contains('armed')) {
+      b.classList.add('armed'); $('clearLbl').textContent = 'Confirmer ?';
+      b.querySelector('.lbl').style.display = 'inline';
+      armTimer = setTimeout(disarm, 3000); return;
+    }
+    disarm(); commit([]);
+  };
+  function disarm() { clearTimeout(armTimer); var b = $('clear'); b.classList.remove('armed'); $('clearLbl').textContent = 'Tout effacer'; b.querySelector('.lbl').style.display = ''; }
+  function cycleBtn(sel, attr) {
+    var list = document.querySelectorAll(sel), cur = -1, i;
+    for (i = 0; i < list.length; i++) if (list[i].getAttribute(attr) === 'true') cur = i;
+    list[(cur + 1) % list.length].click();
+  }
+  var pop = $('pop');
+  function openPop() { pop.hidden = false; $('popX').focus(); }
+  function closePop() { pop.hidden = true; $('helpBtn').focus(); }
+  $('helpBtn').onclick = openPop;
+  $('popX').onclick = closePop;
+  pop.addEventListener('pointerdown', function (e) { if (e.target === pop) closePop(); });
+  document.addEventListener('keydown', function (e) {
+    if (!pop.hidden) { if (e.key === 'Escape') { e.preventDefault(); closePop(); } return; }
+    if (!e.ctrlKey && !e.metaKey && !e.altKey && !e.shiftKey) {
+      if (e.key === 'ArrowUp') { e.preventDefault(); stepWeek(-1); return; }
+      if (e.key === 'ArrowDown') { e.preventDefault(); stepWeek(1); return; }
+      if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+        e.preventDefault();
+        var names = Array.prototype.map.call(toolBtns, function (b) { return b.dataset.tool; });
+        var k = names.indexOf(tool) + (e.key === 'ArrowRight' ? 1 : -1);
+        setTool(names[(k + names.length) % names.length]); return;
+      }
+      var kk = e.key.toLowerCase();
+      if (kk === 'q') { e.preventDefault(); stepWeek(-1); return; }
+      if (kk === 'e') { e.preventDefault(); stepWeek(1); return; }
+      if (kk === 'a') { e.preventDefault(); var nm = Array.prototype.map.call(toolBtns, function (b) { return b.dataset.tool; }); setTool(nm[(nm.indexOf(tool) + 1) % nm.length]); return; }
+      if (kk === 'd') { e.preventDefault(); cycleBtn('#colors .sw', 'aria-checked'); return; }
+      if (kk === 'w') { e.preventDefault(); cycleBtn('#widths .btn', 'aria-pressed'); return; }
+    }
+    if ((e.ctrlKey || e.metaKey) && !e.shiftKey && e.key.toLowerCase() === 'z') { e.preventDefault(); $('undo').click(); }
+    else if ((e.ctrlKey || e.metaKey) && (e.key.toLowerCase() === 'y' || (e.shiftKey && e.key.toLowerCase() === 'z'))) { e.preventDefault(); $('redo').click(); }
+  });
+
+  // ----- outils -----
+  // curseurs par outil : dessin SVG noir cerné de blanc, lisible sur toutes les teintes
+  function mkCur(inner, hx, hy, fb) {
+    var svg = "<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32' fill='none' stroke-linecap='round' stroke-linejoin='round'><g stroke='white' stroke-width='3.6'>" + inner + "</g><g stroke='#111' stroke-width='1.5'>" + inner + '</g></svg>';
+    return 'url("data:image/svg+xml,' + encodeURIComponent(svg) + '") ' + hx + ' ' + hy + ', ' + fb;
+  }
+  var CH = "<path d='M12 3v6M12 15v6M3 12h6M15 12h6'/>";
+  var CURS = {
+    scroll: 'grab',
+    move: 'move',
+    text: 'text',
+    pen: mkCur("<path d='M4 28l1-6L20 7l5 5L10 27zM17 10l5 5'/>", 4, 28, 'crosshair'),
+    line: mkCur(CH + "<path d='M19 28l8-8'/>", 12, 12, 'crosshair'),
+    rect: mkCur(CH + "<rect x='18' y='20' width='10' height='7'/>", 12, 12, 'crosshair'),
+    cross: mkCur(CH + "<path d='M19 20l7 7M26 20l-7 7'/>", 12, 12, 'crosshair'),
+    erase: mkCur("<circle cx='16' cy='16' r='9'/>", 16, 16, 'cell')
+  };
+  var toolBtns = document.querySelectorAll('#toolGroup .btn');
+  function setTool(t) {
+    tool = t;
+    toolBtns.forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.tool === t)); });
+    ink.setAttribute('class', t === 'scroll' ? '' : (t === 'erase' ? 'erase' : 'draw'));
+    ink.style.cursor = t === 'scroll' ? '' : CURS[t];
+    scroller.style.cursor = t === 'scroll' ? 'grab' : '';
+  }
+  toolBtns.forEach(function (b) { b.onclick = function () { setTool(b.dataset.tool); }; });
+  function setCur() { $('widths').style.setProperty('--cur', 'var(--pen-' + color + ')'); }
+  var PENS = [['ink', 'Noir'], ['red', 'Rouge'], ['blue', 'Bleu'], ['green', 'Vert'], ['amber', 'Orange']];
+  $('colors').innerHTML = PENS.map(function (p) {
+    return '<button class="sw" role="radio" aria-checked="' + (p[0] === color) + '" aria-label="' + p[1] + '" title="' + p[1] + '" data-c="' + p[0] + '" style="--c:var(--pen-' + p[0] + ')"></button>';
+  }).join('');
+  $('colors').onclick = function (e) {
+    var b = e.target.closest('.sw'); if (!b) return; color = b.dataset.c; setCur();
+    this.querySelectorAll('.sw').forEach(function (s) { s.setAttribute('aria-checked', String(s === b)); });
+    if (tool === 'scroll' || tool === 'erase') setTool('pen');
+  };
+  var WIDTHS = [[2, 'Fin', 2], [4, 'Moyen', 4], [8, 'Épais', 7]];
+  $('widths').innerHTML = WIDTHS.map(function (w) {
+    return '<button class="btn" role="radio" style="padding:7px 9px" aria-checked="' + (w[0] === width) + '" aria-pressed="' + (w[0] === width) + '" aria-label="' + w[1] + '" title="' + w[1] + '" data-w="' + w[0] + '"><span class="wd"><i style="height:' + w[2] + 'px"></i></span></button>';
+  }).join('');
+  setCur();
+  $('widths').onclick = function (e) {
+    var b = e.target.closest('.btn'); if (!b) return; width = +b.dataset.w;
+    this.querySelectorAll('.btn').forEach(function (s) { s.setAttribute('aria-pressed', String(s === b)); s.setAttribute('aria-checked', String(s === b)); });
+  };
+
+  // ----- rendu des dessins -----
+  function X(nx) { return nx * W; }
+  function Y(wy) { return (wy - startIdx) * H; }
+  var CROSS = 11;
+  function el(name, attrs) { var n = document.createElementNS(NS, name); for (var k in attrs) n.setAttribute(k, attrs[k]); return n; }
+  function pathOf(pts) {
+    var p = pts.map(function (q) { return [X(q[0]), Y(q[1])]; });
+    if (p.length === 1) return 'M' + p[0][0] + ' ' + p[0][1] + 'l0.01 0';
+    var d = 'M' + p[0][0] + ' ' + p[0][1];
+    for (var i = 1; i < p.length - 1; i++) {
+      var mx = (p[i][0] + p[i + 1][0]) / 2, my = (p[i][1] + p[i + 1][1]) / 2;
+      d += 'Q' + p[i][0] + ' ' + p[i][1] + ' ' + mx + ' ' + my;
+    }
+    var l = p[p.length - 1]; return d + 'L' + l[0] + ' ' + l[1];
+  }
+  function shapeEl(s) {
+    var st = { stroke: 'var(--pen-' + s.c + ')', 'stroke-width': s.w, 'stroke-linecap': 'round', 'stroke-linejoin': 'round', fill: 'none' };
+    var g;
+    if (s.t === 'p') { st.d = pathOf(s.pts); g = el('path', st); }
+    else if (s.t === 'T') {
+      g = el('text', { x: X(s.p[0]), y: Y(s.p[1]), 'font-size': s.z, 'dominant-baseline': 'central', fill: 'var(--pen-' + s.c + ')', stroke: 'var(--surface)', 'stroke-width': 3, 'stroke-linejoin': 'round', 'paint-order': 'stroke' });
+      g.style.fontFamily = 'var(--font-body)'; g.style.fontWeight = '500'; g.textContent = s.s;
+    }
+    else if (s.t === 'e') {
+      g = el('ellipse', Object.assign(st, { cx: (X(s.a[0]) + X(s.b[0])) / 2, cy: (Y(s.a[1]) + Y(s.b[1])) / 2, rx: Math.abs(X(s.b[0]) - X(s.a[0])) / 2, ry: Math.abs(Y(s.b[1]) - Y(s.a[1])) / 2 }));
+    }
+    else if (s.t === 'r') {
+      var x1 = X(s.a[0]), y1 = Y(s.a[1]), x2 = X(s.b[0]), y2 = Y(s.b[1]);
+      st.d = 'M' + x1 + ' ' + y1 + 'H' + x2 + 'V' + y2 + 'H' + x1 + 'Z'; g = el('path', st);
+    }
+    else if (s.t === 'l') { g = el('line', Object.assign(st, { x1: X(s.a[0]), y1: Y(s.a[1]), x2: X(s.b[0]), y2: Y(s.b[1]) })); }
+    else {
+      var x = X(s.p[0]), y = Y(s.p[1]), r = CROSS + s.w;
+      st.d = 'M' + (x - r) + ' ' + (y - r) + 'L' + (x + r) + ' ' + (y + r) + 'M' + (x + r) + ' ' + (y - r) + 'L' + (x - r) + ' ' + (y + r);
+      g = el('path', st);
+    }
+    return g;
+  }
+  function render() {
+    while (ink.firstChild) ink.removeChild(ink.firstChild);
+    shapes.forEach(function (s) { if (s !== editing) ink.appendChild(shapeEl(s)); });
+  }
+
+  // ----- saisie -----
+  function pos(e) {
+    var r = sheet.getBoundingClientRect();
+    var x = Math.max(0, Math.min(W, e.clientX - r.left)), y = e.clientY - r.top;
+    return { px: x, py: y, n: [x / W, y / H + startIdx] };
+  }
+  function distSeg(px, py, ax, ay, bx, by) {
+    var dx = bx - ax, dy = by - ay, l2 = dx * dx + dy * dy, t = l2 ? ((px - ax) * dx + (py - ay) * dy) / l2 : 0;
+    t = Math.max(0, Math.min(1, t)); var cx = ax + t * dx, cy = ay + t * dy;
+    return Math.hypot(px - cx, py - cy);
+  }
+  function hit(s, px, py) {
+    var tol = 8 + s.w / 2;
+    if (s.t === 'T') {
+      var tx = X(s.p[0]), ty = Y(s.p[1]), tw = s.s.length * s.z * 0.58;
+      return px >= tx - 6 && px <= tx + tw + 6 && Math.abs(py - ty) <= s.z * 0.7 + 4;
+    }
+    if (s.t === 'x') { var r = CROSS + s.w; return Math.abs(px - X(s.p[0])) <= r + 6 && Math.abs(py - Y(s.p[1])) <= r + 6; }
+    if (s.t === 'e') {
+      var ecx = (X(s.a[0]) + X(s.b[0])) / 2, ecy = (Y(s.a[1]) + Y(s.b[1])) / 2, erx = Math.abs(X(s.b[0]) - X(s.a[0])) / 2, ery = Math.abs(Y(s.b[1]) - Y(s.a[1])) / 2, ep = null;
+      for (var k = 0; k <= 48; k++) {
+        var th = k / 48 * 2 * Math.PI, q = [ecx + erx * Math.cos(th), ecy + ery * Math.sin(th)];
+        if (ep && distSeg(px, py, ep[0], ep[1], q[0], q[1]) <= tol) return true;
+        ep = q;
+      }
+      return false;
+    }
+    if (s.t === 'r') {
+      var ax = X(s.a[0]), ay = Y(s.a[1]), bx = X(s.b[0]), by = Y(s.b[1]);
+      return distSeg(px, py, ax, ay, bx, ay) <= tol || distSeg(px, py, bx, ay, bx, by) <= tol || distSeg(px, py, bx, by, ax, by) <= tol || distSeg(px, py, ax, by, ax, ay) <= tol;
+    }
+    if (s.t === 'l') return distSeg(px, py, X(s.a[0]), Y(s.a[1]), X(s.b[0]), Y(s.b[1])) <= tol;
+    for (var i = 0; i < s.pts.length - 1; i++) if (distSeg(px, py, X(s.pts[i][0]), Y(s.pts[i][1]), X(s.pts[i + 1][0]), Y(s.pts[i + 1][1])) <= tol) return true;
+    return s.pts.length === 1 && Math.hypot(px - X(s.pts[0][0]), py - Y(s.pts[0][1])) <= tol;
+  }
+
+  // ----- outil texte -----
+  var tin = null, editing = null;
+  function tsize(w) { return w <= 2 ? 14 : (w <= 4 ? 18 : 26); }
+  function closeText(cancel) {
+    if (!tin) return;
+    var inp = tin, ed = editing; tin = null; editing = null;
+    var val = inp.value.trim();
+    var pn = inp._p, z = inp._z, c = inp._c, w = inp._w;
+    inp.remove();
+    if (cancel || (ed && val === ed.s) || (!ed && !val)) { render(); return; }
+    var next = shapes.filter(function (s) { return s !== ed; });
+    if (val) next.push({ t: 'T', c: c, w: w, z: z, p: pn, s: val });
+    commit(next);
+  }
+  function openText(p) {
+    closeText();
+    var found = null, i;
+    for (i = shapes.length - 1; i >= 0; i--) if (shapes[i].t === 'T' && hit(shapes[i], p.px, p.py)) { found = shapes[i]; break; }
+    var z = found ? found.z : tsize(width), c = found ? found.c : color, w = found ? found.w : width, pn = found ? found.p : p.n;
+    editing = found; render();
+    var inp = document.createElement('input');
+    inp.type = 'text'; inp.id = 'textInput'; inp.className = 'tin'; inp.maxLength = 80;
+    inp.setAttribute('aria-label', 'Texte'); inp.value = found ? found.s : '';
+    var left = Math.max(0, X(pn[0]) - 5);
+    inp.style.cssText = 'left:' + left + 'px;top:' + (Y(pn[1]) - (z + 10) / 2) + 'px;width:' + Math.max(100, Math.min(260, W - left - 4)) + 'px;font-size:' + z + 'px;height:' + (z + 10) + 'px;color:var(--pen-' + c + ')';
+    inp._p = pn; inp._z = z; inp._c = c; inp._w = w;
+    inp.addEventListener('keydown', function (e) {
+      e.stopPropagation();
+      if (e.key === 'Enter') { e.preventDefault(); closeText(); }
+      else if (e.key === 'Escape') { e.preventDefault(); closeText(true); }
+    });
+    inp.addEventListener('blur', function () { closeText(); });
+    sheet.appendChild(inp); tin = inp;
+    setTimeout(function () { inp.focus(); }, 0);
+  }
+
+  // ----- redressage automatique : on garde le stylo immobile en fin de tracé libre -----
+  var HOLD_MS = 250, holdTimer = null;
+  function pxPts(s) { return s.pts.map(function (q) { return [X(q[0]), Y(q[1])]; }); }
+  function norm(q) { return [q[0] / W, q[1] / H + startIdx]; }
+  // croix en un seul geste (forme de alpha) : un tracé court qui se croise une seule fois, avec deux queues
+  function selfCross(p, len) {
+    var n = p.length, cum = [0], i, j, hits = [];
+    for (i = 1; i < n; i++) cum[i] = cum[i - 1] + Math.hypot(p[i][0] - p[i - 1][0], p[i][1] - p[i - 1][1]);
+    for (i = 0; i < n - 1; i++) for (j = i + 2; j < n - 1; j++) {
+      var a = p[i], b = p[i + 1], c = p[j], d = p[j + 1];
+      var r1x = b[0] - a[0], r1y = b[1] - a[1], r2x = d[0] - c[0], r2y = d[1] - c[1];
+      var den = r1x * r2y - r1y * r2x; if (!den) continue;
+      var t = ((c[0] - a[0]) * r2y - (c[1] - a[1]) * r2x) / den, u = ((c[0] - a[0]) * r1y - (c[1] - a[1]) * r1x) / den;
+      if (t < 0 || t > 1 || u < 0 || u > 1) continue;
+      var pt = [a[0] + t * r1x, a[1] + t * r1y];
+      if (!hits.some(function (k) { return Math.hypot(k.pt[0] - pt[0], k.pt[1] - pt[1]) < 8; }))
+        hits.push({ pt: pt, l1: cum[i] + t * (cum[i + 1] - cum[i]), l2: cum[j] + u * (cum[j + 1] - cum[j]) });
+    }
+    if (hits.length !== 1) return null;
+    var x0 = Infinity, x1 = -Infinity, y0 = Infinity, y1 = -Infinity;
+    p.forEach(function (q) { x0 = Math.min(x0, q[0]); x1 = Math.max(x1, q[0]); y0 = Math.min(y0, q[1]); y1 = Math.max(y1, q[1]); });
+    var big = Math.max(x1 - x0, y1 - y0);
+    if (big < 14 || big > 90) return null;
+    if (hits[0].l1 + (len - hits[0].l2) < 0.35 * len) return null;
+    return { t: 'x', p: hits[0].pt };
+  }
+  function recognize(p) {
+    var n = p.length, i, len = 0;
+    if (n < 4) return null;
+    for (i = 1; i < n; i++) len += Math.hypot(p[i][0] - p[i - 1][0], p[i][1] - p[i - 1][1]);
+    if (len < 24) return null;
+    var xr = selfCross(p, len); if (xr) return xr;
+    var f = p[0], l = p[n - 1], chord = Math.hypot(l[0] - f[0], l[1] - f[1]);
+    if (chord > 0.7 * len && chord > 24) {
+      var dx = (l[0] - f[0]) / chord, dy = (l[1] - f[1]) / chord, dev = 0;
+      for (i = 0; i < n; i++) dev = Math.max(dev, Math.abs((p[i][0] - f[0]) * dy - (p[i][1] - f[1]) * dx));
+      if (dev <= Math.max(6, 0.07 * chord)) {
+        var b = [l[0], l[1]];
+        if (Math.abs(l[1] - f[1]) < 0.12 * Math.abs(l[0] - f[0])) b[1] = f[1];
+        else if (Math.abs(l[0] - f[0]) < 0.12 * Math.abs(l[1] - f[1])) b[0] = f[0];
+        return { t: 'l', a: f, b: b };
+      }
+      return null;
+    }
+    if (chord < 0.3 * len && len > 70) {
+      var x0 = Infinity, x1 = -Infinity, y0 = Infinity, y1 = -Infinity;
+      p.forEach(function (q) { x0 = Math.min(x0, q[0]); x1 = Math.max(x1, q[0]); y0 = Math.min(y0, q[1]); y1 = Math.max(y1, q[1]); });
+      var w = x1 - x0, hh = y1 - y0;
+      if (w < 24 || hh < 24) return null;
+      var cx = (x0 + x1) / 2, cy = (y0 + y1) / 2, eR = 0, eE = 0;
+      p.forEach(function (q) {
+        eR += Math.min(Math.abs(q[0] - x0), Math.abs(q[0] - x1), Math.abs(q[1] - y0), Math.abs(q[1] - y1));
+        eE += Math.abs(Math.hypot((q[0] - cx) / (w / 2), (q[1] - cy) / (hh / 2)) - 1);
+      });
+      eR = eR / n / Math.min(w, hh); eE = eE / n;
+      if (eE < 0.1 && eE < eR * 1.2) return { t: 'e', a: [x0, y0], b: [x1, y1] };
+      if (eR < 0.06) return { t: 'r', a: [x0, y0], b: [x1, y1] };
+    }
+    return null;
+  }
+  function snapNow() {
+    holdTimer = null;
+    if (!cur || cur.t !== 'p' || cur.snapped) return;
+    var r = recognize(pxPts(cur)); if (!r) return;
+    if (r.t === 'x') cur = { t: 'x', c: cur.c, w: Math.max(2, cur.w * 0.7), p: norm(r.p), snapped: true };
+    else cur = { t: r.t, c: cur.c, w: cur.w, a: norm(r.a), b: norm(r.b), snapped: true };
+    var nn = shapeEl(cur); ink.replaceChild(nn, preview); preview = nn;
+    try { if (navigator.vibrate) navigator.vibrate(15); } catch (e) {}
+  }
+
+  // ----- déplacement -----
+  var mv = null;
+  function inside(s, px, py) {
+    if (s.t === 'r') return px >= Math.min(X(s.a[0]), X(s.b[0])) && px <= Math.max(X(s.a[0]), X(s.b[0])) && py >= Math.min(Y(s.a[1]), Y(s.b[1])) && py <= Math.max(Y(s.a[1]), Y(s.b[1]));
+    if (s.t === 'e') {
+      var cx = (X(s.a[0]) + X(s.b[0])) / 2, cy = (Y(s.a[1]) + Y(s.b[1])) / 2, rx = Math.abs(X(s.b[0]) - X(s.a[0])) / 2 || 1, ry = Math.abs(Y(s.b[1]) - Y(s.a[1])) / 2 || 1;
+      return Math.pow((px - cx) / rx, 2) + Math.pow((py - cy) / ry, 2) <= 1;
+    }
+    return false;
+  }
+  function moved(s, dx, dy) {
+    var c = JSON.parse(JSON.stringify(s));
+    function sh(q) { q[0] += dx; q[1] += dy; }
+    if (c.pts) c.pts.forEach(sh);
+    if (c.a) sh(c.a); if (c.b) sh(c.b); if (c.p) sh(c.p);
+    return c;
+  }
+  function startMove(p) {
+    var i, idx = -1;
+    for (i = shapes.length - 1; i >= 0; i--) if (hit(shapes[i], p.px, p.py)) { idx = i; break; }
+    if (idx < 0) for (i = shapes.length - 1; i >= 0; i--) if (inside(shapes[i], p.px, p.py)) { idx = i; break; }
+    if (idx < 0) return;
+    mv = { idx: idx, orig: shapes[idx], start: p, snap: JSON.stringify(shapes), moved: false };
+  }
+
+  var cur = null, preview = null, erased = false, snap = null;
+  ink.addEventListener('pointerdown', function (e) {
+    if (tool === 'scroll' || e.button > 0) return;
+    e.preventDefault(); ink.setPointerCapture(e.pointerId);
+    var p = pos(e);
+    if (tool === 'text') { openText(p); return; }
+    if (tool === 'move') { startMove(p); return; }
+    if (tool === 'erase') { snap = shapes.slice(); erased = false; eraseAt(p); return; }
+    if (tool === 'cross') { commit(shapes.concat([{ t: 'x', c: color, w: Math.max(2, width * 0.7), p: p.n }])); return; }
+    cur = tool === 'pen' ? { t: 'p', c: color, w: width, pts: [p.n], last: p } : { t: tool === 'rect' ? 'r' : 'l', c: color, w: width, a: p.n, b: p.n };
+    preview = shapeEl(cur); ink.appendChild(preview);
+  });
+  ink.addEventListener('pointermove', function (e) {
+    var p = pos(e);
+    if (mv) {
+      var dx = (p.px - mv.start.px) / W, dy = (p.py - mv.start.py) / H;
+      if (Math.abs(p.px - mv.start.px) + Math.abs(p.py - mv.start.py) > 2) mv.moved = true;
+      shapes[mv.idx] = moved(mv.orig, dx, dy); render(); return;
+    }
+    if (tool === 'erase' && snap) { eraseAt(p); return; }
+    if (!cur) return;
+    if (cur.snapped) return;
+    if (cur.t === 'p') {
+      if (Math.hypot(p.px - cur.last.px, p.py - cur.last.py) < 2) return;
+      cur.pts.push(p.n); cur.last = p;
+      clearTimeout(holdTimer); holdTimer = setTimeout(snapNow, HOLD_MS);
+    } else { cur.b = p.n; }
+    var n = shapeEl(cur); ink.replaceChild(n, preview); preview = n;
+  });
+  function eraseAt(p) {
+    var keep = shapes.filter(function (s) { return !hit(s, p.px, p.py); });
+    if (keep.length !== shapes.length) { shapes = keep; erased = true; render(); }
+  }
+  function finish() {
+    if (mv) {
+      if (mv.moved) { undoStack.push(mv.snap); redoStack = []; save(); buttons(); }
+      else { shapes[mv.idx] = mv.orig; render(); }
+      mv = null; return;
+    }
+    if (snap) {
+      if (erased) { undoStack.push(JSON.stringify(snap)); redoStack = []; save(); buttons(); }
+      snap = null; erased = false; return;
+    }
+    if (!cur) return;
+    clearTimeout(holdTimer); holdTimer = null;
+    var s = cur; cur = null; delete s.last; delete s.snapped;
+    if (preview) { ink.removeChild(preview); preview = null; }
+    if (s.t !== 'p' && s.t !== 'x' && Math.hypot((s.b[0] - s.a[0]) * W, (s.b[1] - s.a[1]) * H) < 3) return;
+    commit(shapes.concat([s]));
+  }
+  ink.addEventListener('pointerup', finish);
+  ink.addEventListener('pointercancel', finish);
+
+
+  // ----- sauvegarde dans un fichier + stockage persistant -----
+  try { if (navigator.storage && navigator.storage.persist) navigator.storage.persist(); } catch (e) {}
+  $('exportBtn').onclick = function () {
+    var d = new Date(), p = function (n) { return String(n).padStart(2, '0'); };
+    var name = 'calendrier-' + d.getFullYear() + p(d.getMonth() + 1) + p(d.getDate()) + '-' + p(d.getHours()) + p(d.getMinutes()) + '.json';
+    var blob = new Blob([JSON.stringify({ version: 1, shapes: shapes }, null, 1)], { type: 'application/json' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click();
+    setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+  };
+  $('importBtn').onclick = function () { $('importFile').click(); };
+  $('importFile').onchange = function () {
+    var f = this.files && this.files[0]; this.value = '';
+    if (!f) return;
+    var r = new FileReader();
+    r.onload = function () {
+      try {
+        var data = JSON.parse(r.result), list = Array.isArray(data) ? data : data.shapes;
+        if (!Array.isArray(list)) throw new Error('format');
+        commit(list);
+      } catch (e) { $('importBtn').title = 'Fichier non reconnu'; }
+    };
+    r.readAsText(f);
+  };
+
+  // ----- démarrage -----
+  function layout() { measure(); render(); updateTitle(); }
+  window.addEventListener('resize', function () {
+    var top = scroller.scrollTop / H, old = H; layout(); scroller.scrollTop = top * H;
+  });
+  measure(); render(); buttons(); setTool('scroll');
+  scrollToWeek(todayIdx, false); updateTitle();
+  if (window.ResizeObserver) new ResizeObserver(function () { if (sheet.clientWidth !== W) { measure(); render(); } }).observe(sheet);
+})();
+</script>
+</body>
+</html>
