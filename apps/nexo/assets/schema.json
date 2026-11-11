@@ -865,6 +865,7 @@
                 {
                     "key": "cibleId",
                     "label": "Id de la fiche",
+                    "openRecordTypeField": "cibleTypeId",
                     "category": "cible",
                     "order": 1,
                     "displayMode": "complet"
@@ -954,6 +955,7 @@
                 {
                     "key": "cibleId",
                     "label": "Id de la fiche",
+                    "openRecordTypeField": "cibleTypeId",
                     "category": "cible",
                     "order": 1,
                     "displayMode": "complet"
